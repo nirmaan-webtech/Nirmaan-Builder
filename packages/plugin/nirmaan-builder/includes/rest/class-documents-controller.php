@@ -19,6 +19,13 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Documents_Controller {
 	/**
+	 * Maximum canonical document size, in bytes.
+	 *
+	 * @var int
+	 */
+	private const MAX_DOCUMENT_BYTES = 1048576;
+
+	/**
 	 * Register routes.
 	 *
 	 * @return void
@@ -35,7 +42,7 @@ final class Documents_Controller {
 					'args'                => array(
 						'id' => array(
 							'required'          => true,
-							'validate_callback' => 'absint',
+							'validate_callback' => array( $this, 'validate_document_id' ),
 						),
 					),
 				),
@@ -46,16 +53,46 @@ final class Documents_Controller {
 					'args'                => array(
 						'id'       => array(
 							'required'          => true,
-							'validate_callback' => 'absint',
+							'validate_callback' => array( $this, 'validate_document_id' ),
 						),
 						'document' => array(
-							'required' => true,
-							'type'     => 'object',
+							'required'          => true,
+							'validate_callback' => array( $this, 'validate_document_payload' ),
 						),
 					),
 				),
 			)
 		);
+	}
+
+	/**
+	 * Validate a positive document ID.
+	 *
+	 * @param mixed           $value   Candidate ID.
+	 * @param WP_REST_Request $request Request.
+	 * @param string          $param  Parameter name.
+	 * @return bool
+	 */
+	public function validate_document_id( $value, $request, $param ) {
+		return is_scalar( $value ) && absint( $value ) > 0 && (string) absint( $value ) === (string) $value;
+	}
+
+	/**
+	 * Validate a bounded document JSON structure.
+	 *
+	 * @param mixed           $value   Candidate document.
+	 * @param WP_REST_Request $request Request.
+	 * @param string          $param  Parameter name.
+	 * @return bool
+	 */
+	public function validate_document_payload( $value, $request, $param ) {
+		if ( ! is_array( $value ) || ! isset( $value['schema_version'], $value['elements'] ) || ! is_array( $value['elements'] ) ) {
+			return false;
+		}
+
+		$json = wp_json_encode( $value );
+
+		return false !== $json && strlen( $json ) <= self::MAX_DOCUMENT_BYTES;
 	}
 
 	/**
@@ -120,32 +157,14 @@ final class Documents_Controller {
 	 * Validate and save document JSON.
 	 *
 	 * @param WP_REST_Request $request Request.
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_REST_Response
 	 */
 	public function save_document( $request ) {
 		$post     = get_post( absint( $request['id'] ) );
 		$document = $request->get_param( 'document' );
 
-		if ( ! is_array( $document ) || ! isset( $document['schema_version'], $document['elements'] ) || ! is_array( $document['elements'] ) ) {
-			return new WP_Error(
-				'nirmaan_invalid_document',
-				__( 'Document structure is invalid.', 'nirmaan-builder' ),
-				array( 'status' => 422 )
-			);
-		}
-
-		$json = wp_json_encode( $document );
-
-		if ( false === $json || strlen( $json ) > 1048576 ) {
-			return new WP_Error(
-				'nirmaan_document_too_large',
-				__( 'Document could not be encoded or exceeds the 1 MB limit.', 'nirmaan-builder' ),
-				array( 'status' => 413 )
-			);
-		}
-
 		/*
-		 * The JSON is canonical Builder data, not executable PHP or HTML.
+		 * JSON is canonical Builder data, not executable PHP or HTML.
 		 * Individual renderers must validate and escape values at output time.
 		 */
 		update_post_meta( $post->ID, '_nirmaan_document_json', wp_slash( $document ) );
