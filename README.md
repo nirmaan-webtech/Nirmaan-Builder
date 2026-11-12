@@ -41,15 +41,16 @@ npm run build
 
 The build generates `assets/build/editor.js` and `assets/build/editor.css`. These assets are required by the WordPress admin editor. GitHub Actions builds them and uploads the build artifact.
 
-## Install locally
+## Install the unified suite
 
-1. Build the plugin assets.
-2. Copy `packages/theme/nirmaan-starter` to `wp-content/themes/nirmaan-starter`.
-3. Copy `packages/plugin/nirmaan-builder` to `wp-content/plugins/nirmaan-builder`.
-4. Activate the theme and plugin.
-5. Open **Nirmaan Builder** in WordPress Admin.
+1. Download the single `nirmaan-suite.zip` asset from a stable GitHub Release.
+2. In WordPress, open **Appearance → Themes → Add New → Upload Theme** and upload that ZIP.
+3. Activate **Nirmaan Starter**. On activation, the theme copies the bundled Builder plugin into `wp-content/plugins/` and activates it automatically.
+4. Open **Nirmaan Builder** in WordPress Admin.
 
-Stable tags beginning with `v` create separate installable ZIPs. Tags containing a hyphen are excluded from stable releases.
+The user installs one ZIP and activates one theme. Internally, the theme and Builder remain separate WordPress packages so Builder data survives theme changes and the plugin can be reused independently. Automatic setup requires filesystem write access and the activating account to have plugin-install and plugin-activation capabilities. If the host blocks filesystem writes, the admin notice explains the failure; install the bundled plugin manually or correct permissions and switch to the theme again.
+
+For local development, build the plugin assets, then install `packages/theme/nirmaan-starter` as the theme and `packages/plugin/nirmaan-builder` as the plugin. Stable tags beginning with `v` create one unified suite ZIP. Tags containing a hyphen are excluded from stable releases.
 
 ## Explicitly not complete yet
 
