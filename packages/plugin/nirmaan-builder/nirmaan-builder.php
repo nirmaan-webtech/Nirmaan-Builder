@@ -21,6 +21,7 @@ define( 'NIRMAAN_BUILDER_FILE', __FILE__ );
 define( 'NIRMAAN_BUILDER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NIRMAAN_BUILDER_URL', plugin_dir_url( __FILE__ ) );
 
+require_once NIRMAAN_BUILDER_DIR . 'includes/class-document-validator.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-renderer.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-template-resolver.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-nirmaan-builder.php';
