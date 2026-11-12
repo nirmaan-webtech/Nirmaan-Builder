@@ -18,7 +18,7 @@ final class Renderer {
 	 */
 	public static function render( $post_id ) {
 		$document = get_post_meta( absint( $post_id ), '_nirmaan_document_json', true );
-		if ( ! is_array( $document ) || empty( $document['elements'] ) || ! is_array( $document['elements'] ) ) {
+		if ( ! Document_Validator::is_valid( $document ) || empty( $document['elements'] ) ) {
 			return '';
 		}
 
@@ -89,6 +89,6 @@ final class Renderer {
 		 * @param string $html    Rendered markup.
 		 * @param array  $element Element data.
 		 */
-		return (string) apply_filters( 'nirmaan_builder_render_unknown_module', '', $element );
+		return wp_kses_post( (string) apply_filters( 'nirmaan_builder_render_unknown_module', '', $element ) );
 	}
 }
