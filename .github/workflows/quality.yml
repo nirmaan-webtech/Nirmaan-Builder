@@ -1,0 +1,40 @@
+name: Quality checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  php-lint:
+    name: PHP syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+      - name: Lint PHP files
+        run: |
+          find packages -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  package-layout:
+    name: WordPress package structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required package files
+        run: |
+          test -f packages/theme/nirmaan-starter/style.css
+          test -f packages/theme/nirmaan-starter/functions.php
+          test -f packages/theme/nirmaan-starter/index.php
+          test -f packages/plugin/nirmaan-builder/nirmaan-builder.php
+          test -f packages/plugin/nirmaan-builder/uninstall.php
+          grep -q "Theme Name: Nirmaan Starter" packages/theme/nirmaan-starter/style.css
+          grep -q "Plugin Name: Nirmaan Builder" packages/plugin/nirmaan-builder/nirmaan-builder.php
