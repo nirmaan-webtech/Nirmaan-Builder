@@ -22,10 +22,10 @@ A WordPress theme and independently installable visual-builder plugin by Nirmaan
 - React admin editor with module panel, HTML drag-and-drop insertion/reordering, element settings, document list/create/load/save.
 - Autosave after edits and basic undo/redo history.
 - Heading, Text, Button, Image, Divider and Spacer modules.
-- REST API with WordPress authentication, nonce-based cookie authentication, capability checks, schema validation and a 1 MB document payload ceiling.
+- REST API with WordPress authentication, nonce-based cookie authentication, capability checks, strict version-1 module schema validation, duplicate-ID checks, safe URL-scheme checks, module/text limits and a 1 MB document payload ceiling.
 - PHP allowlist renderer for implemented modules.
 - Published Builder layouts with a frontend template and preview URL.
-- Header/Footer Theme Builder assignment with display conditions and priority resolution.
+- Header/Footer Theme Builder replacement adapter for the Nirmaan Starter theme, with display conditions and priority resolution. Other themes require an explicit adapter; generic header/footer replacement is not claimed.
 - Data is preserved when the plugin is uninstalled.
 
 ## Build the editor
@@ -60,7 +60,7 @@ This branch is active development, not a finished Divi-class builder. Remaining 
 - Per-property responsive inheritance and generated responsive CSS.
 - Full revisions, save-conflict recovery and autosave recovery UI.
 - Complete module library and custom module SDK.
-- Theme Builder body, archive, product and advanced condition types.
+- Theme Builder body, archive, product and advanced condition types; generic adapter support for third-party themes.
 - Dynamic content providers, ACF mapping and query/loop builder.
 - Form Builder, CAPTCHA providers, submissions, notifications and retention.
 - WooCommerce Builder.
@@ -69,11 +69,11 @@ This branch is active development, not a finished Divi-class builder. Remaining 
 - Import/export, cross-site migration, backup and restore.
 - SEO, multilingual, accessibility audit and complete role-based permissions.
 - Signed update packages, automatic update integration and recovery.
-- End-to-end WordPress integration tests, browser tests and production security audit.
+- End-to-end WordPress integration tests, browser tests, database transaction/concurrency protection, and production security audit.
 
 ## Security and compatibility
 
-The current REST endpoints use WordPress capability checks and REST nonce-based cookie authentication. Supported module types are allowlisted and renderer output is escaped. This is a security baseline, not a guarantee of complete security. New modules and integrations require their own validation, escaping and tests.
+The current REST endpoints use WordPress capability checks and REST nonce-based cookie authentication. Version-1 documents are validated against a strict module/settings allowlist, with element-count, text-size, duplicate-ID and URL-scheme checks. Supported module types are allowlisted and renderer output is escaped. Save input is validated before writes, but the persistence flow is not yet a database transaction and does not yet provide concurrent-edit conflict detection. This is a security baseline, not a guarantee of complete security. New modules and integrations require their own validation, escaping and tests.
 
 Target baseline: WordPress 6.5+ and PHP 8.2+. Compatibility with specific hosting stacks, third-party plugins, browsers and future WordPress versions must be verified.
 
