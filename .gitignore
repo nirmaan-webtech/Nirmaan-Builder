@@ -1,0 +1,13 @@
+# Node dependencies and build outputs
+**/node_modules/
+**/.vite/
+**/coverage/
+dist/
+*.log
+
+# Local WordPress development
+wp-config.php
+.env
+.env.*
+.DS_Store
+Thumbs.db
