@@ -20,7 +20,10 @@ final class Template_Resolver {
 		$templates = get_posts( array(
 			'post_type' => 'nirmaan_layout',
 			'post_status' => 'publish',
-			'posts_per_page' => 100,
+			'posts_per_page' => -1,
+			'no_found_rows' => true,
+			'update_post_meta_cache' => true,
+			'update_post_term_cache' => false,
 			'meta_key' => '_nirmaan_template_type',
 			'meta_value' => sanitize_key( $type ),
 			'orderby' => 'ID',
