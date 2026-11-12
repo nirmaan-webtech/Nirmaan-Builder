@@ -19,10 +19,31 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          tools: composer
       - name: Lint PHP files
-        run: |
-          find packages -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: find packages -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  editor-build:
+    name: React editor production build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/plugin/nirmaan-builder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: packages/plugin/nirmaan-builder/package.json
+      - name: Install editor dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build production editor
+        run: npm run build
+      - name: Upload editor build
+        uses: actions/upload-artifact@v4
+        with:
+          name: nirmaan-builder-editor
+          path: packages/plugin/nirmaan-builder/assets/build/
 
   package-layout:
     name: WordPress package structure
@@ -36,5 +57,7 @@ jobs:
           test -f packages/theme/nirmaan-starter/index.php
           test -f packages/plugin/nirmaan-builder/nirmaan-builder.php
           test -f packages/plugin/nirmaan-builder/uninstall.php
+          test -f packages/plugin/nirmaan-builder/src/editor.jsx
+          test -f packages/plugin/nirmaan-builder/package.json
           grep -q "Theme Name: Nirmaan Starter" packages/theme/nirmaan-starter/style.css
           grep -q "Plugin Name: Nirmaan Builder" packages/plugin/nirmaan-builder/nirmaan-builder.php
