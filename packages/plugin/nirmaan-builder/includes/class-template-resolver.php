@@ -10,6 +10,8 @@ namespace NirmaanBuilder;
 defined( 'ABSPATH' ) || exit;
 
 final class Template_Resolver {
+	/** @var array<string,int> Request-local resolution cache. */
+	private static $cache = array();
 	/**
 	 * Find the highest-priority matching published template.
 	 *
@@ -17,6 +19,11 @@ final class Template_Resolver {
 	 * @return int
 	 */
 	public static function find( $type ) {
+		$type = sanitize_key( $type );
+		if ( isset( self::$cache[ $type ] ) ) {
+			return self::$cache[ $type ];
+		}
+
 		$templates = get_posts( array(
 			'post_type' => 'nirmaan_layout',
 			'post_status' => 'publish',
@@ -48,6 +55,7 @@ final class Template_Resolver {
 		}
 
 		if ( empty( $matches ) ) {
+			self::$cache[ $type ] = 0;
 			return 0;
 		}
 
@@ -61,7 +69,8 @@ final class Template_Resolver {
 			return $a['id'] <=> $b['id'];
 		} );
 
-		return absint( $matches[0]['id'] );
+		self::$cache[ $type ] = absint( $matches[0]['id'] );
+		return self::$cache[ $type ];
 	}
 
 	/**
