@@ -96,7 +96,7 @@ final class Documents_Controller {
 		$data = array();
 		foreach ( $posts as $post ) {
 			if ( current_user_can( 'edit_post', $post->ID ) ) {
-				$data[] = array( 'id' => $post->ID, 'title' => get_the_title( $post ), 'status' => $post->post_status );
+				$data[] = array( 'id' => $post->ID, 'title' => get_the_title( $post ), 'status' => $post->post_status, 'template_type' => get_post_meta( $post->ID, '_nirmaan_template_type', true ) );
 			}
 		}
 		return new WP_REST_Response( array( 'success' => true, 'data' => $data ), 200 );
@@ -118,11 +118,18 @@ final class Documents_Controller {
 		}
 		$document = array( 'schema_version' => 1, 'elements' => array() );
 		update_post_meta( $post_id, '_nirmaan_document_json', wp_slash( $document ) );
+		update_post_meta( $post_id, '_nirmaan_template_type', 'none' );
+		update_post_meta( $post_id, '_nirmaan_template_condition', array( 'type' => 'entire_site', 'value' => '' ) );
+		update_post_meta( $post_id, '_nirmaan_template_priority', 10 );
 		$post = get_post( $post_id );
 		return new WP_REST_Response( array( 'success' => true, 'data' => array(
 			'id' => $post_id,
 			'title' => get_the_title( $post_id ),
 			'document' => $document,
+			'template_type' => get_post_meta( $post->ID, '_nirmaan_template_type', true ),
+			'template_condition' => get_post_meta( $post->ID, '_nirmaan_template_condition', true ),
+			'template_priority' => absint( get_post_meta( $post->ID, '_nirmaan_template_priority', true ) ),
+			'template_type' => 'none',
 			'preview_url' => $this->get_preview_url( $post ),
 		) ), 201 );
 	}
@@ -171,6 +178,43 @@ final class Documents_Controller {
 		}
 
 		update_post_meta( $post->ID, '_nirmaan_document_json', wp_slash( $document ) );
+
+		$template_type = $request->get_param( 'template_type' );
+		if ( null !== $template_type ) {
+			if ( ! in_array( $template_type, array( 'none', 'header', 'footer' ), true ) ) {
+				return new WP_Error( 'nirmaan_invalid_template_type', __( 'Unsupported template type.', 'nirmaan-builder' ), array( 'status' => 422 ) );
+			}
+			update_post_meta( $post->ID, '_nirmaan_template_type', $template_type );
+		}
+
+		$condition = $request->get_param( 'template_condition' );
+		if ( null !== $condition ) {
+			$allowed_conditions = array( 'entire_site', 'front_page', 'singular', 'post_type', 'page_id', 'category_id', 'search', '404' );
+			if ( ! is_array( $condition ) || empty( $condition['type'] ) || ! in_array( $condition['type'], $allowed_conditions, true ) ) {
+				return new WP_Error( 'nirmaan_invalid_template_condition', __( 'Unsupported template display condition.', 'nirmaan-builder' ), array( 'status' => 422 ) );
+			}
+			$condition_value = isset( $condition['value'] ) ? $condition['value'] : '';
+			if ( in_array( $condition['type'], array( 'page_id', 'category_id' ), true ) ) {
+				$condition_value = absint( $condition_value );
+				if ( ! $condition_value ) {
+					return new WP_Error( 'nirmaan_invalid_condition_value', __( 'A valid numeric condition value is required.', 'nirmaan-builder' ), array( 'status' => 422 ) );
+				}
+			} elseif ( 'post_type' === $condition['type'] ) {
+				$condition_value = sanitize_key( (string) $condition_value );
+				if ( ! post_type_exists( $condition_value ) ) {
+					return new WP_Error( 'nirmaan_invalid_post_type', __( 'The selected post type does not exist.', 'nirmaan-builder' ), array( 'status' => 422 ) );
+				}
+			} else {
+				$condition_value = '';
+			}
+			update_post_meta( $post->ID, '_nirmaan_template_condition', array( 'type' => $condition['type'], 'value' => $condition_value ) );
+		}
+
+		$priority = $request->get_param( 'template_priority' );
+		if ( null !== $priority ) {
+			update_post_meta( $post->ID, '_nirmaan_template_priority', min( 999, absint( $priority ) ) );
+		}
+
 		$updated_post = get_post( $post->ID );
 
 		return new WP_REST_Response( array( 'success' => true, 'data' => array(
@@ -178,6 +222,7 @@ final class Documents_Controller {
 			'title' => get_the_title( $post ),
 			'modified' => get_post_field( 'post_modified_gmt', $post->ID ),
 			'status' => $updated_post->post_status,
+			'template_type' => get_post_meta( $post->ID, '_nirmaan_template_type', true ),
 			'preview_url' => $this->get_preview_url( $updated_post ),
 		) ), 200 );
 	}
