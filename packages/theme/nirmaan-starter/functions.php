@@ -99,3 +99,5 @@ function nirmaan_starter_body_classes( $classes ) {
 	return $classes;
 }
 add_filter( 'body_class', 'nirmaan_starter_body_classes' );
+
+require_once NIRMAAN_STARTER_DIR . '/inc/class-suite-installer.php';
