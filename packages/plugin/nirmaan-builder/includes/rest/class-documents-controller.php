@@ -77,6 +77,13 @@ final class Documents_Controller {
 		return true;
 	}
 
+	private function get_preview_url( $post ) {
+		if ( 'publish' === $post->post_status ) {
+			return get_permalink( $post );
+		}
+		return get_preview_post_link( $post );
+	}
+
 	public function list_documents() {
 		$posts = get_posts( array(
 			'post_type' => 'nirmaan_layout',
@@ -89,7 +96,7 @@ final class Documents_Controller {
 		$data = array();
 		foreach ( $posts as $post ) {
 			if ( current_user_can( 'edit_post', $post->ID ) ) {
-				$data[] = array( 'id' => $post->ID, 'title' => get_the_title( $post ) );
+				$data[] = array( 'id' => $post->ID, 'title' => get_the_title( $post ), 'status' => $post->post_status );
 			}
 		}
 		return new WP_REST_Response( array( 'success' => true, 'data' => $data ), 200 );
@@ -111,10 +118,12 @@ final class Documents_Controller {
 		}
 		$document = array( 'schema_version' => 1, 'elements' => array() );
 		update_post_meta( $post_id, '_nirmaan_document_json', wp_slash( $document ) );
+		$post = get_post( $post_id );
 		return new WP_REST_Response( array( 'success' => true, 'data' => array(
 			'id' => $post_id,
 			'title' => get_the_title( $post_id ),
 			'document' => $document,
+			'preview_url' => $this->get_preview_url( $post ),
 		) ), 201 );
 	}
 
@@ -129,6 +138,8 @@ final class Documents_Controller {
 			'title' => get_the_title( $post ),
 			'document' => $document,
 			'modified' => $post->post_modified_gmt,
+			'status' => $post->post_status,
+			'preview_url' => $this->get_preview_url( $post ),
 		) ), 200 );
 	}
 
@@ -136,20 +147,38 @@ final class Documents_Controller {
 		$post = get_post( absint( $request['id'] ) );
 		$document = $request->get_param( 'document' );
 		$title = $request->get_param( 'title' );
+		$status = $request->get_param( 'status' );
+
+		$update = array( 'ID' => $post->ID );
 		if ( is_string( $title ) && '' !== trim( $title ) ) {
-			$updated = wp_update_post( array(
-				'ID' => $post->ID,
-				'post_title' => sanitize_text_field( $title ),
-			), true );
+			$update['post_title'] = sanitize_text_field( $title );
+		}
+		if ( null !== $status ) {
+			if ( ! in_array( $status, array( 'draft', 'publish' ), true ) ) {
+				return new WP_Error( 'nirmaan_invalid_status', __( 'Unsupported document status.', 'nirmaan-builder' ), array( 'status' => 422 ) );
+			}
+			if ( 'publish' === $status && ! current_user_can( 'publish_posts' ) ) {
+				return new WP_Error( 'nirmaan_publish_forbidden', __( 'You are not allowed to publish layouts.', 'nirmaan-builder' ), array( 'status' => 403 ) );
+			}
+			$update['post_status'] = $status;
+		}
+
+		if ( count( $update ) > 1 ) {
+			$updated = wp_update_post( $update, true );
 			if ( is_wp_error( $updated ) ) {
 				return $updated;
 			}
 		}
+
 		update_post_meta( $post->ID, '_nirmaan_document_json', wp_slash( $document ) );
+		$updated_post = get_post( $post->ID );
+
 		return new WP_REST_Response( array( 'success' => true, 'data' => array(
 			'id' => $post->ID,
 			'title' => get_the_title( $post ),
 			'modified' => get_post_field( 'post_modified_gmt', $post->ID ),
+			'status' => $updated_post->post_status,
+			'preview_url' => $this->get_preview_url( $updated_post ),
 		) ), 200 );
 	}
 }
