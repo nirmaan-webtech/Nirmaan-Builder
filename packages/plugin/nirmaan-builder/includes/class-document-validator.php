@@ -71,20 +71,20 @@ final class Document_Validator {
 
 		$settings = $element['settings'];
 		foreach ( array( 'text', 'alt' ) as $field ) {
-			if ( isset( $settings[ $field ] ) && ( ! is_string( $settings[ $field ] ) || strlen( $settings[ $field ] ) > self::MAX_TEXT_BYTES ) ) {
+			if ( array_key_exists( $field, $settings ) && ( ! is_string( $settings[ $field ] ) || strlen( $settings[ $field ] ) > self::MAX_TEXT_BYTES ) ) {
 				return false;
 			}
 		}
-		if ( isset( $settings['url'] ) && ! self::valid_url( $settings['url'] ) ) {
+		if ( array_key_exists( 'url', $settings ) && ! self::valid_url( $settings['url'] ) ) {
 			return false;
 		}
-		if ( isset( $settings['align'] ) && ! in_array( $settings['align'], array( 'left', 'center', 'right' ), true ) ) {
+		if ( array_key_exists( 'align', $settings ) && ! in_array( $settings['align'], array( 'left', 'center', 'right' ), true ) ) {
 			return false;
 		}
-		if ( isset( $settings['level'] ) && ! in_array( $settings['level'], array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ) {
+		if ( array_key_exists( 'level', $settings ) && ! in_array( $settings['level'], array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ) {
 			return false;
 		}
-		if ( isset( $settings['height'] ) && ( ! is_int( $settings['height'] ) || $settings['height'] < 0 || $settings['height'] > 500 ) ) {
+		if ( array_key_exists( 'height', $settings ) && ( ! is_int( $settings['height'] ) || $settings['height'] < 0 || $settings['height'] > 500 ) ) {
 			return false;
 		}
 		return true;
