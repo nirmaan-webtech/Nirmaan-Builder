@@ -26,8 +26,11 @@ final class Plugin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 		add_filter( 'template_include', array( $this, 'load_layout_template' ) );
-		add_filter( 'get_header', array( $this, 'filter_header_template' ), 10, 3 );
-		add_filter( 'get_footer', array( $this, 'filter_footer_template' ), 10, 3 );
+		// Nirmaan Starter exposes explicit replacement points for Builder templates.
+		add_filter( 'nirmaan_starter_use_builder_header', array( $this, 'use_builder_header' ) );
+		add_filter( 'nirmaan_starter_use_builder_footer', array( $this, 'use_builder_footer' ) );
+		add_action( 'nirmaan_starter_render_builder_header', array( $this, 'render_builder_header' ) );
+		add_action( 'nirmaan_starter_render_builder_footer', array( $this, 'render_builder_footer' ) );
 	}
 
 	public function register_post_types() {
@@ -63,18 +66,40 @@ final class Plugin {
 		return $template;
 	}
 
-	public function filter_header_template( $templates, $name, $args ) {
-		if ( Template_Resolver::find( 'header' ) ) {
-			return array( NIRMAAN_BUILDER_DIR . 'templates/builder-header.php' );
-		}
-		return $templates;
+	/**
+	 * Tell the Nirmaan Starter theme to replace its native header.
+	 *
+	 * @param bool $enabled Existing setting.
+	 * @return bool
+	 */
+	public function use_builder_header( $enabled ) {
+		return (bool) Template_Resolver::find( 'header' ) || (bool) $enabled;
 	}
 
-	public function filter_footer_template( $templates, $name, $args ) {
-		if ( Template_Resolver::find( 'footer' ) ) {
-			return array( NIRMAAN_BUILDER_DIR . 'templates/builder-footer.php' );
+	/**
+	 * Tell the Nirmaan Starter theme to replace its native footer.
+	 *
+	 * @param bool $enabled Existing setting.
+	 * @return bool
+	 */
+	public function use_builder_footer( $enabled ) {
+		return (bool) Template_Resolver::find( 'footer' ) || (bool) $enabled;
+	}
+
+	/** Render the selected Builder header inside the active theme's header shell. */
+	public function render_builder_header() {
+		$template_id = Template_Resolver::find( 'header' );
+		if ( $template_id ) {
+			echo Renderer::render( $template_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer escapes supported module output.
 		}
-		return $templates;
+	}
+
+	/** Render the selected Builder footer inside the active theme's footer shell. */
+	public function render_builder_footer() {
+		$template_id = Template_Resolver::find( 'footer' );
+		if ( $template_id ) {
+			echo Renderer::render( $template_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Renderer escapes supported module output.
+		}
 	}
 
 	public function register_admin_menu() {
