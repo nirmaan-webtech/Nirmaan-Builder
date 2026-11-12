@@ -7,7 +7,7 @@ A WordPress theme and independently installable visual-builder plugin by Nirmaan
 - `packages/theme/nirmaan-starter/` — standalone WordPress theme.
 - `packages/plugin/nirmaan-builder/` — independent Builder plugin and React editor.
 - `.github/workflows/quality.yml` — PHP lint, React build and package checks.
-- `.github/workflows/release.yml` — stable-tag theme/plugin ZIP packaging.
+- `.github/workflows/release.yml` — stable-tag unified Nirmaan Suite ZIP packaging.
 
 ## Implemented in the current development branch
 
