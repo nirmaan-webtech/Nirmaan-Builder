@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Nirmaan Builder
  * Plugin URI:  https://github.com/nirmaan-webtech/Nirmaan-Builder
- * Description: Independent foundation for the Nirmaan visual page builder.
+ * Description: Independent visual page builder for WordPress.
  * Version:     0.1.0
  * Requires at least: 6.5
  * Requires PHP: 8.2
@@ -21,6 +21,7 @@ define( 'NIRMAAN_BUILDER_FILE', __FILE__ );
 define( 'NIRMAAN_BUILDER_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NIRMAAN_BUILDER_URL', plugin_dir_url( __FILE__ ) );
 
+require_once NIRMAAN_BUILDER_DIR . 'includes/class-renderer.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-nirmaan-builder.php';
 
 /**
