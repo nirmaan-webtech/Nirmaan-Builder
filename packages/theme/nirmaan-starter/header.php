@@ -15,6 +15,13 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'nirmaan-starter' ); ?></a>
+<?php if ( apply_filters( 'nirmaan_starter_use_builder_header', false ) ) : ?>
+	<header class="site-header site-header--builder">
+		<div class="nirmaan-container site-header__inner">
+			<?php do_action( 'nirmaan_starter_render_builder_header' ); ?>
+		</div>
+	</header>
+<?php else : ?>
 <header class="site-header">
 	<div class="nirmaan-container site-header__inner">
 		<div class="site-branding">
@@ -43,3 +50,4 @@
 		</nav>
 	</div>
 </header>
+<?php endif; ?>
