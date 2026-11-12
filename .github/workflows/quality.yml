@@ -48,6 +48,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up PHP for isolated tests
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
       - name: Run isolated document validator tests
         run: php tests/unit/test-document-validator.php
       - name: Verify required package files
