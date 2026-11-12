@@ -1,4 +1,4 @@
-name: Build stable WordPress packages
+name: Build Nirmaan Suite release
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 jobs:
   package:
     if: ${{ !contains(github.ref_name, '-') }}
-    name: Build and publish installable ZIPs
+    name: Build one-upload Nirmaan Suite ZIP
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -25,23 +25,24 @@ jobs:
       - name: Build React editor
         working-directory: packages/plugin/nirmaan-builder
         run: |
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
           npm run build
 
-      - name: Package theme and plugin
+      - name: Assemble unified theme package
         run: |
-          mkdir -p dist
-          cd packages/theme
-          zip -r ../../dist/nirmaan-starter-theme.zip nirmaan-starter
-          cd ../plugin
-          zip -r ../../dist/nirmaan-builder-plugin.zip nirmaan-builder -x 'nirmaan-builder/node_modules/*'
+          rm -rf dist
+          mkdir -p dist/package/nirmaan-starter/bundled-plugins
+          cp -a packages/theme/nirmaan-starter/. dist/package/nirmaan-starter/
+          cp -a packages/plugin/nirmaan-builder dist/package/nirmaan-starter/bundled-plugins/
+          cd dist/package
+          zip -r ../nirmaan-suite.zip nirmaan-starter \
+            -x 'nirmaan-starter/bundled-plugins/nirmaan-builder/node_modules/*' \
+               'nirmaan-starter/bundled-plugins/nirmaan-builder/.git/*'
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            dist/nirmaan-starter-theme.zip
-            dist/nirmaan-builder-plugin.zip
+          files: dist/nirmaan-suite.zip
           generate_release_notes: true
           draft: false
           prerelease: false
