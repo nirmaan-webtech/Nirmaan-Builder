@@ -46,6 +46,10 @@ function App() {
   const [dirty, setDirty] = useState(false);
   const [undoStack, setUndoStack] = useState([]);
   const [redoStack, setRedoStack] = useState([]);
+  const [templateType, setTemplateType] = useState('none');
+  const [conditionType, setConditionType] = useState('entire_site');
+  const [conditionValue, setConditionValue] = useState('');
+  const [templatePriority, setTemplatePriority] = useState(10);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('Loading Builder…');
   const [error, setError] = useState('');
@@ -66,6 +70,10 @@ function App() {
       setDocumentId(id);
       setTitle(result.data.title || 'Untitled Layout');
       setPreviewUrl(result.data.preview_url || '');
+      setTemplateType(result.data.template_type || 'none');
+      setConditionType(result.data.template_condition?.type || 'entire_site');
+      setConditionValue(result.data.template_condition?.value || '');
+      setTemplatePriority(result.data.template_priority || 10);
       setDirty(false);
       setUndoStack([]);
       setRedoStack([]);
@@ -98,7 +106,7 @@ function App() {
     setBusy(true);
     setError('');
     try {
-      const payload = { document: { schema_version: 1, elements }, title };
+      const payload = { document: { schema_version: 1, elements }, title, template_type: templateType, template_condition: { type: conditionType, value: conditionValue }, template_priority: templatePriority };
       if (status) payload.status = status;
       const result = await request('documents/' + documentId, {
         method: 'PUT',
@@ -191,7 +199,7 @@ function App() {
       try {
         await request('documents/' + documentId, {
           method: 'PUT',
-          body: JSON.stringify({ document: { schema_version: 1, elements }, title }),
+          body: JSON.stringify({ document: { schema_version: 1, elements }, title, template_type: templateType, template_condition: { type: conditionType, value: conditionValue }, template_priority: templatePriority }),
         });
         setDirty(false);
         setMessage('Autosaved');
@@ -202,7 +210,7 @@ function App() {
       }
     }, 1500);
     return () => window.clearTimeout(timer);
-  }, [dirty, documentId, busy, elements, title]);
+  }, [dirty, documentId, busy, elements, title, templateType, conditionType, conditionValue, templatePriority]);
 
   useEffect(() => {
     loadDocuments()
@@ -276,6 +284,37 @@ function App() {
         </main>
         <aside className="nb-sidebar nb-settings">
           <div className="nb-panel-heading"><strong>Settings</strong></div>
+          <section className="nb-template-settings">
+            <h3>Theme Builder</h3>
+            <label>Template type
+              <select value={templateType} onChange={(e) => { setTemplateType(e.target.value); setDirty(true); }}>
+                <option value="none">Regular layout</option>
+                <option value="header">Global / conditional header</option>
+                <option value="footer">Global / conditional footer</option>
+              </select>
+            </label>
+            {templateType !== 'none' && <>
+              <label>Display condition
+                <select value={conditionType} onChange={(e) => { setConditionType(e.target.value); setDirty(true); }}>
+                  <option value="entire_site">Entire site</option>
+                  <option value="front_page">Homepage</option>
+                  <option value="singular">All singular content</option>
+                  <option value="post_type">Specific post type</option>
+                  <option value="page_id">Specific page ID</option>
+                  <option value="category_id">Specific category ID</option>
+                  <option value="search">Search results</option>
+                  <option value="404">404 page</option>
+                </select>
+              </label>
+              {['post_type', 'page_id', 'category_id'].includes(conditionType) && <label>Condition value
+                <input value={conditionValue} onChange={(e) => { setConditionValue(e.target.value); setDirty(true); }} placeholder={conditionType === 'post_type' ? 'post or page' : 'Numeric ID'} />
+              </label>}
+              <label>Priority (0–999)
+                <input type="number" min="0" max="999" value={templatePriority} onChange={(e) => { setTemplatePriority(Number(e.target.value)); setDirty(true); }} />
+              </label>
+              <p className="nb-template-help">Publish this layout to activate it. Higher priority wins; more specific conditions break ties.</p>
+            </>}
+          </section>
           {!selected && <div className="nb-inspector-empty">Select an element on the canvas to edit its settings.</div>}
           {selected && <div className="nb-inspector">
             <h3>{MODULES.find((m) => m.type === selected.type)?.label || selected.type}</h3>
