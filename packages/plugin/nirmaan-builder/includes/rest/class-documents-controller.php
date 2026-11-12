@@ -126,10 +126,9 @@ final class Documents_Controller {
 			'id' => $post_id,
 			'title' => get_the_title( $post_id ),
 			'document' => $document,
-			'template_type' => get_post_meta( $post->ID, '_nirmaan_template_type', true ),
-			'template_condition' => get_post_meta( $post->ID, '_nirmaan_template_condition', true ),
-			'template_priority' => absint( get_post_meta( $post->ID, '_nirmaan_template_priority', true ) ),
 			'template_type' => 'none',
+			'template_condition' => array( 'type' => 'entire_site', 'value' => '' ),
+			'template_priority' => 10,
 			'preview_url' => $this->get_preview_url( $post ),
 		) ), 201 );
 	}
@@ -146,6 +145,9 @@ final class Documents_Controller {
 			'document' => $document,
 			'modified' => $post->post_modified_gmt,
 			'status' => $post->post_status,
+			'template_type' => get_post_meta( $post->ID, '_nirmaan_template_type', true ),
+			'template_condition' => get_post_meta( $post->ID, '_nirmaan_template_condition', true ),
+			'template_priority' => absint( get_post_meta( $post->ID, '_nirmaan_template_priority', true ) ),
 			'preview_url' => $this->get_preview_url( $post ),
 		) ), 200 );
 	}
