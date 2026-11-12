@@ -9,7 +9,6 @@ defined( 'ABSPATH' ) || exit;
 
 define( 'NIRMAAN_STARTER_VERSION', '0.1.0' );
 define( 'NIRMAAN_STARTER_DIR', get_template_directory() );
-define( 'NIRMAAN_STARTER_URI', get_template_directory_uri() );
 
 /**
  * Register theme supports and navigation locations.
@@ -67,6 +66,12 @@ function nirmaan_starter_enqueue_assets() {
 		'nirmaan-starter',
 		get_stylesheet_uri(),
 		array(),
+		NIRMAAN_STARTER_VERSION
+	);
+	wp_enqueue_style(
+		'nirmaan-starter-theme',
+		get_template_directory_uri() . '/assets/css/theme.css',
+		array( 'nirmaan-starter' ),
 		NIRMAAN_STARTER_VERSION
 	);
 }
