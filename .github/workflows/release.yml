@@ -2,6 +2,8 @@ name: Build Nirmaan Suite release
 
 on:
   push:
+    branches:
+      - development
     tags:
       - 'v*'
 
@@ -10,7 +12,7 @@ permissions:
 
 jobs:
   package:
-    if: ${{ !contains(github.ref_name, '-') }}
+    if: ${{ github.ref == 'refs/heads/development' || (startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-')) }}
     name: Build one-upload Nirmaan Suite ZIP
     runs-on: ubuntu-latest
     steps:
@@ -39,7 +41,15 @@ jobs:
             -x 'nirmaan-starter/bundled-plugins/nirmaan-builder/node_modules/*' \
                'nirmaan-starter/bundled-plugins/nirmaan-builder/.git/*'
 
+      - name: Upload unified ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nirmaan-suite-${{ github.ref_name }}
+          path: dist/nirmaan-suite.zip
+          if-no-files-found: error
+
       - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-')
         uses: softprops/action-gh-release@v2
         with:
           files: dist/nirmaan-suite.zip
