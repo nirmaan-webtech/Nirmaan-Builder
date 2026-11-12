@@ -43,6 +43,9 @@ function App() {
   const [previewUrl, setPreviewUrl] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [previewVersion, setPreviewVersion] = useState(0);
+  const [dirty, setDirty] = useState(false);
+  const [undoStack, setUndoStack] = useState([]);
+  const [redoStack, setRedoStack] = useState([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('Loading Builder…');
   const [error, setError] = useState('');
@@ -63,6 +66,9 @@ function App() {
       setDocumentId(id);
       setTitle(result.data.title || 'Untitled Layout');
       setPreviewUrl(result.data.preview_url || '');
+      setDirty(false);
+      setUndoStack([]);
+      setRedoStack([]);
       setElements(Array.isArray(result.data.document?.elements) ? result.data.document.elements : []);
       setSelectedId(null);
       setMessage('Document loaded');
@@ -100,6 +106,7 @@ function App() {
       });
       setPreviewUrl(result.data.preview_url || '');
       setPreviewVersion((value) => value + 1);
+      setDirty(false);
       setMessage(status === 'publish' ? 'Published successfully' : 'Saved successfully');
       await loadDocuments();
     } catch (e) {
@@ -109,34 +116,55 @@ function App() {
     }
   }
 
+  function commitElements(next) {
+    setUndoStack((stack) => [...stack.slice(-49), elements]);
+    setRedoStack([]);
+    setElements(next);
+    setDirty(true);
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    const previous = undoStack[undoStack.length - 1];
+    setUndoStack((stack) => stack.slice(0, -1));
+    setRedoStack((stack) => [...stack, elements]);
+    setElements(previous);
+    setDirty(true);
+  }
+
+  function redo() {
+    if (!redoStack.length) return;
+    const next = redoStack[redoStack.length - 1];
+    setRedoStack((stack) => stack.slice(0, -1));
+    setUndoStack((stack) => [...stack, elements]);
+    setElements(next);
+    setDirty(true);
+  }
+
   function addModule(type, index = elements.length) {
     const definition = MODULES.find((item) => item.type === type);
     if (!definition) return;
     const item = { id: makeId(), type, settings: { ...definition.defaults } };
-    setElements((current) => {
-      const next = [...current];
-      next.splice(index, 0, item);
-      return next;
-    });
+    const next = [...elements];
+    next.splice(index, 0, item);
+    commitElements(next);
     setSelectedId(item.id);
   }
 
   function updateSelected(key, value) {
-    setElements((current) => current.map((item) => item.id === selectedId
+    commitElements(elements.map((item) => item.id === selectedId
       ? { ...item, settings: { ...item.settings, [key]: value } }
       : item));
   }
 
   function moveElement(fromId, toIndex) {
-    setElements((current) => {
-      const fromIndex = current.findIndex((item) => item.id === fromId);
-      if (fromIndex < 0) return current;
-      const next = [...current];
-      const item = next.splice(fromIndex, 1)[0];
-      const adjustedIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
-      next.splice(Math.max(0, adjustedIndex), 0, item);
-      return next;
-    });
+    const fromIndex = elements.findIndex((item) => item.id === fromId);
+    if (fromIndex < 0) return;
+    const next = [...elements];
+    const item = next.splice(fromIndex, 1)[0];
+    const adjustedIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
+    next.splice(Math.max(0, adjustedIndex), 0, item);
+    commitElements(next);
   }
 
   function renderElement(item) {
@@ -157,6 +185,26 @@ function App() {
   }
 
   useEffect(() => {
+    if (!dirty || !documentId || busy) return undefined;
+    const timer = window.setTimeout(async () => {
+      setBusy(true);
+      try {
+        await request('documents/' + documentId, {
+          method: 'PUT',
+          body: JSON.stringify({ document: { schema_version: 1, elements }, title }),
+        });
+        setDirty(false);
+        setMessage('Autosaved');
+      } catch (e) {
+        setError('Autosave failed: ' + e.message);
+      } finally {
+        setBusy(false);
+      }
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [dirty, documentId, busy, elements, title]);
+
+  useEffect(() => {
     loadDocuments()
       .then((items) => {
         if (items.length) openDocument(items[0].id);
@@ -169,8 +217,8 @@ function App() {
     <div className="nb-app">
       <header className="nb-topbar">
         <div className="nb-brand"><span className="nb-mark">N</span><strong>Nirmaan Builder</strong></div>
-        <div className="nb-document-title"><input aria-label="Layout title" value={title} onChange={(e) => setTitle(e.target.value)} disabled={!documentId} /></div>
-        <div className="nb-top-actions"><span className="nb-status">{busy ? 'Working…' : message}</span><button onClick={() => setShowPreview((value) => !value)} disabled={!documentId || !previewUrl}>{showPreview ? 'Editor' : 'Preview'}</button><button onClick={() => saveDocument('publish')} disabled={!documentId || busy}>Publish</button><button className="nb-primary" onClick={() => saveDocument()} disabled={!documentId || busy}>Save</button></div>
+        <div className="nb-document-title"><input aria-label="Layout title" value={title} onChange={(e) => { setTitle(e.target.value); setDirty(true); }} disabled={!documentId} /></div>
+        <div className="nb-top-actions"><button onClick={undo} disabled={!undoStack.length || busy}>Undo</button><button onClick={redo} disabled={!redoStack.length || busy}>Redo</button><span className="nb-status">{busy ? 'Working…' : message}</span><button onClick={() => setShowPreview((value) => !value)} disabled={!documentId || !previewUrl}>{showPreview ? 'Editor' : 'Preview'}</button><button onClick={() => saveDocument('publish')} disabled={!documentId || busy}>Publish</button><button className="nb-primary" onClick={() => saveDocument()} disabled={!documentId || busy}>Save</button></div>
       </header>
       {error && <div className="nb-error" role="alert">{error}</div>}
       <div className="nb-workspace">
@@ -237,7 +285,7 @@ function App() {
             {selected.type === 'button' && <label>Link URL<input value={selected.settings.url || ''} onChange={(e) => updateSelected('url', e.target.value)} /></label>}
             {selected.type === 'spacer' && <label>Height (px)<input type="number" min="0" max="500" value={selected.settings.height || 32} onChange={(e) => updateSelected('height', Number(e.target.value))} /></label>}
             {['heading', 'text', 'button'].includes(selected.type) && <label>Alignment<select value={selected.settings.align || 'left'} onChange={(e) => updateSelected('align', e.target.value)}><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select></label>}
-            <button className="nb-danger" onClick={() => { setElements((current) => current.filter((item) => item.id !== selectedId)); setSelectedId(null); }}>Delete element</button>
+            <button className="nb-danger" onClick={() => { commitElements(elements.filter((item) => item.id !== selectedId)); setSelectedId(null); }}>Delete element</button>
           </div>}
         </aside>
       </div>
