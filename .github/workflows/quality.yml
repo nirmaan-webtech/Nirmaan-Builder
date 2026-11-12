@@ -59,9 +59,11 @@ jobs:
           test -f packages/theme/nirmaan-starter/style.css
           test -f packages/theme/nirmaan-starter/functions.php
           test -f packages/theme/nirmaan-starter/index.php
+          test -f packages/theme/nirmaan-starter/inc/class-suite-installer.php
           test -f packages/plugin/nirmaan-builder/nirmaan-builder.php
           test -f packages/plugin/nirmaan-builder/uninstall.php
           test -f packages/plugin/nirmaan-builder/src/editor.jsx
           test -f packages/plugin/nirmaan-builder/package.json
           grep -q "Theme Name: Nirmaan Starter" packages/theme/nirmaan-starter/style.css
+          grep -q "Nirmaan_Starter_Suite_Installer::register" packages/theme/nirmaan-starter/inc/class-suite-installer.php
           grep -q "Plugin Name: Nirmaan Builder" packages/plugin/nirmaan-builder/nirmaan-builder.php
