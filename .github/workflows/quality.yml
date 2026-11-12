@@ -33,8 +33,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
-          cache-dependency-path: packages/plugin/nirmaan-builder/package.json
       - name: Install editor dependencies
         run: npm install --no-audit --no-fund
       - name: Build production editor
