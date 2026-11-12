@@ -1,0 +1,9 @@
+.nirmaan-builder-content { display: grid; gap: 1.25rem; }
+.nirmaan-builder-content .nb-module { min-width: 0; }
+.nirmaan-builder-content .nb-align-left { text-align: left; }
+.nirmaan-builder-content .nb-align-center { text-align: center; }
+.nirmaan-builder-content .nb-align-right { text-align: right; }
+.nirmaan-builder-content .nb-module-image img { display: inline-block; max-width: 100%; height: auto; }
+.nirmaan-builder-content .nb-button { display: inline-block; padding: .75rem 1.25rem; border-radius: .375rem; background: #243b73; color: #fff; text-decoration: none; }
+.nirmaan-builder-content .nb-button:hover { background: #172554; color: #fff; }
+.nirmaan-builder-content .nb-module-divider hr { border: 0; border-top: 1px solid #dfe4eb; }
