@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   package:
+    if: ${{ !contains(github.ref_name, '-') }}
     name: Build and publish installable ZIPs
     runs-on: ubuntu-latest
     steps:
