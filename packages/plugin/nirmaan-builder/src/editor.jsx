@@ -40,6 +40,9 @@ function App() {
   const [elements, setElements] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [device, setDevice] = useState('desktop');
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewVersion, setPreviewVersion] = useState(0);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('Loading Builder…');
   const [error, setError] = useState('');
@@ -59,6 +62,7 @@ function App() {
       const result = await request('documents/' + id);
       setDocumentId(id);
       setTitle(result.data.title || 'Untitled Layout');
+      setPreviewUrl(result.data.preview_url || '');
       setElements(Array.isArray(result.data.document?.elements) ? result.data.document.elements : []);
       setSelectedId(null);
       setMessage('Document loaded');
@@ -83,16 +87,20 @@ function App() {
     }
   }
 
-  async function saveDocument() {
+  async function saveDocument(status = null) {
     if (!documentId) return;
     setBusy(true);
     setError('');
     try {
-      await request('documents/' + documentId, {
+      const payload = { document: { schema_version: 1, elements }, title };
+      if (status) payload.status = status;
+      const result = await request('documents/' + documentId, {
         method: 'PUT',
-        body: JSON.stringify({ document: { schema_version: 1, elements }, title }),
+        body: JSON.stringify(payload),
       });
-      setMessage('Saved successfully');
+      setPreviewUrl(result.data.preview_url || '');
+      setPreviewVersion((value) => value + 1);
+      setMessage(status === 'publish' ? 'Published successfully' : 'Saved successfully');
       await loadDocuments();
     } catch (e) {
       setError(e.message);
@@ -162,7 +170,7 @@ function App() {
       <header className="nb-topbar">
         <div className="nb-brand"><span className="nb-mark">N</span><strong>Nirmaan Builder</strong></div>
         <div className="nb-document-title"><input aria-label="Layout title" value={title} onChange={(e) => setTitle(e.target.value)} disabled={!documentId} /></div>
-        <div className="nb-top-actions"><span className="nb-status">{busy ? 'Working…' : message}</span><button className="nb-primary" onClick={saveDocument} disabled={!documentId || busy}>Save</button></div>
+        <div className="nb-top-actions"><span className="nb-status">{busy ? 'Working…' : message}</span><button onClick={() => setShowPreview((value) => !value)} disabled={!documentId || !previewUrl}>{showPreview ? 'Editor' : 'Preview'}</button><button onClick={() => saveDocument('publish')} disabled={!documentId || busy}>Publish</button><button className="nb-primary" onClick={() => saveDocument()} disabled={!documentId || busy}>Save</button></div>
       </header>
       {error && <div className="nb-error" role="alert">{error}</div>}
       <div className="nb-workspace">
@@ -189,7 +197,7 @@ function App() {
             <div className="nb-device-switch">{['desktop', 'tablet', 'phone'].map((value) => <button key={value} className={device === value ? 'active' : ''} onClick={() => setDevice(value)}>{value}</button>)}</div>
             <span>Editor canvas · local editor preview</span>
           </div>
-          <div className="nb-canvas-scroll">
+          {showPreview ? <div className="nb-frontend-preview"><iframe key={previewVersion} title="Frontend preview" src={previewUrl} /></div> : <div className="nb-canvas-scroll">
             <div className="nb-canvas" onDragOver={(e) => e.preventDefault()} onDrop={(e) => {
               e.preventDefault();
               const type = e.dataTransfer.getData('text/nirmaan-module');
@@ -216,7 +224,7 @@ function App() {
                 </div>
               ))}
             </div>
-          </div>
+          </div>}
         </main>
         <aside className="nb-sidebar nb-settings">
           <div className="nb-panel-heading"><strong>Settings</strong></div>
