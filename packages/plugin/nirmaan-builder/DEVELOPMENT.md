@@ -34,7 +34,7 @@ Not yet implemented:
 - Live postMessage iframe synchronization.
 - Responsive per-property inheritance and generated media queries.
 - Undo/redo, autosave, revision restore and save-conflict detection.
-- Theme Builder conditions.
+- Theme Builder header/footer replacement through the Nirmaan Starter theme adapter; other themes need an adapter implementation.
 - Forms, dynamic content and WooCommerce modules.
 - Production packaging and release signing.
 
