@@ -48,6 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Run isolated document validator tests
+        run: php tests/unit/test-document-validator.php
       - name: Verify required package files
         run: |
           test -f packages/theme/nirmaan-starter/style.css
