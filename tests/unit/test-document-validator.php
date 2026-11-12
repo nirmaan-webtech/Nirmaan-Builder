@@ -1,10 +1,10 @@
 <?php
 /**
- * Standalone tests for the document validator.
+ * Standalone tests for the integrated theme document validator.
  */
 define( 'ABSPATH', __DIR__ );
 function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); }
-require_once __DIR__ . '/../../packages/plugin/nirmaan-builder/includes/class-document-validator.php';
+require_once __DIR__ . '/../../nirmaan-builder/builder/includes/class-document-validator.php';
 
 use NirmaanBuilder\Document_Validator;
 

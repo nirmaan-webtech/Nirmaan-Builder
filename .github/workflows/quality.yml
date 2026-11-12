@@ -1,4 +1,4 @@
-name: Quality checks
+name: Nirmaan theme quality checks
 
 on:
   push:
@@ -19,15 +19,17 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-      - name: Lint PHP files
-        run: find packages -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Lint theme PHP
+        run: find nirmaan-builder -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Run document validator tests
+        run: php tests/unit/test-document-validator.php
 
-  editor-build:
-    name: React editor production build
+  builder-build:
+    name: Build integrated React editor
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: packages/plugin/nirmaan-builder
+        working-directory: nirmaan-builder/builder
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,35 +37,29 @@ jobs:
           node-version: '20'
       - name: Install editor dependencies
         run: npm install --no-audit --no-fund
-      - name: Build production editor
+      - name: Build editor assets
         run: npm run build
-      - name: Upload editor build
+      - name: Upload editor assets
         uses: actions/upload-artifact@v4
         with:
-          name: nirmaan-builder-editor
-          path: packages/plugin/nirmaan-builder/assets/build/
+          name: nirmaan-builder-theme-assets
+          path: nirmaan-builder/builder/assets/build/
 
-  package-layout:
-    name: WordPress package structure
+  theme-structure:
+    name: Single theme structure
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up PHP for isolated tests
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-      - name: Run isolated document validator tests
-        run: php tests/unit/test-document-validator.php
-      - name: Verify required package files
+      - name: Verify integrated theme
         run: |
-          test -f packages/theme/nirmaan-starter/style.css
-          test -f packages/theme/nirmaan-starter/functions.php
-          test -f packages/theme/nirmaan-starter/index.php
-          test -f packages/theme/nirmaan-starter/inc/class-suite-installer.php
-          test -f packages/plugin/nirmaan-builder/nirmaan-builder.php
-          test -f packages/plugin/nirmaan-builder/uninstall.php
-          test -f packages/plugin/nirmaan-builder/src/editor.jsx
-          test -f packages/plugin/nirmaan-builder/package.json
-          grep -q "Theme Name: Nirmaan Starter" packages/theme/nirmaan-starter/style.css
-          grep -q "Nirmaan_Starter_Suite_Installer::register" packages/theme/nirmaan-starter/inc/class-suite-installer.php
-          grep -q "Plugin Name: Nirmaan Builder" packages/plugin/nirmaan-builder/nirmaan-builder.php
+          test -f nirmaan-builder/style.css
+          test -f nirmaan-builder/functions.php
+          test -f nirmaan-builder/builder/bootstrap.php
+          test -f nirmaan-builder/builder/includes/class-document-validator.php
+          test -f nirmaan-builder/builder/includes/rest/class-documents-controller.php
+          test -f nirmaan-builder/builder/src/editor.jsx
+          test -f nirmaan-builder/builder/package.json
+          test ! -d packages/plugin
+          test ! -d packages/theme
+          grep -q "Theme Name: Nirmaan Builder" nirmaan-builder/style.css
+          grep -q "builder/bootstrap.php" nirmaan-builder/functions.php
