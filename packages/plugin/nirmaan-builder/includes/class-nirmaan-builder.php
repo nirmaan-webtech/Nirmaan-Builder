@@ -24,6 +24,7 @@ final class Plugin {
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 		add_filter( 'template_include', array( $this, 'load_layout_template' ) );
 	}
 
@@ -105,6 +106,18 @@ final class Plugin {
 				'restUrl' => esc_url_raw( rest_url( 'nirmaan-builder/v1/' ) ),
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 			)
+		);
+	}
+
+	public function enqueue_frontend_assets() {
+		if ( ! is_singular( 'nirmaan_layout' ) ) {
+			return;
+		}
+		wp_enqueue_style(
+			'nirmaan-builder-frontend',
+			NIRMAAN_BUILDER_URL . 'assets/css/frontend.css',
+			array(),
+			NIRMAAN_BUILDER_VERSION
 		);
 	}
 
