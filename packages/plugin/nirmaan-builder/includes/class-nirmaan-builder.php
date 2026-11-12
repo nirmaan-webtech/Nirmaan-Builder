@@ -26,6 +26,8 @@ final class Plugin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 		add_filter( 'template_include', array( $this, 'load_layout_template' ) );
+		add_filter( 'get_header', array( $this, 'filter_header_template' ), 10, 3 );
+		add_filter( 'get_footer', array( $this, 'filter_footer_template' ), 10, 3 );
 	}
 
 	public function register_post_types() {
@@ -59,6 +61,20 @@ final class Plugin {
 			}
 		}
 		return $template;
+	}
+
+	public function filter_header_template( $templates, $name, $args ) {
+		if ( Template_Resolver::find( 'header' ) ) {
+			return array( NIRMAAN_BUILDER_DIR . 'templates/builder-header.php' );
+		}
+		return $templates;
+	}
+
+	public function filter_footer_template( $templates, $name, $args ) {
+		if ( Template_Resolver::find( 'footer' ) ) {
+			return array( NIRMAAN_BUILDER_DIR . 'templates/builder-footer.php' );
+		}
+		return $templates;
 	}
 
 	public function register_admin_menu() {
