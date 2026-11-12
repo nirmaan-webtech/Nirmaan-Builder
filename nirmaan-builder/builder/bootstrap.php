@@ -7,6 +7,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// If the legacy companion plugin is still active during a theme update, let it
+// finish this request. The theme-owned engine takes over after that plugin is
+// deactivated, avoiding duplicate class declarations during migration.
+if ( class_exists( '\\NirmaanBuilder\\Plugin', false ) ) {
+	return;
+}
+
 if ( ! defined( 'NIRMAAN_BUILDER_VERSION' ) ) {
 	define( 'NIRMAAN_BUILDER_VERSION', '0.2.0' );
 }
@@ -22,12 +29,7 @@ require_once NIRMAAN_BUILDER_DIR . 'includes/class-renderer.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-template-resolver.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-nirmaan-builder.php';
 
-/**
- * Start the visual builder as part of the theme lifecycle.
- *
- * @return void
- */
 function nirmaan_builder_theme_boot() {
-	\NirmaanBuilder\Plugin::instance()->init();
+	\\NirmaanBuilder\\Plugin::instance()->init();
 }
 add_action( 'after_setup_theme', 'nirmaan_builder_theme_boot', 20 );
