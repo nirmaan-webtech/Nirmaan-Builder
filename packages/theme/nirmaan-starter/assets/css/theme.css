@@ -154,3 +154,17 @@ img {
 		scroll-behavior: auto;
 	}
 }
+
+.entry__meta, .entry__footer, .archive-description { color: var(--nirmaan-color-muted); font-size: .9rem; }
+.entry__featured-image img, .entry-card__image img { display: block; max-width: 100%; height: auto; border-radius: .5rem; }
+.entry-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 2rem; }
+.entry-card { min-width: 0; }
+.entry-card__title { line-height: 1.25; }
+.entry-card__title a { color: inherit; text-decoration: none; }
+.entry-card__excerpt { color: var(--nirmaan-color-muted); }
+.search-form { display: flex; flex-wrap: wrap; gap: .5rem; }
+.search-form label { flex: 1 1 14rem; }
+.search-field { width: 100%; min-height: 2.75rem; padding: .5rem .75rem; border: 1px solid var(--nirmaan-color-border); border-radius: .375rem; font: inherit; }
+.search-submit { min-height: 2.75rem; padding: .5rem 1rem; border: 0; border-radius: .375rem; background: var(--nirmaan-color-primary); color: #fff; font: inherit; cursor: pointer; }
+.page-header { margin-bottom: 2rem; }
+.page-title { line-height: 1.15; }
