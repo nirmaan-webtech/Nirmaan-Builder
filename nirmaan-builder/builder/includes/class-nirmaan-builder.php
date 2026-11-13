@@ -9,7 +9,7 @@ namespace NirmaanBuilder;
 
 defined( 'ABSPATH' ) || exit;
 
-final class Plugin {
+final class Builder_Engine {
 	private static $instance = null;
 
 	public static function instance() {
