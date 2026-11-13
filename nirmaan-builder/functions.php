@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'NIRMAAN_STARTER_VERSION', '0.2.0' );
+define( 'NIRMAAN_STARTER_VERSION', '0.3.0' );
 define( 'NIRMAAN_STARTER_DIR', get_template_directory() );
 
 function nirmaan_starter_setup() {
