@@ -257,7 +257,7 @@ function App() {
 
     window.addEventListener('keydown', handleBuilderShortcuts);
     return () => window.removeEventListener('keydown', handleBuilderShortcuts);
-  }, [selected, selectedId, elements, clipboardElement]);
+  }, [selected, selectedId, elements, clipboardElement, undoStack, redoStack]);
 
   function renderElement(item) {
     const s = item.settings || {};
