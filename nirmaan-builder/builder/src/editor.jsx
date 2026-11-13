@@ -233,7 +233,14 @@ function App() {
       );
       const command = event.ctrlKey || event.metaKey;
 
-      if (command && event.key.toLowerCase() === 'd' && !editingText) {
+      if (command && event.key.toLowerCase() === 'z' && !editingText) {
+        event.preventDefault();
+        if (event.shiftKey) redo();
+        else undo();
+      } else if (command && event.key.toLowerCase() === 'y' && !editingText) {
+        event.preventDefault();
+        redo();
+      } else if (command && event.key.toLowerCase() === 'd' && !editingText) {
         event.preventDefault();
         duplicateSelected();
       } else if (command && event.key.toLowerCase() === 'c' && !editingText && selected) {
@@ -409,7 +416,7 @@ function App() {
               <button type="button" onClick={duplicateSelected}>Duplicate</button>
               <button type="button" className="nb-danger" onClick={deleteSelected}>Delete element</button>
             </div>
-            <p className="nb-template-help">Shortcuts: Ctrl/Cmd + D duplicate · Ctrl/Cmd + C copy · Ctrl/Cmd + V paste · Delete remove</p>
+            <p className="nb-template-help">Shortcuts: Ctrl/Cmd + Z undo · Shift + Ctrl/Cmd + Z redo · Ctrl/Cmd + D duplicate · Ctrl/Cmd + C copy · Ctrl/Cmd + V paste · Delete remove</p>
           </div>}
         </aside>
       </div>
