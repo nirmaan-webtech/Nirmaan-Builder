@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './editor.css';
 
@@ -53,6 +53,12 @@ function App() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('Loading Builder…');
   const [error, setError] = useState('');
+  const revisionRef = useRef(0);
+
+  function markDirty() {
+    revisionRef.current += 1;
+    setDirty(true);
+  }
 
   const selected = useMemo(() => elements.find((item) => item.id === selectedId) || null, [elements, selectedId]);
 
@@ -63,6 +69,8 @@ function App() {
   }
 
   async function openDocument(id) {
+    revisionRef.current += 1;
+    setDirty(false);
     setBusy(true);
     setError('');
     try {
@@ -103,6 +111,7 @@ function App() {
 
   async function saveDocument(status = null) {
     if (!documentId) return;
+    const savedRevision = revisionRef.current;
     setBusy(true);
     setError('');
     try {
@@ -114,7 +123,8 @@ function App() {
       });
       setPreviewUrl(result.data.preview_url || '');
       setPreviewVersion((value) => value + 1);
-      setDirty(false);
+      if (savedRevision === revisionRef.current) setDirty(false);
+      else setDirty(true);
       setMessage(status === 'publish' ? 'Published successfully' : 'Saved successfully');
       await loadDocuments();
     } catch (e) {
@@ -197,11 +207,13 @@ function App() {
     const timer = window.setTimeout(async () => {
       setBusy(true);
       try {
+        const savedRevision = revisionRef.current;
         await request('documents/' + documentId, {
           method: 'PUT',
           body: JSON.stringify({ document: { schema_version: 1, elements }, title, template_type: templateType, template_condition: { type: conditionType, value: conditionValue }, template_priority: templatePriority }),
         });
-        setDirty(false);
+        if (savedRevision === revisionRef.current) setDirty(false);
+        else setDirty(true);
         setMessage('Autosaved');
       } catch (e) {
         setError('Autosave failed: ' + e.message);
