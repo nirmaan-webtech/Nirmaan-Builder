@@ -28,6 +28,7 @@ require_once NIRMAAN_BUILDER_DIR . 'includes/class-document-validator.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-renderer.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-template-resolver.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-nirmaan-builder.php';
+require_once NIRMAAN_BUILDER_DIR . 'includes/rest/class-documents-controller.php';
 
 function nirmaan_builder_theme_boot() {
 	\NirmaanBuilder\Builder_Engine::instance()->init();
