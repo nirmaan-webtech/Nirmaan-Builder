@@ -138,7 +138,7 @@ function App() {
     setUndoStack((stack) => [...stack.slice(-49), elements]);
     setRedoStack([]);
     setElements(next);
-    setDirty(true);
+    markDirty();
   }
 
   function undo() {
@@ -147,7 +147,7 @@ function App() {
     setUndoStack((stack) => stack.slice(0, -1));
     setRedoStack((stack) => [...stack, elements]);
     setElements(previous);
-    setDirty(true);
+    markDirty();
   }
 
   function redo() {
@@ -156,7 +156,7 @@ function App() {
     setRedoStack((stack) => stack.slice(0, -1));
     setUndoStack((stack) => [...stack, elements]);
     setElements(next);
-    setDirty(true);
+    markDirty();
   }
 
   function addModule(type, index = elements.length) {
@@ -237,7 +237,7 @@ function App() {
     <div className="nb-app">
       <header className="nb-topbar">
         <div className="nb-brand"><span className="nb-mark">N</span><strong>Nirmaan Builder</strong></div>
-        <div className="nb-document-title"><input aria-label="Layout title" value={title} onChange={(e) => { setTitle(e.target.value); setDirty(true); }} disabled={!documentId} /></div>
+        <div className="nb-document-title"><input aria-label="Layout title" value={title} onChange={(e) => { setTitle(e.target.value); markDirty(); }} disabled={!documentId} /></div>
         <div className="nb-top-actions"><button onClick={undo} disabled={!undoStack.length || busy}>Undo</button><button onClick={redo} disabled={!redoStack.length || busy}>Redo</button><span className="nb-status">{busy ? 'Working…' : message}</span><button onClick={() => setShowPreview((value) => !value)} disabled={!documentId || !previewUrl}>{showPreview ? 'Editor' : 'Preview'}</button><button onClick={() => saveDocument('publish')} disabled={!documentId || busy}>Publish</button><button className="nb-primary" onClick={() => saveDocument()} disabled={!documentId || busy}>Save</button></div>
       </header>
       {error && <div className="nb-error" role="alert">{error}</div>}
@@ -299,7 +299,7 @@ function App() {
           <section className="nb-template-settings">
             <h3>Theme Builder</h3>
             <label>Template type
-              <select value={templateType} onChange={(e) => { setTemplateType(e.target.value); setDirty(true); }}>
+              <select value={templateType} onChange={(e) => { setTemplateType(e.target.value); markDirty(); }}>
                 <option value="none">Regular layout</option>
                 <option value="header">Global / conditional header</option>
                 <option value="footer">Global / conditional footer</option>
@@ -307,7 +307,7 @@ function App() {
             </label>
             {templateType !== 'none' && <>
               <label>Display condition
-                <select value={conditionType} onChange={(e) => { setConditionType(e.target.value); setDirty(true); }}>
+                <select value={conditionType} onChange={(e) => { setConditionType(e.target.value); markDirty(); }}>
                   <option value="entire_site">Entire site</option>
                   <option value="front_page">Homepage</option>
                   <option value="singular">All singular content</option>
@@ -319,10 +319,10 @@ function App() {
                 </select>
               </label>
               {['post_type', 'page_id', 'category_id'].includes(conditionType) && <label>Condition value
-                <input value={conditionValue} onChange={(e) => { setConditionValue(e.target.value); setDirty(true); }} placeholder={conditionType === 'post_type' ? 'post or page' : 'Numeric ID'} />
+                <input value={conditionValue} onChange={(e) => { setConditionValue(e.target.value); markDirty(); }} placeholder={conditionType === 'post_type' ? 'post or page' : 'Numeric ID'} />
               </label>}
               <label>Priority (0–999)
-                <input type="number" min="0" max="999" value={templatePriority} onChange={(e) => { setTemplatePriority(Number(e.target.value)); setDirty(true); }} />
+                <input type="number" min="0" max="999" value={templatePriority} onChange={(e) => { setTemplatePriority(Number(e.target.value)); markDirty(); }} />
               </label>
               <p className="nb-template-help">Publish this layout to activate it. Higher priority wins; more specific conditions break ties.</p>
             </>}
