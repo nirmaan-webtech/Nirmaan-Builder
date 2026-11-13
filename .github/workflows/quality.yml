@@ -38,7 +38,7 @@ jobs:
           cache: npm
           cache-dependency-path: nirmaan-builder/builder/package-lock.json
       - name: Install editor dependencies
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund
       - name: Build editor assets
         run: npm run build
       - name: Upload compiled theme editor assets
