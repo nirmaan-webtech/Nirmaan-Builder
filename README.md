@@ -1,38 +1,50 @@
 # Nirmaan Builder Theme
 
-Nirmaan Builder is a single WordPress theme with its visual Builder engine integrated directly. There is no separate Builder plugin folder or companion plugin requirement.
+Nirmaan Builder is a single, installable WordPress theme. The visual Builder engine is integrated inside the theme; there is no companion plugin or separate plugin package.
 
 ## Repository structure
 
-- `nirmaan-builder/` — complete installable WordPress theme, including theme templates, Builder PHP engine, REST API, React editor source, compiled editor assets, modules, and frontend renderer.
-- `tests/unit/` — isolated validator tests.
-- `.github/workflows/quality.yml` — PHP lint, validator tests, editor production build, and single-theme structure checks. Compiled editor assets are committed automatically on the development branch.
+- `nirmaan-builder/` — the complete installable theme: WordPress templates, Builder PHP engine, REST API, React editor source, compiled editor assets, module definitions and frontend renderer.
+- `tests/unit/` — isolated PHP validator tests.
+- `.github/workflows/quality.yml` — PHP lint, validator tests, editor build and single-theme package checks. CI uploads build artifacts; it does not write generated files back to the development branch.
 
-## Install
+## Development and installation
 
-1. Open the repository's `nirmaan-builder/` folder.
-2. Apply its contents as one theme directory under `wp-content/themes/nirmaan-builder/`.
-3. Activate **Nirmaan Builder**. The compiled React editor assets are included; no separate plugin installation or local build step is required.
+1. Develop and review code on the `development` branch. Keep `main` stable.
+2. Install the contents of `nirmaan-builder/` as one directory at `wp-content/themes/nirmaan-builder/`.
+3. Activate **Nirmaan Builder**. No plugin installation is part of the product architecture.
+4. The GitHub Actions workflow builds the editor and publishes the installable theme ZIP as a workflow artifact.
 
-If upgrading from the earlier two-package setup and the old Nirmaan Builder plugin is still active, first activate this theme, then deactivate the old plugin. A compatibility guard prevents the theme engine from loading twice while the old plugin is active. Builder documents remain in the WordPress database.
-
-## Current implemented functionality
+## Current implementation baseline
 
 - WordPress theme templates, navigation, logo support, featured images, theme.json and responsive base styling.
 - Integrated Builder admin screen and React editor source plus production bundle.
-- Heading, Text, Button, Image, Divider and Spacer modules.
-- Drag/drop insertion and reordering, element settings, document list/create/load/save.
-- Autosave and basic undo/redo.
+- Six initial modules: Heading, Text, Button, Image, Divider and Spacer.
+- Drag/drop insertion and reordering, module settings, document list/create/load/save, autosave and basic undo/redo.
 - REST API with WordPress nonce authentication and capability checks.
-- Strict document validation, safe URL scheme checks, duplicate ID checks and payload limits.
-- PHP server-side rendering of supported modules.
-- Header/Footer Theme Builder templates with display conditions and priority resolution, integrated with this theme.
-- Builder document data stored in WordPress and retained in the database.
+- Versioned document validation, safe URL scheme checks, duplicate ID checks and payload limits.
+- PHP server-side rendering for the implemented modules.
+- Initial Header/Footer Theme Builder templates with basic display conditions and priority resolution.
+- Builder documents stored in WordPress and retained in the database.
 
-## Not yet complete
+## Product status — foundation, not feature-complete
 
-This is not yet Divi 4 feature parity. Outstanding work includes nested Section/Row/Column layout tree, live iframe message synchronization, responsive inheritance, complete module library, advanced Theme Builder conditions and body/archive templates, dynamic content and query loops, forms/CAPTCHA/submissions, WooCommerce Builder, popup/mega-menu, global presets, import/export, backup/restore, SEO tooling, multilingual support, accessibility audit tools, full browser/E2E testing and production security review.
+This baseline is not Divi 4 parity and is not production-certified. The following are product-development requirements, not completed features:
+
+- Nested Section / Row / Column layout tree and recursive rendering.
+- Real-time visual preview synchronization between editor and frontend iframe.
+- Responsive device controls with inherited values and per-device overrides.
+- Broad, extensible module library with advanced styling, interactions and accessibility controls.
+- Full Theme Builder for headers, footers, body, archives, search, 404 and custom templates with granular include/exclude conditions.
+- Dynamic data, custom fields, query loops and reusable/global elements.
+- Form builder, validation, CAPTCHA integrations, email delivery and submissions storage.
+- WooCommerce templates and product/cart/checkout components.
+- Popup and mega-menu systems.
+- Global design tokens, presets, variables and reusable styles.
+- Import/export, revisions, backup/restore and migration tooling.
+- SEO controls, schema support, multilingual compatibility and accessibility auditing.
+- Automated WordPress integration tests, browser E2E tests, performance profiling and independent security review.
 
 ## Compatibility and security
 
-Target baseline: WordPress 6.5+ and PHP 8.2+. The current Builder validates the implemented document schema and applies WordPress capability checks, nonce authentication and output escaping. This is not a claim of complete security or production certification. Test on a staging WordPress site before production use.
+Target baseline: WordPress 6.5+ and PHP 8.2+. Implemented endpoints use WordPress capability checks and REST nonce authentication; the current document validator restricts accepted data and the renderer escapes supported output. These controls do not constitute a complete security audit or production certification. Validate on a staging WordPress installation before production use.
