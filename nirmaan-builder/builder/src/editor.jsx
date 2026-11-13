@@ -39,6 +39,7 @@ function App() {
   const [title, setTitle] = useState('Untitled Layout');
   const [elements, setElements] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [clipboardElement, setClipboardElement] = useState(null);
   const [device, setDevice] = useState('desktop');
   const [previewUrl, setPreviewUrl] = useState('');
   const [showPreview, setShowPreview] = useState(false);
@@ -184,6 +185,72 @@ function App() {
     next.splice(Math.max(0, adjustedIndex), 0, item);
     commitElements(next);
   }
+
+  function cloneElement(element) {
+    return JSON.parse(JSON.stringify(element));
+  }
+
+  function duplicateSelected() {
+    if (!selected) return;
+    const index = elements.findIndex((item) => item.id === selectedId);
+    if (index < 0) return;
+    const duplicate = cloneElement(selected);
+    duplicate.id = makeId();
+    const next = [...elements];
+    next.splice(index + 1, 0, duplicate);
+    commitElements(next);
+    setSelectedId(duplicate.id);
+  }
+
+  function copySelected() {
+    if (selected) setClipboardElement(cloneElement(selected));
+  }
+
+  function pasteElement() {
+    if (!clipboardElement) return;
+    const pasted = cloneElement(clipboardElement);
+    pasted.id = makeId();
+    const selectedIndex = elements.findIndex((item) => item.id === selectedId);
+    const insertAt = selectedIndex < 0 ? elements.length : selectedIndex + 1;
+    const next = [...elements];
+    next.splice(insertAt, 0, pasted);
+    commitElements(next);
+    setSelectedId(pasted.id);
+  }
+
+  function deleteSelected() {
+    if (!selectedId) return;
+    commitElements(elements.filter((item) => item.id !== selectedId));
+    setSelectedId(null);
+  }
+
+  useEffect(() => {
+    function handleBuilderShortcuts(event) {
+      const target = event.target;
+      const editingText = target instanceof HTMLElement && (
+        target.isContentEditable ||
+        ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+      );
+      const command = event.ctrlKey || event.metaKey;
+
+      if (command && event.key.toLowerCase() === 'd' && !editingText) {
+        event.preventDefault();
+        duplicateSelected();
+      } else if (command && event.key.toLowerCase() === 'c' && !editingText && selected) {
+        event.preventDefault();
+        copySelected();
+      } else if (command && event.key.toLowerCase() === 'v' && !editingText && clipboardElement) {
+        event.preventDefault();
+        pasteElement();
+      } else if ((event.key === 'Delete' || event.key === 'Backspace') && !editingText && selectedId) {
+        event.preventDefault();
+        deleteSelected();
+      }
+    }
+
+    window.addEventListener('keydown', handleBuilderShortcuts);
+    return () => window.removeEventListener('keydown', handleBuilderShortcuts);
+  }, [selected, selectedId, elements, clipboardElement]);
 
   function renderElement(item) {
     const s = item.settings || {};
@@ -336,7 +403,13 @@ function App() {
             {selected.type === 'button' && <label>Link URL<input value={selected.settings.url || ''} onChange={(e) => updateSelected('url', e.target.value)} /></label>}
             {selected.type === 'spacer' && <label>Height (px)<input type="number" min="0" max="500" value={selected.settings.height || 32} onChange={(e) => updateSelected('height', Number(e.target.value))} /></label>}
             {['heading', 'text', 'button'].includes(selected.type) && <label>Alignment<select value={selected.settings.align || 'left'} onChange={(e) => updateSelected('align', e.target.value)}><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select></label>}
-            <button className="nb-danger" onClick={() => { commitElements(elements.filter((item) => item.id !== selectedId)); setSelectedId(null); }}>Delete element</button>
+            <div className="nb-inspector-actions">
+              <button type="button" onClick={copySelected}>Copy</button>
+              <button type="button" onClick={pasteElement} disabled={!clipboardElement}>Paste</button>
+              <button type="button" onClick={duplicateSelected}>Duplicate</button>
+              <button type="button" className="nb-danger" onClick={deleteSelected}>Delete element</button>
+            </div>
+            <p className="nb-template-help">Shortcuts: Ctrl/Cmd + D duplicate · Ctrl/Cmd + C copy · Ctrl/Cmd + V paste · Delete remove</p>
           </div>}
         </aside>
       </div>
