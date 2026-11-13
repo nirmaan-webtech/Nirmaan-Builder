@@ -47,6 +47,66 @@ jobs:
             nirmaan-builder/builder/assets/build/editor.js
             nirmaan-builder/builder/assets/build/editor.css
 
+
+  wordpress-runtime:
+    name: WordPress runtime activation and REST smoke tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mysqli, mbstring, curl, dom, exif, fileinfo, intl, json, openssl, xml, zip
+      - name: Install WordPress CLI
+        run: |
+          curl -fsSLo wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          php wp-cli.phar --info
+          chmod +x wp-cli.phar
+          sudo mv wp-cli.phar /usr/local/bin/wp
+      - name: Install clean WordPress
+        run: |
+          mkdir -p "$RUNNER_TEMP/wordpress"
+          wp core download --path="$RUNNER_TEMP/wordpress"
+          wp config create --path="$RUNNER_TEMP/wordpress" --dbname=wordpress --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1:3306 --skip-check
+          wp core install --path="$RUNNER_TEMP/wordpress" --url=http://nirmaan.test --title="Nirmaan Builder CI" --admin_user=ci-admin --admin_password=ci-password-123 --admin_email=ci@example.test --skip-email
+      - name: Install and activate the theme
+        run: |
+          mkdir -p "$RUNNER_TEMP/wordpress/wp-content/themes/nirmaan-builder"
+          cp -R nirmaan-builder/. "$RUNNER_TEMP/wordpress/wp-content/themes/nirmaan-builder/"
+          wp theme activate nirmaan-builder --path="$RUNNER_TEMP/wordpress"
+      - name: Verify theme bootstrap, post type and REST routes
+        run: |
+          wp eval --path="$RUNNER_TEMP/wordpress" '
+            if ( ! class_exists( "\\\\NirmaanBuilder\\\\Builder_Engine" ) ) {
+              WP_CLI::error( "Theme Builder_Engine class did not load." );
+            }
+            if ( ! post_type_exists( "nirmaan_layout" ) ) {
+              WP_CLI::error( "Builder layout post type was not registered." );
+            }
+            do_action( "rest_api_init" );
+            $routes = rest_get_server()->get_routes();
+            if ( ! isset( $routes["/nirmaan-builder/v1/documents"] ) || ! isset( $routes["/nirmaan-builder/v1/documents/(?P<id>\\\\d+)"] ) ) {
+              WP_CLI::error( "Builder document REST routes were not registered." );
+            }
+            WP_CLI::success( "Theme activation, engine bootstrap, post type and REST routes passed." );
+          '
+
   theme-package:
     name: Package installable theme ZIP
     runs-on: ubuntu-latest
