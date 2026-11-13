@@ -30,6 +30,6 @@ require_once NIRMAAN_BUILDER_DIR . 'includes/class-template-resolver.php';
 require_once NIRMAAN_BUILDER_DIR . 'includes/class-nirmaan-builder.php';
 
 function nirmaan_builder_theme_boot() {
-	\NirmaanBuilder\Plugin::instance()->init();
+	\NirmaanBuilder\Builder_Engine::instance()->init();
 }
 add_action( 'after_setup_theme', 'nirmaan_builder_theme_boot', 20 );
