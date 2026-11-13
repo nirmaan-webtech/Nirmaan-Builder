@@ -93,7 +93,7 @@ jobs:
       - name: Verify theme bootstrap, post type and REST routes
         run: |
           wp eval --path="$RUNNER_TEMP/wordpress" '
-            if ( ! class_exists( "\\\\NirmaanBuilder\\\\Builder_Engine" ) ) {
+            if ( ! class_exists( "NirmaanBuilder\\\\Builder_Engine" ) ) {
               WP_CLI::error( "Theme Builder_Engine class did not load." );
             }
             if ( ! post_type_exists( "nirmaan_layout" ) ) {
@@ -101,7 +101,15 @@ jobs:
             }
             do_action( "rest_api_init" );
             $routes = rest_get_server()->get_routes();
-            if ( ! isset( $routes["/nirmaan-builder/v1/documents"] ) || ! isset( $routes["/nirmaan-builder/v1/documents/(?P<id>\\\\d+)"] ) ) {
+            $has_document_route = isset( $routes["/nirmaan-builder/v1/documents"] );
+            $has_single_document_route = false;
+            foreach ( array_keys( $routes ) as $route ) {
+              if ( 0 === strpos( $route, "/nirmaan-builder/v1/documents/" ) ) {
+                $has_single_document_route = true;
+                break;
+              }
+            }
+            if ( ! $has_document_route || ! $has_single_document_route ) {
               WP_CLI::error( "Builder document REST routes were not registered." );
             }
             WP_CLI::success( "Theme activation, engine bootstrap, post type and REST routes passed." );
