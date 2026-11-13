@@ -15,7 +15,7 @@ if ( class_exists( '\\NirmaanBuilder\\Plugin', false ) ) {
 }
 
 if ( ! defined( 'NIRMAAN_BUILDER_VERSION' ) ) {
-	define( 'NIRMAAN_BUILDER_VERSION', '0.2.0' );
+	define( 'NIRMAAN_BUILDER_VERSION', '0.3.0' );
 }
 if ( ! defined( 'NIRMAAN_BUILDER_DIR' ) ) {
 	define( 'NIRMAAN_BUILDER_DIR', trailingslashit( get_template_directory() ) . 'builder/' );
