@@ -7,7 +7,7 @@
     "start": "wp-scripts start",
     "build": "wp-scripts build",
     "lint:js": "wp-scripts lint-js src",
-    "lint:css": "wp-scripts lint-style assets",
+    "lint:css": "wp-scripts lint-style src assets",
     "format": "wp-scripts format"
   },
   "devDependencies": {
