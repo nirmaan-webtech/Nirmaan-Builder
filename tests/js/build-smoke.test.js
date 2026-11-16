@@ -80,3 +80,16 @@ test('layers support safe same-level drag reordering', () => {
   assert.match(builder, /const insertAt=current\.index/);
   assert.match(builder, /wrap\.draggable=!n\.settings\.locked/);
 });
+
+
+test('editor includes autosave, crash recovery and revision restore controls', () => {
+  assert.match(builder, /scheduleAutosave/);
+  assert.match(builder, /saveLocalDraft/);
+  assert.match(builder, /recoveryKey/);
+  assert.match(builder, /nirmaan-revisions/);
+  assert.match(rest, /function save_autosave/);
+  assert.match(rest, /function list_revisions/);
+  assert.match(rest, /function restore_revision/);
+  assert.match(rest, /_nirmaan_builder_revisions/);
+  assert.match(rest, /_nirmaan_builder_autosaves/);
+});

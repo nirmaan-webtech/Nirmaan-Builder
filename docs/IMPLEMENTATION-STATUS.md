@@ -55,3 +55,12 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Layers can be reordered by drag-and-drop among siblings at the same hierarchy level.
 - Cross-parent moves are intentionally rejected to avoid accidental tree restructuring; use canvas drag/drop for moves into containers.
 - Locked layers cannot be dragged from the Layers panel.
+
+
+## Autosave, revisions and crash recovery batch (PR in progress)
+- Editor changes are saved to browser local storage immediately and autosaved to the server after a short idle period.
+- On reopening the editor, a recoverable local or server draft is offered before continuing.
+- Main saves create capped per-object revision snapshots (up to 30), including template-part revisions.
+- Added a Revisions control to list and restore saved snapshots; restoring first snapshots the current document.
+- Autosaves are user- and template-part-specific and are cleared after a successful manual save.
+- This remains subject to WordPress staging tests, especially multi-user editing, storage quotas and browser crash scenarios.
