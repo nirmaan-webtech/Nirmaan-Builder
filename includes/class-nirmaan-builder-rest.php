@@ -6,6 +6,10 @@ class Rest {
  public function register_hooks() { add_action( 'rest_api_init', array( $this, 'register_routes' ) ); }
  public function register_routes() {
   register_rest_route( 'nirmaan-builder/v1', '/status', array( 'methods'=>WP_REST_Server::READABLE, 'callback'=>array($this,'status'), 'permission_callback'=>'__return_true' ) );
+  register_rest_route( 'nirmaan-builder/v1', '/settings', array(
+   array('methods'=>WP_REST_Server::READABLE,'callback'=>array($this,'get_settings'),'permission_callback'=>array($this,'can_manage_settings')),
+   array('methods'=>WP_REST_Server::CREATABLE,'callback'=>array($this,'save_settings'),'permission_callback'=>array($this,'can_manage_settings'))
+  ) );
   register_rest_route( 'nirmaan-builder/v1', '/content/(?P<id>\\d+)', array(
    array('methods'=>WP_REST_Server::READABLE,'callback'=>array($this,'get_content'),'permission_callback'=>array($this,'can_edit_content')),
    array('methods'=>WP_REST_Server::CREATABLE,'callback'=>array($this,'save_content'),'permission_callback'=>array($this,'can_edit_content')) ) );
@@ -27,6 +31,14 @@ class Rest {
    array('methods'=>WP_REST_Server::DELETABLE,'callback'=>array($this,'delete_library_item'),'permission_callback'=>array($this,'can_manage_library')) ) );
  }
  public function status(){return rest_ensure_response(array('name'=>'Nirmaan Builder','version'=>NIRMAAN_BUILDER_VERSION,'status'=>'builder-expanded'));}
+ public function can_manage_settings(){return current_user_can('manage_options');}
+ public function get_settings(){return rest_ensure_response(Settings::get());}
+ public function save_settings($request){
+  $params=$request->get_json_params();
+  $settings=Settings::sanitize($params);
+  update_option(Settings::OPTION,$settings,false);
+  return rest_ensure_response(array('saved'=>true,'settings'=>$settings));
+ }
  public function can_edit_content($r){$id=absint($r['id']);return $id && current_user_can('edit_post',$id);}
  public function can_manage_templates($r=null){if(!current_user_can('edit_theme_options'))return false;if($r&&isset($r['id'])){$p=get_post(absint($r['id']));return $p&&'nirmaan_template'===$p->post_type;}return true;}
  public function can_manage_library($r=null){if(!current_user_can('edit_posts'))return false;if($r&&isset($r['id'])){$p=get_post(absint($r['id']));return $p&&'nirmaan_library'===$p->post_type;}return true;}
