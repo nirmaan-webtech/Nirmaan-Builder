@@ -1,53 +1,18 @@
 <?php
-/**
- * Registers builder-owned content types.
- *
- * @package NirmaanBuilder
- */
-
 namespace NirmaanBuilder;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
-/**
- * Builder content registration.
- */
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 class Content {
-
-	/**
-	 * Register private templates and reusable library entries.
-	 *
-	 * @return void
-	 */
 	public static function register() {
 		$types = array(
-			'nirmaan_template' => array(
-				'name'          => __( 'Builder Templates', 'nirmaan-builder' ),
-				'singular_name' => __( 'Builder Template', 'nirmaan-builder' ),
-			),
-			'nirmaan_library'  => array(
-				'name'          => __( 'Builder Library', 'nirmaan-builder' ),
-				'singular_name' => __( 'Library Item', 'nirmaan-builder' ),
-			),
+			'nirmaan_template' => array( 'name' => __( 'Builder Templates', 'nirmaan-builder' ), 'singular_name' => __( 'Builder Template', 'nirmaan-builder' ) ),
+			'nirmaan_library' => array( 'name' => __( 'Builder Library', 'nirmaan-builder' ), 'singular_name' => __( 'Library Layout', 'nirmaan-builder' ) ),
 		);
-
-		foreach ( $types as $post_type => $labels ) {
-			register_post_type(
-				$post_type,
-				array(
-					'labels'              => $labels,
-					'public'              => false,
-					'publicly_queryable'  => false,
-					'exclude_from_search' => true,
-					'show_ui'             => false,
-					'show_in_rest'        => false,
-					'supports'            => array( 'title', 'revisions', 'custom-fields' ),
-					'capability_type'     => 'post',
-					'map_meta_cap'        => true,
-				)
-			);
+		foreach ( $types as $type => $labels ) {
+			register_post_type( $type, array(
+				'labels' => $labels, 'public' => false, 'publicly_queryable' => false,
+				'exclude_from_search' => true, 'show_ui' => false, 'show_in_rest' => false,
+				'supports' => array( 'title', 'revisions' ), 'capability_type' => 'post', 'map_meta_cap' => true,
+			) );
 		}
 	}
 }

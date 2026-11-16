@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, feature/**]
   pull_request:
     branches: [main, develop]
 
@@ -21,13 +21,14 @@ jobs:
           find . -path './vendor' -prune -o -name '*.php' -type f -print0 | xargs -0 -n1 php -l
 
   javascript:
-    name: JavaScript build
+    name: JavaScript syntax and feature tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
-      - run: npm install
-      - run: npm run build
+      - name: Check JavaScript syntax
+        run: npm run build
+      - name: Run feature smoke tests
+        run: npm test
