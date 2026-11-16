@@ -56,7 +56,8 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Cross-parent moves are intentionally rejected to avoid accidental tree restructuring; use canvas drag/drop for moves into containers.
 - Locked layers cannot be dragged from the Layers panel.
 
-\n## Autosave, revisions and crash recovery batch (PR in progress)
+
+## Autosave, revisions and crash recovery batch (PR in progress)
 - Editor changes are saved to browser local storage immediately and autosaved to the server after a short idle period.
 - On reopening the editor, a recoverable local or server draft is offered before continuing.
 - Main saves create capped per-object revision snapshots (up to 30), including template-part revisions.
