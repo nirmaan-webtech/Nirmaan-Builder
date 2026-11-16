@@ -43,3 +43,10 @@ GitHub Actions checks PHP syntax, JavaScript syntax and builder feature smoke te
 - Added smoke tests for these editor controls.
 
 Limitations: the Layers panel is a basic hierarchical selector, not yet drag-reorderable, collapsible, renameable, or independently hide/lock capable. Undo/Redo is session-memory only; it is not autosave, revision history, or crash recovery. Keyboard shortcuts are not a replacement for complete keyboard accessibility. These changes require browser testing in WordPress before production use.
+
+## Expanded Layers and Wireframe batch (PR in progress)
+- Layers can expand/collapse nested containers, rename nodes, toggle visibility, and lock/unlock nodes.
+- Hidden nodes are omitted from the editor canvas; locked nodes cannot be dragged from the canvas.
+- Added a basic Wireframe/Visual view toggle.
+
+Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mode is a lightweight CSS view, not a separate rendering engine. Locked nodes can still be selected from the Layers list and their settings can be changed; permission-grade locking is not intended. Verify behavior in a real browser before production.
