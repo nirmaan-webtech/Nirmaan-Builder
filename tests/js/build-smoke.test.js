@@ -9,7 +9,7 @@ const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 
 test('editor supports nested nodes and responsive device settings', () => {
   assert.match(builder, /function find\(/);
   assert.match(builder, /nb-nested-children/);
-  assert.match(builder, /desktop.*tablet.*mobile/);
+  assert.ok(builder.includes("['desktop','tablet','mobile']"));
   assert.match(builder, /hide_\+device/);
 });
 
