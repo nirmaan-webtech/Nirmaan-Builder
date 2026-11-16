@@ -36,3 +36,16 @@ test('template rules include priorities and exclusions', () => {
   assert.match(renderer, /matches_conditions/);
   assert.match(actions, /nirmaan-save-template-rules/);
 });
+
+test('Theme Options are persisted through a privileged REST route', () => {
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  const settings = fs.readFileSync('includes/class-nirmaan-builder-settings.php', 'utf8');
+  assert.match(rest, /'\/settings'/);
+  assert.match(rest, /can_manage_settings/);
+  assert.match(rest, /Settings::sanitize/);
+  assert.match(admin, /nirmaan-theme-settings/);
+  assert.match(admin, /nb-select-media/);
+  assert.match(settings, /sanitize_hex_color/);
+  assert.match(settings, /get_custom_logo/);
+  assert.match(settings, /get_site_icon_url/);
+});
