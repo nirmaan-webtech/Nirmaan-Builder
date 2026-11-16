@@ -1,26 +1,33 @@
 # Nirmaan Builder
 
-An independent WordPress visual theme and page builder plugin.
+An independent WordPress visual page and theme builder plugin by Nirmaan WebTech.
 
-## Version 0.2.0 – Visual Builder MVP
-- Page/post canvas editor with basic content modules.
-- Authenticated REST save/load endpoints.
-- Header, Body and Footer template-part editing.
-- Template creation and common display-condition matching.
-- Server-rendered frontend output.
+## Current feature set
+- Recursive page canvas with nested containers/columns, module settings and drag/drop.
+- Desktop, tablet and mobile style controls with per-device visibility.
+- Theme Builder with Header, Body and Footer parts, include/exclude conditions and priority ordering.
+- Reusable Library layouts, JSON import/export and editable live-reference Global Elements.
+- WooCommerce product, product archive, cart, checkout and mini-cart modules using native WooCommerce output.
+- Authenticated REST API with server-side allow-list sanitization.
 
-This is not full Divi 4 feature parity. See docs/IMPLEMENTATION-STATUS.md and docs/DEVELOPMENT-ROADMAP.md for the implemented scope and remaining work.
+This is an evolving builder foundation, **not a complete Divi 4 replacement**. Review [implementation status](docs/IMPLEMENTATION-STATUS.md) before use.
 
 ## Requirements
 - WordPress 6.4+
 - PHP 8.0+
-- Node.js 20+ for JavaScript build tooling
+- Node.js 20+ for JavaScript syntax checks and smoke tests
+- WooCommerce for WooCommerce modules
 
 ## Installation
-1. Download this branch as ZIP.
-2. Copy the nirmaan-builder plugin folder into wp-content/plugins/.
+1. Download the branch ZIP or the reviewed pull request.
+2. Copy the plugin folder into `wp-content/plugins/nirmaan-builder/`.
 3. Activate Nirmaan Builder.
-4. Open a Page or Post and use the Nirmaan Builder metabox or row action.
-5. Open Nirmaan Builder → Theme Builder to create Header, Body and Footer parts.
+4. Edit a Page/Post with the Nirmaan Builder metabox, or open **Nirmaan Builder → Theme Builder**.
+5. Manage reusable layouts and global elements under **Nirmaan Builder → Library**.
 
-Install and test on a staging WordPress site before production use.
+## Development checks
+- `npm run build` – JavaScript syntax validation.
+- `npm test` – builder feature smoke tests.
+- GitHub Actions – PHP syntax validation and JavaScript checks.
+
+Install on staging and validate with the target theme, WooCommerce version, checkout/payment gateways and extensions before production deployment.
