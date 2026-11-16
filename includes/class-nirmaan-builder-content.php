@@ -22,36 +22,32 @@ class Content {
 	 * @return void
 	 */
 	public static function register() {
-		register_post_type(
-			'nirmaan_template',
-			array(
-				'labels'       => array(
-					'name'          => __( 'Builder Templates', 'nirmaan-builder' ),
-					'singular_name' => __( 'Builder Template', 'nirmaan-builder' ),
-				),
-				'public'       => false,
-				'show_ui'      => false,
-				'show_in_rest' => false,
-				'supports'     => array( 'title', 'revisions', 'custom-fields' ),
-				'capability_type' => 'post',
-				'map_meta_cap' => true,
-			)
+		$types = array(
+			'nirmaan_template' => array(
+				'name'          => __( 'Builder Templates', 'nirmaan-builder' ),
+				'singular_name' => __( 'Builder Template', 'nirmaan-builder' ),
+			),
+			'nirmaan_library'  => array(
+				'name'          => __( 'Builder Library', 'nirmaan-builder' ),
+				'singular_name' => __( 'Library Item', 'nirmaan-builder' ),
+			),
 		);
 
-		register_post_type(
-			'nirmaan_library',
-			array(
-				'labels'       => array(
-					'name'          => __( 'Builder Library', 'nirmaan-builder' ),
-					'singular_name' => __( 'Library Item', 'nirmaan-builder' ),
-				),
-				'public'       => false,
-				'show_ui'      => false,
-				'show_in_rest' => false,
-				'supports'     => array( 'title', 'revisions', 'custom-fields' ),
-				'capability_type' => 'post',
-				'map_meta_cap' => true,
-			)
-		);
+		foreach ( $types as $post_type => $labels ) {
+			register_post_type(
+				$post_type,
+				array(
+					'labels'              => $labels,
+					'public'              => false,
+					'publicly_queryable'  => false,
+					'exclude_from_search' => true,
+					'show_ui'             => false,
+					'show_in_rest'        => false,
+					'supports'            => array( 'title', 'revisions', 'custom-fields' ),
+					'capability_type'     => 'post',
+					'map_meta_cap'        => true,
+				)
+			);
+		}
 	}
 }
