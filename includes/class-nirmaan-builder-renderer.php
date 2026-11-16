@@ -58,7 +58,9 @@ class Renderer {
 	private function render_part( $part ) {
 		if ( is_admin() ) { return; } $id = $this->assigned_template(); if ( ! $id ) { return; }
 		$parts = get_post_meta( $id, '_nirmaan_template_parts', true );
-		if ( isset( $parts[ $part ]['nodes'] ) && is_array( $parts[ $part ]['nodes'] ) ) { echo $this->render_nodes( $parts[ $part ]['nodes'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped }
+		if ( isset( $parts[ $part ]['nodes'] ) && is_array( $parts[ $part ]['nodes'] ) ) {
+			echo $this->render_nodes( $parts[ $part ]['nodes'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
 	}
 	private function woo_module( $type ) {
 		if ( ! function_exists( 'wc_get_product' ) ) { return '<!-- WooCommerce module unavailable: WooCommerce is inactive. -->'; }
