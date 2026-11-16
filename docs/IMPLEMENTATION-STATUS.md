@@ -2,6 +2,14 @@
 
 This branch expands the original MVP into a broader builder foundation. It is still not a complete Divi 4 replacement and must be validated on a real WordPress/WooCommerce staging site.
 
+## Additional implementation in the current development branch
+- Theme Options screen with persistent logo and favicon attachment selection, global color palette, typography, container width, section spacing, button radius and custom CSS.
+- Privileged REST settings endpoints restricted to users with `manage_options`; settings values are sanitized and design tokens are exposed as frontend CSS variables.
+- Configured logo and favicon are integrated through WordPress `get_custom_logo` and `get_site_icon_url` filters.
+- Frontend base typography, colors, button color/radius and builder container width consume the global design tokens.
+
+These additions are in the open development branch and are not yet merged into `main`. They still require runtime verification on WordPress.
+
 ## Implemented in this branch
 - Recursive nested containers and columns in the editor document model; nested node selection, insertion, deletion and drag/drop into containers.
 - Per-element desktop, tablet and mobile style settings, including visibility toggles. Responsive settings are sanitized server-side and rendered as media-query CSS.
