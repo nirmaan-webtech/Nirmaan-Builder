@@ -2,42 +2,25 @@
 
 An independent WordPress visual theme and page builder plugin.
 
-## Status
+## Version 0.2.0 – Visual Builder MVP
+- Page/post canvas editor with basic content modules.
+- Authenticated REST save/load endpoints.
+- Header, Body and Footer template-part editing.
+- Template creation and common display-condition matching.
+- Server-rendered frontend output.
 
-This repository starts with the secure plugin foundation and an extensible architecture. The full product scope is tracked in [docs/DEVELOPMENT-ROADMAP.md](docs/DEVELOPMENT-ROADMAP.md). Features are not considered complete until implemented and tested.
+This is not full Divi 4 feature parity. See docs/IMPLEMENTATION-STATUS.md and docs/DEVELOPMENT-ROADMAP.md for the implemented scope and remaining work.
 
 ## Requirements
-
 - WordPress 6.4+
 - PHP 8.0+
-- Node.js 20+ (for editor development)
-- Composer (optional, for PHP development tooling)
-
-## Development
-
-The plugin entry point is `nirmaan-builder.php`. PHP classes are loaded from `includes/`; admin and frontend assets live in `assets/`; the React editor source lives in `src/`.
-
-Install JavaScript dependencies and build assets:
-
-```bash
-npm install
-npm run build
-```
-
-For development with file watching:
-
-```bash
-npm run start
-```
+- Node.js 20+ for JavaScript build tooling
 
 ## Installation
+1. Download this branch as ZIP.
+2. Copy the nirmaan-builder plugin folder into wp-content/plugins/.
+3. Activate Nirmaan Builder.
+4. Open a Page or Post and use the Nirmaan Builder metabox or row action.
+5. Open Nirmaan Builder → Theme Builder to create Header, Body and Footer parts.
 
-Copy the `nirmaan-builder` directory into `wp-content/plugins/`, then activate **Nirmaan Builder** in WordPress. The plugin currently provides the foundation and admin navigation scaffold; builder editing and rendering capabilities are roadmap items until implemented.
-
-## Security and compatibility
-
-All write operations must use WordPress capabilities, REST permission callbacks, nonce authentication where applicable, strict input validation, sanitization, and escaped output. Never trust client-provided template or builder data.
-
-## License
-
-GPL-2.0-or-later. See [LICENSE](LICENSE).
+Install and test on a staging WordPress site before production use.
