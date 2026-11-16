@@ -52,6 +52,8 @@ class Rest {
 	 * @return \WP_REST_Response
 	 */
 	public function status( WP_REST_Request $request ) {
+		unset( $request );
+
 		return rest_ensure_response(
 			array(
 				'name'    => 'Nirmaan Builder',
