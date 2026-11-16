@@ -25,7 +25,8 @@ test('editor exposes WooCommerce layout modules', () => {
 test('library supports global elements and JSON import/export', () => {
   assert.match(rest, /_nirmaan_global/);
   assert.match(rest, /function export_library/);
-  assert.match(rest, /function import_library/);\n  assert.match(rest, /function save_library_item/);
+  assert.match(rest, /function import_library/);
+  assert.match(rest, /function save_library_item/);
   assert.match(renderer, /global_element/);
 });
 
