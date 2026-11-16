@@ -73,3 +73,10 @@ test('layers support collapse, rename, visibility, lock and wireframe view', () 
   const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
   assert.match(admin, /id="nirmaan-view-toggle"/);
 });
+
+test('layers support safe same-level drag reordering', () => {
+  assert.match(builder, /nb-layer-drop-target/);
+  assert.match(builder, /source\.nodes!==target\.nodes/);
+  assert.match(builder, /const insertAt=current\.index/);
+  assert.match(builder, /wrap\.draggable=!n\.settings\.locked/);
+});
