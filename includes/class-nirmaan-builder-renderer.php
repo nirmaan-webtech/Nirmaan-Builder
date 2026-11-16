@@ -28,7 +28,7 @@ class Renderer {
 	}
 	private function matches_rule( $rule ) {
 		if ( ! is_array( $rule ) || empty( $rule['type'] ) ) { return false; }
-		$type = sanitize_key( $rule['type'] ); $value = isset( $rule['value'] ) ? absint( $rule['value'] ) : 0;
+		$type = sanitize_key( $rule['type'] ); $value = absint( $rule['value'] ?? 0 );
 		switch ( $type ) {
 			case 'entire_site': return true;
 			case 'front_page': return is_front_page();
@@ -56,37 +56,42 @@ class Renderer {
 	public function render_header() { $this->render_part( 'header' ); }
 	public function render_footer() { $this->render_part( 'footer' ); }
 	private function render_part( $part ) {
-		if ( is_admin() ) { return; }
-		$id = $this->assigned_template(); if ( ! $id ) { return; }
+		if ( is_admin() ) { return; } $id = $this->assigned_template(); if ( ! $id ) { return; }
 		$parts = get_post_meta( $id, '_nirmaan_template_parts', true );
-		if ( isset( $parts[ $part ]['nodes'] ) && is_array( $parts[ $part ]['nodes'] ) ) {
-			echo $this->render_nodes( $parts[ $part ]['nodes'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
+		if ( isset( $parts[ $part ]['nodes'] ) && is_array( $parts[ $part ]['nodes'] ) ) { echo $this->render_nodes( $parts[ $part ]['nodes'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped }
+	}
+	private function woo_module( $type ) {
+		if ( ! function_exists( 'wc_get_product' ) ) { return '<!-- WooCommerce module unavailable: WooCommerce is inactive. -->'; }
+		global $product;
+		if ( ! $product && get_the_ID() ) { $product = wc_get_product( get_the_ID() ); }
+		if ( ! $product ) { return ''; }
+		$map = array(
+			'product_title' => 'woocommerce_template_single_title',
+			'product_price' => 'woocommerce_template_single_price',
+			'product_image' => 'woocommerce_show_product_images',
+			'product_add_to_cart' => 'woocommerce_template_single_add_to_cart',
+			'product_description' => 'woocommerce_template_single_excerpt',
+			'product_rating' => 'woocommerce_template_single_rating',
+		);
+		if ( 'related_products' === $type ) { return do_shortcode( '[related_products limit="4"]' ); }
+		if ( 'shop_products' === $type ) { return do_shortcode( '[products limit="8" columns="4"]' ); }
+		if ( empty( $map[ $type ] ) || ! function_exists( $map[ $type ] ) ) { return ''; }
+		ob_start(); call_user_func( $map[ $type ] ); return ob_get_clean();
 	}
 	public function render_nodes( $nodes ) {
 		if ( ! is_array( $nodes ) ) { return ''; } $html = '';
 		foreach ( array_slice( $nodes, 0, 300 ) as $node ) {
 			if ( ! is_array( $node ) ) { continue; }
-			$type = isset( $node['type'] ) ? sanitize_key( $node['type'] ) : '';
-			$s = isset( $node['settings'] ) && is_array( $node['settings'] ) ? $node['settings'] : array();
-			$content = isset( $s['content'] ) ? $s['content'] : '';
+			$type = sanitize_key( $node['type'] ?? '' ); $s = is_array( $node['settings'] ?? null ) ? $node['settings'] : array(); $content = $s['content'] ?? '';
+			if ( in_array( $type, array( 'product_title', 'product_price', 'product_image', 'product_add_to_cart', 'product_description', 'product_rating', 'related_products', 'shop_products' ), true ) ) { $html .= $this->woo_module( $type ); continue; }
 			switch ( $type ) {
-				case 'heading':
-					$level = isset( $s['level'] ) ? min( 6, max( 1, absint( $s['level'] ) ) ) : 2;
-					$html .= sprintf( '<h%d class="nb-heading">%s</h%d>', $level, esc_html( $content ), $level ); break;
+				case 'heading': $level = min( 6, max( 1, absint( $s['level'] ?? 2 ) ) ); $html .= sprintf( '<h%d class="nb-heading">%s</h%d>', $level, esc_html( $content ), $level ); break;
 				case 'text': $html .= '<div class="nb-text">' . wp_kses_post( $content ) . '</div>'; break;
-				case 'image':
-					$url = isset( $s['url'] ) ? esc_url( $s['url'] ) : ''; $alt = isset( $s['alt'] ) ? esc_attr( $s['alt'] ) : '';
-					if ( $url ) { $html .= sprintf( '<figure class="nb-image"><img src="%s" alt="%s" loading="lazy"></figure>', $url, $alt ); } break;
-				case 'button':
-					$url = isset( $s['url'] ) ? esc_url( $s['url'] ) : '#';
-					$html .= sprintf( '<p class="nb-button-wrap"><a class="nb-button" href="%s">%s</a></p>', $url, esc_html( $content ?: __( 'Button', 'nirmaan-builder' ) ) ); break;
+				case 'image': $url = esc_url( $s['url'] ?? '' ); $alt = esc_attr( $s['alt'] ?? '' ); if ( $url ) { $html .= sprintf( '<figure class="nb-image"><img src="%s" alt="%s" loading="lazy"></figure>', $url, $alt ); } break;
+				case 'button': $html .= sprintf( '<p class="nb-button-wrap"><a class="nb-button" href="%s">%s</a></p>', esc_url( $s['url'] ?? '#' ), esc_html( $content ?: __( 'Button', 'nirmaan-builder' ) ) ); break;
 				case 'divider': $html .= '<hr class="nb-divider">'; break;
-				case 'spacer':
-					$height = isset( $s['height'] ) ? min( 400, max( 0, absint( $s['height'] ) ) ) : 32;
-					$html .= '<div class="nb-spacer" style="height:' . esc_attr( $height ) . 'px"></div>'; break;
-				case 'container':
-				case 'columns': $html .= '<div class="nb-container">' . $this->render_nodes( $node['children'] ?? array() ) . '</div>'; break;
+				case 'spacer': $height = min( 400, absint( $s['height'] ?? 32 ) ); $html .= '<div class="nb-spacer" style="height:' . esc_attr( $height ) . 'px"></div>'; break;
+				case 'container': case 'columns': $html .= '<div class="nb-container">' . $this->render_nodes( $node['children'] ?? array() ) . '</div>'; break;
 			}
 		}
 		return $html;
