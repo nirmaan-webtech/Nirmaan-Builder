@@ -15,10 +15,16 @@ class Admin {
 	}
 	public function enqueue_assets( $hook ) {
 		if ( false === strpos( (string) $hook, 'nirmaan' ) ) { return; } wp_enqueue_style( 'nirmaan-builder-admin', NIRMAAN_BUILDER_URL . 'assets/css/admin.css', array(), NIRMAAN_BUILDER_VERSION );
+		$config = array( 'apiRoot' => esc_url_raw( rest_url( 'nirmaan-builder/v1/' ) ), 'nonce' => wp_create_nonce( 'wp_rest' ) );
 		if ( 'admin_page_nirmaan-editor' === $hook ) {
-			wp_enqueue_style( 'nirmaan-builder-editor', NIRMAAN_BUILDER_URL . 'assets/css/editor.css', array(), NIRMAAN_BUILDER_VERSION ); wp_enqueue_script( 'nirmaan-builder-editor', NIRMAAN_BUILDER_URL . 'assets/js/builder.js', array(), NIRMAAN_BUILDER_VERSION, true );
+			wp_enqueue_style( 'nirmaan-builder-editor', NIRMAAN_BUILDER_URL . 'assets/css/editor.css', array(), NIRMAAN_BUILDER_VERSION );
+			wp_enqueue_script( 'nirmaan-builder-editor', NIRMAAN_BUILDER_URL . 'assets/js/builder.js', array(), NIRMAAN_BUILDER_VERSION, true );
 			$post_id = absint( $_GET['post_id'] ?? 0 ); $template_id = absint( $_GET['template_id'] ?? 0 ); $part = sanitize_key( wp_unslash( $_GET['part'] ?? 'body' ) );
-			wp_localize_script( 'nirmaan-builder-editor', 'NirmaanBuilderConfig', array( 'apiRoot' => esc_url_raw( rest_url( 'nirmaan-builder/v1/' ) ), 'nonce' => wp_create_nonce( 'wp_rest' ), 'postId' => $post_id, 'templateId' => $template_id, 'part' => in_array( $part, array( 'header', 'body', 'footer' ), true ) ? $part : 'body' ) );
+			wp_localize_script( 'nirmaan-builder-editor', 'NirmaanBuilderConfig', array_merge( $config, array( 'postId' => $post_id, 'templateId' => $template_id, 'part' => in_array( $part, array( 'header', 'body', 'footer' ), true ) ? $part : 'body' ) ) );
+		}
+		if ( in_array( $hook, array( 'nirmaan-builder_page_nirmaan-theme-builder', 'nirmaan-builder_page_nirmaan-library' ), true ) ) {
+			wp_enqueue_script( 'nirmaan-builder-admin-actions', NIRMAAN_BUILDER_URL . 'assets/js/admin-actions.js', array(), NIRMAAN_BUILDER_VERSION, true );
+			wp_localize_script( 'nirmaan-builder-admin-actions', 'NirmaanBuilderAdminConfig', $config );
 		}
 	}
 	public function add_builder_metabox() { foreach ( get_post_types( array( 'public' => true ), 'names' ) as $type ) { add_meta_box( 'nirmaan-builder', 'Nirmaan Builder', array( $this, 'render_builder_metabox' ), $type, 'side', 'high' ); } }
