@@ -81,7 +81,8 @@ test('layers support safe same-level drag reordering', () => {
   assert.match(builder, /wrap\.draggable=!n\.settings\.locked/);
 });
 
-\ntest('editor includes autosave, crash recovery and revision restore controls', () => {
+
+test('editor includes autosave, crash recovery and revision restore controls', () => {
   assert.match(builder, /scheduleAutosave/);
   assert.match(builder, /saveLocalDraft/);
   assert.match(builder, /recoveryKey/);
