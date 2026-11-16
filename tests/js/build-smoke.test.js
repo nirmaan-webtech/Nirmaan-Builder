@@ -93,3 +93,14 @@ test('editor includes autosave, crash recovery and revision restore controls', (
   assert.match(rest, /_nirmaan_builder_revisions/);
   assert.match(rest, /_nirmaan_builder_autosaves/);
 });
+
+test('editor supports desktop, tablet and mobile viewport previews', () => {
+  assert.match(builder, /previewDevice/);
+  assert.match(builder, /applyPreviewDevice/);
+  assert.match(builder, /n\.settings\['hide_'\+previewDevice\]/);
+  assert.match(builder, /responsiveStyle/);
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  assert.match(admin, /data-preview-device="mobile"/);
+  const css = fs.readFileSync('assets/css/editor.css', 'utf8');
+  assert.match(css, /data-preview-device=mobile/);
+});
