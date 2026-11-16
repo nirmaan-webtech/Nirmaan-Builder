@@ -16,7 +16,7 @@ This branch expands the original MVP into a broader builder foundation. It is st
 - Nested editing is a practical first pass, not a polished freeform tree editor: no arbitrary column resizing, multi-select, clipboard, undo/redo, or full keyboard accessibility.
 - Responsive controls cover common CSS properties and hide/show per device; no breakpoint manager, visual viewport preview, or complete responsive style inheritance UI.
 - Template conditions are a multi-select set of common contexts; per-taxonomy, per-author, per-user-role, custom URL and arbitrary object targeting are not yet exposed. Singular-ID and custom post-type rules are supported by the data model but not yet fully surfaced in the admin UI.
-- Global elements are live references for frontend rendering; there is no revision history, permissions/locking, or change preview.
+- Global elements are live references for frontend rendering and can be edited from the Library screen; there is no revision history, permissions/locking, or change preview.
 - Library import/export currently supports the Nirmaan Builder JSON format only; no third-party builder conversion or media bundle migration.
 - Cart/checkout output delegates to WooCommerce native shortcodes. This is not a full visual cart/checkout component designer and must be checked against the active theme, checkout blocks, payment gateways and extensions.
 - No custom form builder, animation timeline, role editor, or complete revision/history interface.
