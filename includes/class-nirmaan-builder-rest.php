@@ -30,8 +30,22 @@ class Rest {
 	}
 	public function status() { return rest_ensure_response( array( 'name' => 'Nirmaan Builder', 'version' => NIRMAAN_BUILDER_VERSION, 'status' => 'visual-builder-mvp' ) ); }
 	public function can_edit_content( $r ) { $id = absint( $r['id'] ); return $id && current_user_can( 'edit_post', $id ); }
-	public function can_manage_templates() { return current_user_can( 'edit_theme_options' ); }
-	public function can_manage_library() { return current_user_can( 'edit_posts' ); }
+	public function can_manage_templates( $request = null ) {
+		if ( ! current_user_can( 'edit_theme_options' ) ) { return false; }
+		if ( $request && isset( $request['id'] ) ) {
+			$post = get_post( absint( $request['id'] ) );
+			return $post && 'nirmaan_template' === $post->post_type;
+		}
+		return true;
+	}
+	public function can_manage_library( $request = null ) {
+		if ( ! current_user_can( 'edit_posts' ) ) { return false; }
+		if ( $request && isset( $request['id'] ) ) {
+			$post = get_post( absint( $request['id'] ) );
+			return $post && 'nirmaan_library' === $post->post_type;
+		}
+		return true;
+	}
 	public function get_content( $r ) { $id = absint( $r['id'] ); return rest_ensure_response( array( 'id' => $id, 'document' => get_post_meta( $id, '_nirmaan_builder_document', true ) ?: array( 'nodes' => array() ) ) ); }
 	public function save_content( $r ) { $id = absint( $r['id'] ); $doc = $this->sanitize_document( $r->get_json_params() ); update_post_meta( $id, '_nirmaan_builder_document', $doc ); return rest_ensure_response( array( 'saved' => true, 'id' => $id, 'document' => $doc ) ); }
 	public function list_templates() {
