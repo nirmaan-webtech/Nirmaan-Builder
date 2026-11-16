@@ -50,3 +50,8 @@ Limitations: the Layers panel is a basic hierarchical selector, not yet drag-reo
 - Added a basic Wireframe/Visual view toggle.
 
 Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mode is a lightweight CSS view, not a separate rendering engine. Locked nodes can still be selected from the Layers list and their settings can be changed; permission-grade locking is not intended. Verify behavior in a real browser before production.
+
+## Layer drag-reordering batch (PR in progress)
+- Layers can be reordered by drag-and-drop among siblings at the same hierarchy level.
+- Cross-parent moves are intentionally rejected to avoid accidental tree restructuring; use canvas drag/drop for moves into containers.
+- Locked layers cannot be dragged from the Layers panel.
