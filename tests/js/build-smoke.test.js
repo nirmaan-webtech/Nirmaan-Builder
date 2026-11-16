@@ -49,3 +49,15 @@ test('Theme Options are persisted through a privileged REST route', () => {
   assert.match(settings, /get_custom_logo/);
   assert.match(settings, /get_site_icon_url/);
 });
+
+test('editor exposes layers, duplicate, undo/redo and keyboard shortcuts', () => {
+  assert.match(builder, /function renderLayers/);
+  assert.match(builder, /nirmaan-undo/);
+  assert.match(builder, /nirmaan-redo/);
+  assert.match(builder, /const checkpoint=/);
+  assert.match(builder, /textContent='Duplicate'/);
+  assert.match(builder, /e\.key\.toLowerCase\(\)==='d'/);
+  assert.match(builder, /e\.shiftKey\?redo\(\):undo\(\)/);
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  assert.match(admin, /id="nirmaan-layers"/);
+});

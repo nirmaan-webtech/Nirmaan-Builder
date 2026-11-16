@@ -8,7 +8,7 @@ This branch expands the original MVP into a broader builder foundation. It is st
 - Configured logo and favicon are integrated through WordPress `get_custom_logo` and `get_site_icon_url` filters.
 - Frontend base typography, colors, button color/radius and builder container width consume the global design tokens.
 
-These additions are in the open development branch and are not yet merged into `main`. They still require runtime verification on WordPress.
+These Theme Options additions were merged into `main` in PR #2. They still require runtime verification on WordPress.
 
 ## Implemented in this branch
 - Recursive nested containers and columns in the editor document model; nested node selection, insertion, deletion and drag/drop into containers.
@@ -34,3 +34,12 @@ These additions are in the open development branch and are not yet merged into `
 
 ## Verification
 GitHub Actions checks PHP syntax, JavaScript syntax and builder feature smoke tests. Passing these checks does not establish full runtime compatibility or production readiness.
+
+## Latest editor development batch (PR in progress)
+- Added a Layers panel that lists nested elements and selects a node when clicked.
+- Added element duplication from canvas controls and `Ctrl/Cmd+D`.
+- Added in-memory Undo/Redo snapshots with `Ctrl/Cmd+Z`, `Ctrl/Cmd+Shift+Z` and `Ctrl/Cmd+Y`.
+- Added Delete/Backspace keyboard deletion when focus is outside form controls.
+- Added smoke tests for these editor controls.
+
+Limitations: the Layers panel is a basic hierarchical selector, not yet drag-reorderable, collapsible, renameable, or independently hide/lock capable. Undo/Redo is session-memory only; it is not autosave, revision history, or crash recovery. Keyboard shortcuts are not a replacement for complete keyboard accessibility. These changes require browser testing in WordPress before production use.
