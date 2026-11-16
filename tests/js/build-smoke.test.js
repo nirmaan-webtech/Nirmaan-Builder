@@ -7,7 +7,8 @@ const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
 const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
 
 test('editor supports nested nodes and responsive device settings', () => {
-  assert.match(builder, /function find\(/);\n  assert.match(builder, /containsId/);
+  assert.match(builder, /function find\(/);
+  assert.match(builder, /containsId/);
   assert.match(builder, /nb-nested-children/);
   assert.ok(builder.includes("['desktop','tablet','mobile']"));
   assert.match(builder, /hide_\+device/);
