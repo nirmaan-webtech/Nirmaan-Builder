@@ -1,27 +1,28 @@
-# Visual Builder MVP – Implementation Status
+# Nirmaan Builder – Expanded Feature Status
 
-This branch implements a first functional vertical slice for the requested areas. It does not claim complete Divi 4 feature parity.
+This branch expands the original MVP into a broader builder foundation. It is still not a complete Divi 4 replacement and must be validated on a real WordPress/WooCommerce staging site.
 
-## Implemented
-- Admin canvas editor with add, select, edit, delete and reorder for heading, text, image, button, divider, spacer, container and WooCommerce product elements.
-- Authenticated REST endpoints to load and save page documents.
-- Page/post editor metabox and list-row Edit with Nirmaan Builder links.
-- Theme template create, list and delete workflow with separate Header, Body and Footer editor entry points.
-- Include/exclude template matching for whole site, front page, all pages, all posts, singular ID, post type, archives, search and 404.
-- Frontend rendering for saved page documents and assigned template parts.
-- Reusable Library: save current design, list saved layouts, insert a saved layout into the current canvas, and delete layouts.
-- WooCommerce product title, price, image, add-to-cart, description, rating, related products and shop product modules. WooCommerce must be active.
-- Server-side allow-list validation, type-specific escaping and resource-type checks on destructive REST endpoints.
+## Implemented in this branch
+- Recursive nested containers and columns in the editor document model; nested node selection, insertion, deletion and drag/drop into containers.
+- Per-element desktop, tablet and mobile style settings, including visibility toggles. Responsive settings are sanitized server-side and rendered as media-query CSS.
+- Theme Builder include/exclude multi-select rules and template priority. Higher priority wins; exclusions veto a template match.
+- Template conditions for entire site, front page, pages, posts, archives, search, 404, WooCommerce product, shop, product archive, cart and checkout contexts.
+- Library JSON export/import with server-side document sanitization.
+- Global elements stored as library records and rendered by live reference, so editing the global library document updates every page that references it.
+- WooCommerce product modules plus product archive, cart, checkout and mini-cart modules using WooCommerce's native shortcodes/template functions.
+- Node-based JavaScript syntax checks and feature smoke tests in CI; PHP syntax checks remain enabled.
 
-## Still incomplete
-- Not full Divi 4 parity.
-- Nested container canvas editing and full nested drag-and-drop tree.
-- Advanced per-object condition builder, priorities and template conflict UI.
-- Library categories, search, import/export, shared global-element synchronization and layout versioning.
-- WooCommerce custom cart/checkout layout design, product archive query controls, variations and mini-cart module.
-- Forms, advanced animation, device-specific responsive controls, history timeline, revisions UI, role editor, and comprehensive automated WordPress integration tests.
-- Header/footer output requires the active theme to call wp_body_open() and wp_footer().
-- Install and test on staging before production use.
+## Known limitations / not yet production complete
+- Nested editing is a practical first pass, not a polished freeform tree editor: no arbitrary column resizing, multi-select, clipboard, undo/redo, or full keyboard accessibility.
+- Responsive controls cover common CSS properties and hide/show per device; no breakpoint manager, visual viewport preview, or complete responsive style inheritance UI.
+- Template conditions are a multi-select set of common contexts; per-taxonomy, per-author, per-user-role, custom URL and arbitrary object targeting are not yet exposed. Singular-ID and custom post-type rules are supported by the data model but not yet fully surfaced in the admin UI.
+- Global elements are live references for frontend rendering; there is no revision history, permissions/locking, or change preview.
+- Library import/export currently supports the Nirmaan Builder JSON format only; no third-party builder conversion or media bundle migration.
+- Cart/checkout output delegates to WooCommerce native shortcodes. This is not a full visual cart/checkout component designer and must be checked against the active theme, checkout blocks, payment gateways and extensions.
+- No custom form builder, animation timeline, role editor, or complete revision/history interface.
+- Automated tests are smoke/static feature checks plus PHP lint, not full WordPress integration or browser end-to-end tests.
+- Header/footer rendering requires the active theme to call `wp_body_open()` and `wp_footer()`.
+- Test on staging with the target theme, WordPress version, WooCommerce version, payment/shipping plugins and product types before production deployment.
 
 ## Verification
-GitHub Actions checks PHP syntax and builds the JavaScript bundle. A passing CI run does not replace manual WordPress and WooCommerce integration testing.
+GitHub Actions checks PHP syntax, JavaScript syntax and builder feature smoke tests. Passing these checks does not establish full runtime compatibility or production readiness.
