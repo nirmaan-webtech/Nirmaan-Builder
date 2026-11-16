@@ -61,3 +61,15 @@ test('editor exposes layers, duplicate, undo/redo and keyboard shortcuts', () =>
   const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
   assert.match(admin, /id="nirmaan-layers"/);
 });
+
+test('layers support collapse, rename, visibility, lock and wireframe view', () => {
+  assert.match(builder, /collapsedLayers/);
+  assert.match(builder, /Rename layer/);
+  assert.match(builder, /Toggle visibility/);
+  assert.match(builder, /Toggle lock/);
+  assert.match(builder, /settings\.hidden/);
+  assert.match(builder, /settings\.locked/);
+  assert.match(builder, /nb-wireframe/);
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  assert.match(admin, /id="nirmaan-view-toggle"/);
+});
