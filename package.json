@@ -1,0 +1,16 @@
+{
+  "name": "nirmaan-builder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "React editor workspace for the Nirmaan Builder WordPress plugin.",
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build",
+    "lint:js": "wp-scripts lint-js src",
+    "lint:css": "wp-scripts lint-style assets",
+    "format": "wp-scripts format"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.0.0"
+  }
+}
