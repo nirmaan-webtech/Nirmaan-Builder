@@ -11,7 +11,7 @@ test('editor supports nested nodes and responsive device settings', () => {
   assert.match(builder, /containsId/);
   assert.match(builder, /nb-nested-children/);
   assert.ok(builder.includes("['desktop','tablet','mobile']"));
-  assert.match(builder, /hide_\+device/);
+  assert.ok(builder.includes("hide_'+device"));
 });
 
 test('editor exposes WooCommerce layout modules', () => {
