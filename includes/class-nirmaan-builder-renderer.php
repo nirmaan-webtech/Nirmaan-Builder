@@ -64,6 +64,8 @@ class Renderer {
 	}
 	private function woo_module( $type ) {
 		if ( ! function_exists( 'wc_get_product' ) ) { return '<!-- WooCommerce module unavailable: WooCommerce is inactive. -->'; }
+		if ( 'related_products' === $type ) { return do_shortcode( '[related_products limit="4"]' ); }
+		if ( 'shop_products' === $type ) { return do_shortcode( '[products limit="8" columns="4"]' ); }
 		global $product;
 		if ( ! $product && get_the_ID() ) { $product = wc_get_product( get_the_ID() ); }
 		if ( ! $product ) { return ''; }
@@ -75,8 +77,6 @@ class Renderer {
 			'product_description' => 'woocommerce_template_single_excerpt',
 			'product_rating' => 'woocommerce_template_single_rating',
 		);
-		if ( 'related_products' === $type ) { return do_shortcode( '[related_products limit="4"]' ); }
-		if ( 'shop_products' === $type ) { return do_shortcode( '[products limit="8" columns="4"]' ); }
 		if ( empty( $map[ $type ] ) || ! function_exists( $map[ $type ] ) ) { return ''; }
 		ob_start(); call_user_func( $map[ $type ] ); return ob_get_clean();
 	}
