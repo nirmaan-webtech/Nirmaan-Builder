@@ -5,11 +5,49 @@ class Admin{
  public function hooks(){add_action('admin_menu',array($this,'register_menu'));add_action('admin_enqueue_scripts',array($this,'enqueue_assets'));add_action('add_meta_boxes',array($this,'add_builder_metabox'));add_filter('page_row_actions',array($this,'row_builder_link'),10,2);add_filter('post_row_actions',array($this,'row_builder_link'),10,2);}
  public function register_menu(){$cap='edit_posts';add_menu_page('Nirmaan Builder','Nirmaan Builder',$cap,'nirmaan-builder',array($this,'render_dashboard'),'dashicons-layout',58);add_submenu_page('nirmaan-builder','Theme Option','Theme Option',$cap,'nirmaan-builder',array($this,'render_dashboard'));add_submenu_page('nirmaan-builder','Theme Builder','Theme Builder','edit_theme_options','nirmaan-theme-builder',array($this,'render_theme_builder'));add_submenu_page('nirmaan-builder','Library','Library',$cap,'nirmaan-library',array($this,'render_library'));add_submenu_page(null,'Visual Editor','Visual Editor',$cap,'nirmaan-editor',array($this,'render_editor'));}
  public function enqueue_assets($hook){if(false===strpos((string)$hook,'nirmaan'))return;wp_enqueue_style('nirmaan-builder-admin',NIRMAAN_BUILDER_URL.'assets/css/admin.css',array(),NIRMAAN_BUILDER_VERSION);$config=array('apiRoot'=>esc_url_raw(rest_url('nirmaan-builder/v1/')),'nonce'=>wp_create_nonce('wp_rest'));if('admin_page_nirmaan-editor'===$hook){wp_enqueue_style('nirmaan-builder-editor',NIRMAAN_BUILDER_URL.'assets/css/editor.css',array(),NIRMAAN_BUILDER_VERSION);wp_enqueue_script('nirmaan-builder-editor',NIRMAAN_BUILDER_URL.'assets/js/builder.js',array(),NIRMAAN_BUILDER_VERSION,true);$post_id=absint($_GET['post_id']??0);$template_id=absint($_GET['template_id']??0);$library_id=absint($_GET['library_id']??0);$part=sanitize_key($_GET['part']??'body');wp_localize_script('nirmaan-builder-editor','NirmaanBuilderConfig',array_merge($config,array('postId'=>$post_id,'templateId'=>$template_id,'libraryId'=>$library_id,'part'=>in_array($part,array('header','body','footer'),true)?$part:'body')));}
- if(in_array($hook,array('nirmaan-builder_page_nirmaan-theme-builder','nirmaan-builder_page_nirmaan-library'),true)){wp_enqueue_script('nirmaan-builder-admin-actions',NIRMAAN_BUILDER_URL.'assets/js/admin-actions.js',array(),NIRMAAN_BUILDER_VERSION,true);wp_localize_script('nirmaan-builder-admin-actions','NirmaanBuilderAdminConfig',$config);}}
+ if(in_array($hook,array('toplevel_page_nirmaan-builder','nirmaan-builder_page_nirmaan-theme-builder','nirmaan-builder_page_nirmaan-library'),true)){
+ if('toplevel_page_nirmaan-builder'===$hook)wp_enqueue_media();
+ wp_enqueue_script('nirmaan-builder-admin-actions',NIRMAAN_BUILDER_URL.'assets/js/admin-actions.js',array('jquery'),NIRMAAN_BUILDER_VERSION,true);
+ wp_localize_script('nirmaan-builder-admin-actions','NirmaanBuilderAdminConfig',$config);
+}}
  public function add_builder_metabox(){foreach(get_post_types(array('public'=>true),'names') as $type)add_meta_box('nirmaan-builder','Nirmaan Builder',array($this,'render_builder_metabox'),$type,'side','high');}
  public function render_builder_metabox($post){if(!current_user_can('edit_post',$post->ID))return;$url=add_query_arg(array('page'=>'nirmaan-editor','post_id'=>$post->ID),admin_url('admin.php'));echo '<p>'.esc_html__('Design this content with Nirmaan Builder.','nirmaan-builder').'</p><a class="button button-primary" href="'.esc_url($url).'">'.esc_html__('Edit with Nirmaan Builder','nirmaan-builder').'</a>';}
  public function row_builder_link($actions,$post){if(!is_object($post)||!current_user_can('edit_post',$post->ID))return $actions;$url=add_query_arg(array('page'=>'nirmaan-editor','post_id'=>$post->ID),admin_url('admin.php'));$actions['nirmaan_builder']='<a href="'.esc_url($url).'">'.esc_html__('Edit with Nirmaan Builder','nirmaan-builder').'</a>';return $actions;}
- public function render_dashboard(){$this->screen('Nirmaan Builder','Build page layouts, assign templates, and manage reusable global elements.');}
+ public function render_dashboard(){
+ if(!current_user_can('manage_options'))wp_die(esc_html__('Permission denied.','nirmaan-builder'));
+ $s=Settings::get();
+ $logo=$s['logo_id']?wp_get_attachment_image_url($s['logo_id'],'medium'):'';
+ $favicon=$s['favicon_id']?wp_get_attachment_image_url($s['favicon_id'],'thumbnail'):'';
+ ?>
+ <div class="wrap nirmaan-builder-admin nb-theme-options">
+ <h1>Nirmaan Builder — Theme Options</h1><p>Manage global branding and design tokens used by builder layouts.</p>
+ <form id="nirmaan-theme-settings">
+ <div class="nb-settings-grid">
+ <section class="nb-settings-card"><h2>Branding</h2>
+ <input type="hidden" name="logo_id" value="<?php echo esc_attr($s['logo_id']);?>">
+ <div class="nb-media-field"><strong>Site Logo</strong><div class="nb-media-preview" data-preview="logo"><?php if($logo):?><img src="<?php echo esc_url($logo);?>" alt="Site logo"><?php else:?>No logo selected<?php endif;?></div><button type="button" class="button nb-select-media" data-target="logo_id" data-preview="logo">Select Logo</button><button type="button" class="button nb-clear-media" data-target="logo_id" data-preview="logo">Clear</button></div>
+ <input type="hidden" name="favicon_id" value="<?php echo esc_attr($s['favicon_id']);?>">
+ <div class="nb-media-field"><strong>Favicon</strong><div class="nb-media-preview" data-preview="favicon"><?php if($favicon):?><img src="<?php echo esc_url($favicon);?>" alt="Favicon"><?php else:?>No favicon selected<?php endif;?></div><button type="button" class="button nb-select-media" data-target="favicon_id" data-preview="favicon">Select Favicon</button><button type="button" class="button nb-clear-media" data-target="favicon_id" data-preview="favicon">Clear</button></div>
+ </section>
+ <section class="nb-settings-card"><h2>Global Colors</h2>
+ <?php foreach(array('primary_color'=>'Primary','secondary_color'=>'Secondary','text_color'=>'Text','background_color'=>'Background') as $key=>$label):?>
+ <label><?php echo esc_html($label);?><input type="color" name="<?php echo esc_attr($key);?>" value="<?php echo esc_attr($s[$key]);?>"></label><?php endforeach;?>
+ </section>
+ <section class="nb-settings-card"><h2>Typography</h2>
+ <label>Font family<select name="font_family"><?php foreach(array('system'=>'System UI','Arial, sans-serif'=>'Arial','Georgia, serif'=>'Georgia','Tahoma, sans-serif'=>'Tahoma','Verdana, sans-serif'=>'Verdana') as $value=>$label):?><option value="<?php echo esc_attr($value);?>" <?php selected($s['font_family'],$value);?>><?php echo esc_html($label);?></option><?php endforeach;?></select></label>
+ <label>Base font size<input name="base_font_size" value="<?php echo esc_attr($s['base_font_size']);?>" placeholder="16px"></label>
+ </section>
+ <section class="nb-settings-card"><h2>Layout Defaults</h2>
+ <label>Container width<input name="container_width" value="<?php echo esc_attr($s['container_width']);?>" placeholder="1200px"></label>
+ <label>Section spacing<input name="section_spacing" value="<?php echo esc_attr($s['section_spacing']);?>" placeholder="32px"></label>
+ <label>Button radius<input name="button_radius" value="<?php echo esc_attr($s['button_radius']);?>" placeholder="4px"></label>
+ </section>
+ <section class="nb-settings-card nb-settings-wide"><h2>Custom CSS</h2><p>CSS is applied on the public frontend. Only trusted administrators should have access to this setting.</p><textarea name="custom_css" rows="8" spellcheck="false"><?php echo esc_textarea($s['custom_css']);?></textarea></section>
+ </div>
+ <p><button type="submit" class="button button-primary">Save Theme Options</button> <button type="button" id="nirmaan-reset-settings" class="button">Reset Defaults</button> <span id="nirmaan-settings-status" role="status" aria-live="polite"></span></p>
+ </form></div>
+ <?php
+}
  public function render_library(){if(!current_user_can('edit_posts'))wp_die(esc_html__('Permission denied.','nirmaan-builder'));$items=get_posts(array('post_type'=>'nirmaan_library','post_status'=>'publish','numberposts'=>200));?>
  <div class="wrap nirmaan-builder-admin"><h1>Library</h1><p>Reusable layouts and synchronized global elements.</p><p><button id="nirmaan-export-library" class="button">Export Library JSON</button> <label class="button">Import Library JSON <input id="nirmaan-import-library" type="file" accept="application/json,.json" hidden></label></p>
  <table class="widefat striped"><thead><tr><th>Layout</th><th>Type</th><th>Category</th><th>Actions</th></tr></thead><tbody><?php if(!$items):?><tr><td colspan="4">No saved layouts yet.</td></tr><?php endif;?><?php foreach($items as $item):?><tr><td><?php echo esc_html($item->post_title);?></td><td><?php echo get_post_meta($item->ID,'_nirmaan_global',true)?'Global Element':'Reusable Layout';?></td><td><?php echo esc_html(get_post_meta($item->ID,'_nirmaan_category',true));?></td><td><a class="button button-small" href="<?php echo esc_url(admin_url('admin.php?page=nirmaan-editor&library_id='.$item->ID));?>">Edit</a> <button class="button button-small nirmaan-delete-library" data-id="<?php echo esc_attr($item->ID);?>">Delete</button></td></tr><?php endforeach;?></tbody></table></div><?php }
