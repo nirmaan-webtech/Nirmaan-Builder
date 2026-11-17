@@ -155,17 +155,17 @@
 - [x] Overflow controls
 
 ## Phase 9 – Layers and Wireframe
-- [ ] Layers panel
-- [ ] Hierarchical element tree
-- [ ] Expand and collapse layers
-- [ ] Rename layers
-- [ ] Drag-and-drop layer ordering
-- [ ] Select elements from layers
-- [ ] Hide and lock from layers
-- [ ] Wireframe view
-- [ ] Visual view
-- [ ] Switch between editor views
-- [ ] Element navigator
+- [x] Layers panel
+- [x] Hierarchical element tree
+- [x] Expand and collapse layers
+- [x] Rename layers
+- [x] Drag-and-drop layer ordering
+- [x] Select elements from layers
+- [x] Hide and lock from layers
+- [x] Wireframe view
+- [x] Visual view
+- [x] Switch between editor views
+- [x] Element navigator
 
 ## Phase 10 – Modules / Elements
 - [ ] Text module
