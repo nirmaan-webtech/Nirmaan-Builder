@@ -547,3 +547,22 @@ test('Phase 20 scripts load WordPress gettext runtime for translations', () => {
     assert.match(file, /nirmaan-builder/);
   }
 });
+
+
+test('repository is packaged as a WordPress theme, not a plugin', () => {
+  const theme = fs.readFileSync('style.css', 'utf8');
+  const functions = fs.readFileSync('functions.php', 'utf8');
+  const header = fs.readFileSync('header.php', 'utf8');
+  const footer = fs.readFileSync('footer.php', 'utf8');
+  const bootstrap = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  assert.match(theme, /Theme Name:\\s*Nirmaan Builder/);
+  assert.match(functions, /get_template_directory\\(\\)/);
+  assert.match(functions, /Theme::instance\\(\\)->boot/);
+  assert.match(header, /wp_head\\(\\)/);
+  assert.match(header, /wp_body_open\\(\\)/);
+  assert.match(footer, /wp_footer\\(\\)/);
+  assert.match(bootstrap, /class Theme/);
+  assert.match(bootstrap, /class-nirmaan-builder-content\\.php/);
+  assert.match(bootstrap, /load_theme_textdomain/);
+  assert.doesNotMatch(bootstrap, /load_plugin_textdomain/);
+});
