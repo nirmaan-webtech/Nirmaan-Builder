@@ -661,3 +661,24 @@ test('column widths are pointer-resizable and per-side spacing is persisted and 
     assert.ok(renderer.includes("'"+property+"'"), property + ' is not rendered');
   }
 });
+
+
+test('specialty sections expose asymmetric presets with responsive frontend rendering', () => {
+  assert.match(builder, /Specialty layout preset/);
+  for (const preset of ['1fr 2fr','2fr 1fr','1fr 1fr 2fr','2fr 1fr 1fr','1fr 2fr 1fr']) {
+    assert.ok(builder.includes(preset), 'missing specialty preset '+preset);
+  }
+  assert.match(builder, /previewDevice==='mobile'\?'1fr'/);
+  assert.match(renderer, /'specialty_section'===\$type/);
+  assert.match(renderer, /'gridTemplateColumns'\]\=\$device_style\['gridTemplateColumns'\]\?\?'mobile'/);
+});
+
+test('row column resizing balances an adjacent column and persists both widths', () => {
+  assert.match(builder, /adjacentStart/);
+  assert.match(builder, /pairTotal-next/);
+  assert.match(builder, /Column widths balanced and saved/);
+  assert.match(builder, /targetStyle\.flexBasis=value/);
+  assert.ok(rest.includes("'flexBasis'"));
+  assert.ok(renderer.includes("'flexBasis'=>'flex-basis'"));
+  assert.match(admin, /nb-column-width-handle/);
+});
