@@ -16,5 +16,19 @@ class Renderer {
   if(in_array($type,array('product_title','product_price','product_image','product_add_to_cart','product_description','product_rating','related_products','shop_products','cart','checkout','mini_cart','product_archive'),true)){$html.='<div class="nb-node '.$id.'" style="'.$style.'">'.$this->woo($type).'</div>';continue;}
   switch($type){case'heading':$l=min(6,max(1,absint($s['level']??2)));$html.=sprintf('<h%d class="nb-heading nb-node %s" style="%s">%s</h%d>',$l,esc_attr($id),esc_attr($style),esc_html($content),$l);break;case'text':$html.='<div class="nb-text nb-node '.esc_attr($id).'" style="'.esc_attr($style).'">'.wp_kses_post($content).'</div>';break;case'image':$u=esc_url($s['url']??'');if($u)$html.='<figure class="nb-image nb-node '.esc_attr($id).'" style="'.esc_attr($style).'"><img src="'.$u.'" alt="'.esc_attr($s['alt']??'').'" loading="lazy"></figure>';break;case'button':$html.='<p class="nb-button-wrap nb-node '.esc_attr($id).'" style="'.esc_attr($style).'"><a class="nb-button" href="'.esc_url($s['url']??'#').'">'.esc_html($content?:__('Button','nirmaan-builder')).'</a></p>';break;case'divider':$html.='<hr class="nb-divider nb-node '.esc_attr($id).'" style="'.esc_attr($style).'">';break;case'spacer':$h=min(1200,absint($s['height']??32));$html.='<div class="nb-spacer nb-node '.esc_attr($id).'" style="height:'.$h.'px;'.$style.'"></div>';break;case'container':case'columns':$html.='<div class="nb-container nb-node '.esc_attr($id).'" style="'.esc_attr($style).'">'.$this->render_nodes($n['children']??array()).'</div>';break;}
  }return $html;}
- private function inline_style($s){if(!is_array($s))return '';$map=array('padding'=>'padding','margin'=>'margin','fontSize'=>'font-size','color'=>'color','backgroundColor'=>'background-color','textAlign'=>'text-align','width'=>'width','maxWidth'=>'max-width','borderRadius'=>'border-radius','display'=>'display','gap'=>'gap');$out='';foreach($map as $k=>$prop)if(isset($s[$k])&&''!==$s[$k])$out.=$prop.':'.(in_array($k,array('color','backgroundColor'),true)?sanitize_hex_color($s[$k]):esc_attr($s[$k])).';';return $out;}
+ private function inline_style($s){
+  if(!is_array($s))return '';
+  $map=array('padding'=>'padding','margin'=>'margin','fontSize'=>'font-size','fontWeight'=>'font-weight','lineHeight'=>'line-height','letterSpacing'=>'letter-spacing','color'=>'color','backgroundColor'=>'background-color','borderColor'=>'border-color','borderWidth'=>'border-width','borderStyle'=>'border-style','textAlign'=>'text-align','width'=>'width','maxWidth'=>'max-width','minHeight'=>'min-height','borderRadius'=>'border-radius','boxShadow'=>'box-shadow','opacity'=>'opacity','display'=>'display','gap'=>'gap','flexDirection'=>'flex-direction','justifyContent'=>'justify-content','alignItems'=>'align-items');
+  $shadows=array('none'=>'none','soft'=>'0 2px 8px rgba(15,23,42,.08)','medium'=>'0 6px 18px rgba(15,23,42,.14)','strong'=>'0 12px 32px rgba(15,23,42,.22)');
+  $out='';
+  foreach($map as $key=>$property){
+   if(!isset($s[$key])||''===$s[$key])continue;
+   $value=$s[$key];
+   if('boxShadow'===$key)$value=$shadows[$value]??'none';
+   if(in_array($key,array('color','backgroundColor','borderColor'),true))$value=sanitize_hex_color($value)?:'';
+   else $value=esc_attr($value);
+   if(''!==$value)$out.=$property.':'.$value.';';
+  }
+  return $out;
+ }
 }
