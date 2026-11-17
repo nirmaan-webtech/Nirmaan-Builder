@@ -189,7 +189,7 @@
    const advanced=document.createElement('div');advanced.className='nb-responsive-settings nb-advanced-settings';
    const title=document.createElement('h3');title.textContent=t('HTML attributes');advanced.appendChild(title);
    field(advanced,'HTML ID','html_id',s.html_id||'',v=>{s.html_id=v.trim().replace(/[^a-zA-Z0-9_:-]/g,'').slice(0,80);});
-   field(advanced,'CSS classes (space separated)','css_class',s.css_class||'',v=>{s.css_class=v.split(/\\s+/).map(x=>x.replace(/[^a-zA-Z0-9_-]/g,'')).filter(Boolean).slice(0,12).join(' ');});
+   field(advanced,'CSS classes (space separated)','css_class',s.css_class||'',v=>{s.css_class=v.split(/\s+/).map(x=>x.replace(/[^a-zA-Z0-9_-]/g,'')).filter(Boolean).slice(0,12).join(' ');});
    p.appendChild(advanced);
   }
 
