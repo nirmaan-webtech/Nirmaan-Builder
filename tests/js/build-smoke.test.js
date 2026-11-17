@@ -374,3 +374,31 @@ test('frontend editor is loaded only for an authorized singular post in explicit
   assert.match(renderer, /wp_create_nonce\('wp_rest'\)/);
   assert.match(renderer, /wp_enqueue_style\('nirmaan-builder-frontend-edit'/);
 });
+
+
+test('WooCommerce builder exposes product detail, catalog, cart and checkout elements', () => {
+  for (const type of ['product_breadcrumbs','product_title','product_sale_flash','product_gallery','product_price','product_rating','product_stock','product_sku','product_categories','product_description','product_add_to_cart','product_meta','product_tabs','related_products','shop_products','product_archive','mini_cart','cart','checkout']) {
+    assert.ok(builder.includes("['"+type+"'"), type + ' editor module missing');
+    assert.ok(rest.includes("'"+type+"'"), type + ' REST allowlist missing');
+  }
+  assert.match(renderer, /woocommerce_output_product_data_tabs/);
+  assert.match(renderer, /woocommerce_template_single_add_to_cart/);
+  assert.match(renderer, /woocommerce_template_single_meta/);
+  assert.match(renderer, /woocommerce_show_product_images/);
+  assert.match(renderer, /woocommerce_breadcrumb/);
+  assert.match(renderer, /woocommerce_cart/);
+  assert.match(renderer, /woocommerce_checkout/);
+});
+
+test('WooCommerce catalog grids have bounded, sanitized display controls', () => {
+  assert.match(builder, /Products to show \(1–24\)/);
+  assert.match(builder, /Grid columns \(1–6\)/);
+  assert.match(builder, /Product category slug/);
+  assert.match(builder, /Enable pagination/);
+  assert.match(rest, /'woo'=>array\('limit'=>min\(24,max\(1,absint\(\$woo\['limit'\]\?\?8\)\)\)/);
+  assert.match(rest, /'popularity','rating','price','rand'/);
+  assert.match(renderer, /--nb-woo-columns/);
+  assert.match(renderer, /'paginate'=>\$paginate/);
+  assert.match(renderer, /'category'=>\$category/);
+  assert.match(renderer, /'limit'=>\$limit/);
+});

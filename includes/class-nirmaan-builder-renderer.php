@@ -28,7 +28,44 @@ class Renderer {
  public function filter_content($content){if(is_admin()||!is_main_query()||!in_the_loop())return $content;$doc=get_post_meta(get_the_ID(),'_nirmaan_builder_document',true);if(is_array($doc)&&!empty($doc['nodes'])&&(!metadata_exists('post',get_the_ID(),'_nirmaan_builder_enabled')||get_post_meta(get_the_ID(),'_nirmaan_builder_enabled',true)))return $this->render_nodes($doc['nodes']);$id=$this->assigned_template();if($id&&$this->part_is_active($id,'body')){$parts=get_post_meta($id,'_nirmaan_template_parts',true);if(!empty($parts['body']['nodes']))return $this->render_nodes($parts['body']['nodes']);}return $content;}
  public function render_header(){$this->render_part('header');}public function render_footer(){$this->render_part('footer');}
  private function render_part($part){if(is_admin())return;$id=$this->assigned_template();if(!$id||!in_array($part,array('header','footer'),true)||!$this->part_is_active($id,$part))return;$parts=get_post_meta($id,'_nirmaan_template_parts',true);if(isset($parts[$part]['nodes'])&&is_array($parts[$part]['nodes']))echo $this->render_nodes($parts[$part]['nodes']);}
- private function woo($type){if(!function_exists('wc_get_product'))return '<p class="nb-notice">WooCommerce is required for this element.</p>';if('cart'===$type)return do_shortcode('[woocommerce_cart]');if('checkout'===$type)return do_shortcode('[woocommerce_checkout]');if('product_archive'===$type)return do_shortcode('[products limit="12" columns="4" paginate="true"]');if('mini_cart'===$type){ob_start();if(function_exists('woocommerce_mini_cart'))woocommerce_mini_cart();return '<div class="nb-mini-cart">'.ob_get_clean().'</div>';}if('related_products'===$type)return do_shortcode('[related_products limit="4"]');if('shop_products'===$type)return do_shortcode('[products limit="8" columns="4"]');global $product;if(!$product&&get_the_ID())$product=wc_get_product(get_the_ID());if(!$product)return ''; $map=array('product_title'=>'woocommerce_template_single_title','product_price'=>'woocommerce_template_single_price','product_image'=>'woocommerce_show_product_images','product_add_to_cart'=>'woocommerce_template_single_add_to_cart','product_description'=>'woocommerce_template_single_excerpt','product_rating'=>'woocommerce_template_single_rating');if(empty($map[$type])||!function_exists($map[$type]))return '';ob_start();call_user_func($map[$type]);return ob_get_clean();}
+ private function woo($type,$settings=array()){
+  if(!function_exists('wc_get_product'))return '<p class="nb-notice">'.esc_html__('WooCommerce is required for this element.','nirmaan-builder').'</p>';
+  $options=is_array($settings['woo']??null)?$settings['woo']:array();
+  $limit=min(24,max(1,absint($options['limit']??8)));
+  $columns=min(6,max(1,absint($options['columns']??4)));
+  $orderby=sanitize_key($options['orderby']??'date');
+  if(!in_array($orderby,array('date','title','menu_order','popularity','rating','price','rand'),true))$orderby='date';
+  $order='ASC'===strtoupper((string)($options['order']??'DESC'))?'ASC':'DESC';
+  $category=sanitize_title($options['category']??'');
+  $paginate=!empty($options['paginate'])?'true':'false';
+  $shortcode=function($tag,$attributes){$parts=array();foreach($attributes as $key=>$value){if(''===$value||null===$value)continue;$parts[]=$key.'="'.esc_attr((string)$value).'"';}return do_shortcode('['.$tag.' '.implode(' ',$parts).']');};
+  if('cart'===$type)return do_shortcode('[woocommerce_cart]');
+  if('checkout'===$type)return do_shortcode('[woocommerce_checkout]');
+  if('mini_cart'===$type){ob_start();if(function_exists('woocommerce_mini_cart'))woocommerce_mini_cart();return '<div class="nb-mini-cart">'.ob_get_clean().'</div>';}
+  if('shop_products'===$type||'product_archive'===$type)return $shortcode('products',array('limit'=>$limit,'columns'=>$columns,'orderby'=>$orderby,'order'=>$order,'category'=>$category,'paginate'=>$paginate));
+  if('related_products'===$type)return $shortcode('related_products',array('limit'=>$limit,'columns'=>$columns));
+  if('product_breadcrumbs'===$type){ob_start();if(function_exists('woocommerce_breadcrumb'))woocommerce_breadcrumb();return ob_get_clean();}
+  global $product;
+  if(!$product&&get_the_ID())$product=wc_get_product(get_the_ID());
+  if(!$product)return '';
+  if('product_sku'===$type){$sku=$product->get_sku();return $sku?'<span class="nb-product-sku">'.esc_html__('SKU:','nirmaan-builder').' '.esc_html($sku).'</span>':'';}
+  if('product_stock'===$type)return function_exists('wc_get_stock_html')?wc_get_stock_html($product):'';
+  if('product_categories'===$type){$terms=get_the_terms($product->get_id(),'product_cat');if(is_wp_error($terms)||empty($terms))return '';return '<div class="nb-product-categories">'.esc_html__('Categories:','nirmaan-builder').' '.wp_kses_post(wc_get_product_category_list($product->get_id(),', ')).'</div>';}
+  $map=array(
+   'product_title'=>'woocommerce_template_single_title',
+   'product_price'=>'woocommerce_template_single_price',
+   'product_image'=>'woocommerce_show_product_images',
+   'product_gallery'=>'woocommerce_show_product_images',
+   'product_add_to_cart'=>'woocommerce_template_single_add_to_cart',
+   'product_description'=>'woocommerce_template_single_excerpt',
+   'product_rating'=>'woocommerce_template_single_rating',
+   'product_meta'=>'woocommerce_template_single_meta',
+   'product_sale_flash'=>'woocommerce_show_product_sale_flash',
+   'product_tabs'=>'woocommerce_output_product_data_tabs'
+  );
+  if(empty($map[$type])||!function_exists($map[$type]))return '';
+  ob_start();call_user_func($map[$type]);return ob_get_clean();
+ }
  private function dynamic_value($settings){
   $binding=$settings['dynamic']??array();if(empty($binding['enabled']))return null;$post_id=get_the_ID();$value='';
   switch($binding['source']??''){
@@ -52,7 +89,7 @@ class Renderer {
    $html.='<div class="nb-query-loop nb-node '.$id.'" style="'.$style.'">'.$loop_html.'</div>';continue;
   }
   if('global_element'===$type){$gid=absint($s['library_id']??0);$g=get_post_meta($gid,'_nirmaan_library_document',true);if($gid&&get_post_meta($gid,'_nirmaan_global',true)&&is_array($g))$html.=$this->render_nodes($g['nodes']??array());continue;}
-  if(in_array($type,array('product_title','product_price','product_image','product_add_to_cart','product_description','product_rating','related_products','shop_products','cart','checkout','mini_cart','product_archive'),true)){$html.='<div class="nb-node '.$id.'" style="'.$style.'">'.$this->woo($type).'</div>';continue;}
+  if(in_array($type,array('product_title','product_price','product_image','product_gallery','product_add_to_cart','product_description','product_rating','product_meta','product_sale_flash','product_tabs','product_sku','product_stock','product_categories','product_breadcrumbs','related_products','shop_products','cart','checkout','mini_cart','product_archive'),true)){$woo_style=$style;if(in_array($type,array('related_products','shop_products','product_archive'),true))$woo_style.='--nb-woo-columns:'.min(6,max(1,absint($s['woo']['columns']??4))).';';$html.='<div class="nb-woo-element nb-woo-'.esc_attr($type).' nb-node '.$id.'" style="'.$woo_style.'">'.$this->woo($type,$s).'</div>';continue;}
   switch($type){case'heading':$l=min(6,max(1,absint($s['level']??2)));$html.=sprintf('<h%d class="nb-heading nb-node %s" style="%s">%s</h%d>',$l,esc_attr($id),esc_attr($style),esc_html($content),$l);break;case'text':$html.='<div class="nb-text nb-node '.esc_attr($id).'" style="'.esc_attr($style).'">'.wp_kses_post($content).'</div>';break;case'image':$u=esc_url($s['url']??'');if($u)$html.='<figure class="nb-image nb-node '.esc_attr($id).'" style="'.esc_attr($style).'"><img src="'.$u.'" alt="'.esc_attr($s['alt']??'').'" loading="lazy"></figure>';break;case'button':$html.='<p class="nb-button-wrap nb-node '.esc_attr($id).'" style="'.esc_attr($style).'"><a class="nb-button" href="'.esc_url($s['url']??'#').'">'.esc_html($content?:__('Button','nirmaan-builder')).'</a></p>';break;case'divider':$html.='<hr class="nb-divider nb-node '.esc_attr($id).'" style="'.esc_attr($style).'">';break;case'spacer':$h=min(1200,absint($s['height']??32));$html.='<div class="nb-spacer nb-node '.esc_attr($id).'" style="height:'.$h.'px;'.$style.'"></div>';break;case'section':case'row':case'column':case'container':case'columns':$html.='<div class="nb-layout nb-layout-'.esc_attr($type).' nb-node '.esc_attr($id).'" style="'.esc_attr($style).'">'.$this->render_nodes($n['children']??array(),$depth+1).'</div>';break;}
  }return $html;}
  private function inline_style($s){
