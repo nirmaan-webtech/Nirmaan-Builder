@@ -182,7 +182,7 @@ class Rest {
   $simple=array('padding','margin','paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft','fontSize','fontWeight','lineHeight','letterSpacing','borderWidth','width','flexBasis','maxWidth','minHeight','borderRadius','opacity','gap','top','right','bottom','left','zIndex');
   foreach($simple as $key)if(isset($style[$key]))$out[$key]=preg_replace('/[^0-9a-zA-Z.%\\- ]/','',substr((string)$style[$key],0,32));
   foreach(array('color','backgroundColor','borderColor') as $key)if(isset($style[$key]))$out[$key]=sanitize_hex_color($style[$key])?:'';
-  foreach(array('textAlign','display','borderStyle','flexDirection','flexWrap','justifyContent','alignItems','position','overflow') as $key)if(isset($style[$key]))$out[$key]=sanitize_key($style[$key]);
+  foreach(array('textAlign','display','borderStyle','flexDirection','flexWrap','justifyContent','alignItems','position','overflow','alignSelf') as $key)if(isset($style[$key]))$out[$key]=sanitize_key($style[$key]);
   if(isset($style['gridTemplateColumns'])){$value=trim((string)$style['gridTemplateColumns']);$out['gridTemplateColumns']=preg_match('/^[0-9.]+(fr|%|px|rem)(\\s+[0-9.]+(fr|%|px|rem)){0,11}$/',$value)?$value:'';}
   if(isset($style['boxShadow'])){$value=sanitize_key($style['boxShadow']);$out['boxShadow']=in_array($value,array('none','soft','medium','strong'),true)?$value:'';}
   if(isset($style['backgroundImage'])){$value=trim((string)$style['backgroundImage']);$safe=preg_match('/^(linear|radial)-gradient\\([#a-zA-Z0-9.,%()\\s+\\-]{1,180}\\)$/i',$value)&&!preg_match('/url|var|expression|javascript/i',$value);$out['backgroundImage']=$safe?$value:'';}
