@@ -16,3 +16,5 @@
 .nb-layer-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0}.nb-layer-toolbar input{grid-column:1/-1;width:100%;box-sizing:border-box}.nb-layer-toolbar .button{font-size:11px;padding:2px 5px}.nb-layer-row-wrap{flex-wrap:wrap}.nb-layer-mini:disabled{opacity:.35;cursor:not-allowed}.nb-layer-navigator{margin-top:9px;padding:8px;border:1px solid #dcdcde;background:#fff;font-size:11px}.nb-layer-breadcrumbs{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:5px}.nb-layer-breadcrumbs button{border:0;background:transparent;color:#135e96;padding:0;cursor:pointer;font-size:11px}.nb-layer-breadcrumbs button:disabled{color:#1d2327;font-weight:600;cursor:default}
 
 .nb-hover-settings{background:#f8fafc;border:1px solid #dbe3ec;border-radius:4px;padding:10px}.nb-hover-settings p{font-size:11px;color:#64748b;margin:4px 0 8px}.nb-hover-settings label{margin-top:8px}
+
+.nb-breakpoint-settings{border-top:1px solid #dcdcde;margin-top:14px;padding-top:10px}.nb-breakpoint-settings p{font-size:11px;color:#646970}.nb-breakpoint-settings input{max-width:120px}.nb-breakpoint-settings .button{margin-top:8px}
