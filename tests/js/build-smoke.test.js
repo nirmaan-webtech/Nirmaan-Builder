@@ -786,10 +786,14 @@ test('WooCommerce grids persist and apply price, sale and stock filters', () => 
   assert.match(builder, /woo_min_price/);
   assert.match(builder, /woo_max_price/);
   assert.match(builder, /on_sale/);
-  assert.match(builder, /in_stock/);\n  assert.match(builder, /woo_title_tag/);\n  assert.match(builder, /woo_image_size/);
+  assert.match(builder, /in_stock/);
+  assert.match(builder, /woo_title_tag/);
+  assert.match(builder, /woo_image_size/);
   assert.match(rest, /min_price/);
   assert.match(rest, /max_price/);
-  assert.match(renderer, /stock_status/);\n  assert.match(renderer, /nb-product-title/);\n  assert.match(renderer, /wp_get_attachment_image\(\$image_id,\$size/);
+  assert.match(renderer, /stock_status/);
+  assert.match(renderer, /nb-product-title/);
+  assert.match(renderer, /wp_get_attachment_image\(\$image_id,\$size/);
   assert.match(renderer, /on_sale/);
 });
 
