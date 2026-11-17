@@ -359,6 +359,8 @@
 - [x] Library permissions
 - [x] Multilingual compatibility (WPML/Polylang hooks, translatable templates/Library records, translated builder strings at render time)
 - [x] Translation-ready strings (PHP gettext text domain, wp-i18n script dependencies, script translation loading and catalog workflow)
+- [ ] Live WPML/Polylang staging verification
+- [ ] Multi-role WordPress staging verification (ownership boundaries and denied REST requests)
 
 ## Phase 21 – Performance, SEO and Accessibility
 - [ ] Optimized frontend CSS
