@@ -17,3 +17,5 @@
 .nb-button-small{padding:8px 14px;font-size:.875rem}.nb-button-large{padding:16px 28px;font-size:1.125rem}.nb-button-full{display:block;text-align:center;width:100%;box-sizing:border-box}
 .nb-tabs-vertical{display:grid;grid-template-columns:minmax(130px,220px) minmax(0,1fr);gap:16px}.nb-tabs-vertical .nb-tab-labels{display:flex;flex-direction:column;border:0}.nb-tabs-vertical .nb-tab-labels label{border:1px solid #e2e8f0;border-radius:4px}.nb-tabs-align-center .nb-tab-labels{justify-content:center}.nb-tabs-align-end .nb-tab-labels{justify-content:flex-end}
 @media(max-width:767px){.nb-tabs-vertical{grid-template-columns:1fr}.nb-tabs-vertical .nb-tab-labels{flex-direction:row;flex-wrap:wrap}}
+
+.nb-video-ratio-4-3{aspect-ratio:4/3}.nb-video-ratio-1-1{aspect-ratio:1/1}.nb-video-ratio-16-9{aspect-ratio:16/9}
