@@ -60,7 +60,7 @@ test('editor exposes layers, duplicate, undo/redo and keyboard shortcuts', () =>
   assert.match(builder, /nirmaan-undo/);
   assert.match(builder, /nirmaan-redo/);
   assert.match(builder, /const checkpoint=/);
-  assert.match(builder, /textContent='Duplicate'/);
+  assert.match(builder, /textContent=t\('Duplicate'\)/);
   assert.match(builder, /e\.key\.toLowerCase\(\)==='d'/);
   assert.match(builder, /e\.shiftKey\?redo\(\):undo\(\)/);
   const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
@@ -291,7 +291,7 @@ test('responsive editing supports custom breakpoints and inherited device styles
   assert.match(settings, /\$mobile >= \$tablet/);
   assert.ok(settings.includes("$out['breakpoints']"));
   assert.match(builder, /function getInheritedNodeStyle/);
-  assert.match(builder, /Reset '\+device\+' overrides/);
+  assert.match(builder, /t\('Reset '\)\+device\+' overrides/);
   assert.match(builder, /Save breakpoints/);
   assert.match(builder, /responsiveBreakpoints\.tablet/);
   assert.match(renderer, /Settings::get\(\)\['breakpoints'\]/);
