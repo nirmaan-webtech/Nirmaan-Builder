@@ -271,3 +271,19 @@ Scope limitations:
 - These are responsive CSS layout controls, not a complete Divi 4 layout engine. They do not yet implement true specialty-section column templates, drag-resizable column ratios, equal-height behavior, row/column structural constraints, or per-side spacing controls.
 - The schema uses the existing generic style pipeline; no new REST settings object was added.
 - Browser-level WordPress testing and executable test runs remain pending.
+
+
+## 11. Layout Advanced attributes — first slice
+
+Added Advanced controls for layout elements (Section, Fullwidth Section, Specialty Section, Row, Column, Container and Columns):
+- HTML ID, sanitized with WordPress `sanitize_html_class` and length-limited in the editor.
+- Space-separated CSS classes, sanitized token-by-token and capped at 12 classes.
+- REST document sanitizer now persists both fields.
+- Frontend renderer applies the custom ID and classes to the rendered layout wrapper.
+- Added source-level regression assertions covering editor, REST sanitizer and renderer.
+
+Scope limitations:
+- Custom ID/classes currently apply to layout wrappers only; module-level attributes are still outstanding.
+- No custom CSS editor, JavaScript hooks, ARIA attribute builder, or per-device attribute variants are included.
+- Duplicate HTML IDs are not automatically detected across the document.
+- No executable test run or live WordPress browser verification has been performed in this workflow.
