@@ -334,6 +334,7 @@ test('Gutenberg integration exposes a Builder sidebar and preserves native edito
   assert.match(gutenberg, /_nirmaan_builder_enabled/);
   assert.match(contentTypes, /register_post_meta/);
   assert.match(contentTypes, /'show_in_rest' => true/);
+  assert.match(contentTypes, /add_post_type_support\( \$post_type, 'custom-fields' \)/);
   assert.match(renderer, /metadata_exists\('post',get_the_ID\(\),'_nirmaan_builder_enabled'\)/);
   assert.match(rest, /update_post_meta\(\$id,'_nirmaan_builder_enabled',true\)/);
 });
