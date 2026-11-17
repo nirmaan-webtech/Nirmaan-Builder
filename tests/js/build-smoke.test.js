@@ -6,6 +6,7 @@ const actions = fs.readFileSync('assets/js/admin-actions.js', 'utf8');
 const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
 const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
 const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+const frontendEditor = fs.readFileSync('assets/js/frontend-edit.js', 'utf8');
 const gutenberg = fs.readFileSync('assets/js/gutenberg.js', 'utf8');
 const contentTypes = fs.readFileSync('includes/class-nirmaan-builder-content.php', 'utf8');
 const plugin = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
@@ -348,4 +349,28 @@ test('Classic Editor and public custom post types receive Builder controls safel
   assert.match(admin, /Open Visual Builder/);
   assert.match(contentTypes, /get_post_types\( array\( 'public' => true \), 'names' \)/);
   assert.ok(plugin.includes("register_content_types' ), 5"));
+});
+
+
+test('frontend preview and authenticated inline editing are available for editable posts', () => {
+  assert.match(admin, /Open Frontend Preview/);
+  assert.match(renderer, /enqueue_frontend_editor/);
+  assert.match(renderer, /is_user_logged_in\(\)/);
+  assert.match(renderer, /current_user_can\('edit_post',\$post_id\)/);
+  assert.match(renderer, /get_post_meta\(\$post_id,'_nirmaan_builder_enabled',true\)/);
+  assert.ok(renderer.includes("'1'!==sanitize_text_field(wp_unslash($_GET['nirmaan_frontend_edit']??''))"));
+  assert.match(renderer, /add_frontend_edit_link/);
+  assert.match(renderer, /admin_bar_menu/);
+  assert.match(frontendEditor, /contentEditable = 'true'/);
+  assert.match(frontendEditor, /api\('content\/' \+ cfg\.postId/);
+  assert.match(frontendEditor, /method: 'POST'/);
+  assert.match(frontendEditor, /beforeunload/);
+  assert.match(rest, /update_post_meta\(\$id,'_nirmaan_builder_document',\$doc\)/);
+  assert.match(rest, /update_post_meta\(\$id,'_nirmaan_builder_enabled',true\)/);
+});
+
+test('frontend editor is loaded only for an authorized singular post in explicit edit mode', () => {
+  assert.match(renderer, /!is_singular\(\)\|\|!is_user_logged_in\(\)/);
+  assert.match(renderer, /wp_create_nonce\('wp_rest'\)/);
+  assert.match(renderer, /wp_enqueue_style\('nirmaan-builder-frontend-edit'/);
 });

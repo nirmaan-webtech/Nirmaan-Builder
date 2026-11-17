@@ -4,8 +4,23 @@ if(!defined('ABSPATH')){exit;}
 class Renderer {
  private $style_presets=null;
  private function get_style_preset($id){if(!$id)return array();if(null===$this->style_presets){$items=get_option('nirmaan_builder_style_presets',array());$this->style_presets=is_array($items)?$items:array();}return $this->style_presets[$id]['styles']??array();}
- public function hooks(){add_filter('the_content',array($this,'filter_content'),20);add_action('wp_body_open',array($this,'render_header'),5);add_action('wp_footer',array($this,'render_footer'),5);add_action('wp_enqueue_scripts',array($this,'enqueue_styles'));}
+ public function hooks(){add_filter('the_content',array($this,'filter_content'),20);add_action('wp_body_open',array($this,'render_header'),5);add_action('wp_footer',array($this,'render_footer'),5);add_action('wp_enqueue_scripts',array($this,'enqueue_styles'));add_action('wp_enqueue_scripts',array($this,'enqueue_frontend_editor'),30);add_action('admin_bar_menu',array($this,'add_frontend_edit_link'),90);}
  public function enqueue_styles(){wp_enqueue_style('nirmaan-builder-frontend',NIRMAAN_BUILDER_URL.'assets/css/frontend.css',array(),NIRMAAN_BUILDER_VERSION);}
+ public function enqueue_frontend_editor(){
+  if(is_admin()||!is_singular()||!is_user_logged_in())return;
+  $post_id=get_queried_object_id();
+  $document=get_post_meta($post_id,'_nirmaan_builder_document',true);
+  if(!$post_id||!current_user_can('edit_post',$post_id)||!get_post_meta($post_id,'_nirmaan_builder_enabled',true)||!is_array($document)||empty($document['nodes'])||'1'!==sanitize_text_field(wp_unslash($_GET['nirmaan_frontend_edit']??'')))return;
+  wp_enqueue_style('nirmaan-builder-frontend-edit',NIRMAAN_BUILDER_URL.'assets/css/frontend-edit.css',array(),NIRMAAN_BUILDER_VERSION);wp_enqueue_script('nirmaan-builder-frontend-editor',NIRMAAN_BUILDER_URL.'assets/js/frontend-edit.js',array(),NIRMAAN_BUILDER_VERSION,true);
+  wp_localize_script('nirmaan-builder-frontend-editor','NirmaanBuilderFrontendConfig',array('apiRoot'=>esc_url_raw(rest_url('nirmaan-builder/v1/')),'nonce'=>wp_create_nonce('wp_rest'),'postId'=>$post_id));
+ }
+ public function add_frontend_edit_link($bar){
+  if(is_admin()||!is_singular()||!is_user_logged_in())return;
+  $post_id=get_queried_object_id();$document=get_post_meta($post_id,'_nirmaan_builder_document',true);if(!$post_id||!current_user_can('edit_post',$post_id)||!get_post_meta($post_id,'_nirmaan_builder_enabled',true)||!is_array($document)||empty($document['nodes']))return;
+  $url=add_query_arg('nirmaan_frontend_edit','1',get_permalink($post_id));
+  $bar->add_node(array('id'=>'nirmaan-frontend-edit','title'=>__('Edit Frontend','nirmaan-builder'),'href'=>$url));
+ }
+
  private function assigned_template(){$templates=get_posts(array('post_type'=>'nirmaan_template','post_status'=>'publish','numberposts'=>200,'meta_key'=>'_nirmaan_priority','orderby'=>'meta_value_num','order'=>'DESC'));foreach($templates as $t){$c=get_post_meta($t->ID,'_nirmaan_conditions',true);if($this->matches_conditions(is_array($c)?$c:array()))return $t->ID;}return 0;}
  private function matches_conditions($c){$inc=$c['include']??array();$exc=$c['exclude']??array();$match=false;foreach($inc as $r)if($this->matches_rule($r)){$match=true;break;}if(!$match)return false;foreach($exc as $r)if($this->matches_rule($r))return false;return true;}
  private function part_is_active($template_id,$part){$settings=get_post_meta($template_id,'_nirmaan_part_settings',true);$settings=is_array($settings)?$settings:array();$config=$settings[$part]??array();if(isset($config['active'])&&!$config['active'])return false;$condition=sanitize_key($config['condition']??'');return ''===$condition||$this->matches_rule(array('type'=>$condition));}
