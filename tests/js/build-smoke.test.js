@@ -683,3 +683,13 @@ test('row column resizing balances an adjacent column and persists both widths',
   assert.ok(renderer.includes("'flexBasis'=>'flex-basis'"));
   assert.match(editorCss, /nb-column-width-handle/);
 });
+
+
+test('WordPress Media Library picker is available for Image, Gallery and Slider controls', () => {
+  assert.match(admin, /admin_page_nirmaan-editor'===\$hook\)\{wp_enqueue_media\(\)/);
+  assert.match(builder, /function mediaField\(parent,label,key,value,onChange\)/);
+  assert.match(builder, /window\.wp&&window\.wp\.media/);
+  assert.match(builder, /library:\{type:'image'\}/);
+  assert.match(builder, /image:\[\{key:'url',label:'Image',type:'media'\}/);
+  assert.match(builder, /mediaField\(row,'Image','url'/);
+});
