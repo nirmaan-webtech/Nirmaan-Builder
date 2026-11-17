@@ -10,7 +10,7 @@ class Renderer {
   if(is_admin()||!is_singular()||!is_user_logged_in())return;
   $post_id=get_queried_object_id();
   if(!$post_id||!current_user_can('edit_post',$post_id)||'1'!==sanitize_text_field(wp_unslash($_GET['nirmaan_frontend_edit']??'')))return;
-  wp_enqueue_script('nirmaan-builder-frontend-editor',NIRMAAN_BUILDER_URL.'assets/js/frontend-edit.js',array(),NIRMAAN_BUILDER_VERSION,true);
+  wp_enqueue_style('nirmaan-builder-frontend-edit',NIRMAAN_BUILDER_URL.'assets/css/frontend-edit.css',array(),NIRMAAN_BUILDER_VERSION);wp_enqueue_script('nirmaan-builder-frontend-editor',NIRMAAN_BUILDER_URL.'assets/js/frontend-edit.js',array(),NIRMAAN_BUILDER_VERSION,true);
   wp_localize_script('nirmaan-builder-frontend-editor','NirmaanBuilderFrontendConfig',array('apiRoot'=>esc_url_raw(rest_url('nirmaan-builder/v1/')),'nonce'=>wp_create_nonce('wp_rest'),'postId'=>$post_id));
  }
  public function add_frontend_edit_link($bar){
