@@ -16,7 +16,8 @@
  const uid=()=>'nb-'+Math.random().toString(36).slice(2,10);
  const saveLocalDraft=()=>{try{localStorage.setItem(recoveryKey,JSON.stringify({document:doc,savedAt:Date.now()}));}catch(e){}};
  const scheduleAutosave=()=>{if(!loaded)return;dirty=true;saveLocalDraft();clearTimeout(autosaveTimer);autosaveTimer=setTimeout(async()=>{try{await api('autosave/'+targetType+'/'+targetId+'?part='+encodeURIComponent(part),{method:'POST',body:JSON.stringify({part,document:doc})});status('Draft autosaved');}catch(e){status('Autosave unavailable — changes remain in this browser');}},2500);};
- const status=t=>{const e=document.querySelector('.nirmaan-save-status');if(e)e.textContent=t;if(t==='Unsaved changes')scheduleAutosave();};\n const markChanged=message=>{scheduleAutosave();status(message||'Unsaved changes');};
+ const status=t=>{const e=document.querySelector('.nirmaan-save-status');if(e)e.textContent=t;if(t==='Unsaved changes')scheduleAutosave();};
+ const markChanged=message=>{scheduleAutosave();status(message||'Unsaved changes');};
  const make=type=>({id:uid(),type,settings:{content:type==='heading'?'Your heading':type==='text'?'Add your text here.':type==='button'?'Click here':'',url:'',alt:'',level:2,height:32,desktop:{},tablet:{},mobile:{}},...(type==='container'||type==='columns'?{children:[]}:{})});
  const list=document.getElementById('nirmaan-module-list');
  const find=(id,nodes=doc.nodes,parent=null)=>{for(let i=0;i<nodes.length;i++){const n=nodes[i];if(n.id===id)return {node:n,nodes,index:i,parent};if(n.children){const r=find(id,n.children,n);if(r)return r;}}return null;};
