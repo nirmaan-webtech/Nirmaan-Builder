@@ -133,3 +133,109 @@ This audit inspected repository source and existing automated tests on the audit
 ## 7. Audit conclusion
 
 The next implementation task is **Phase 2 of the roadmap: build the centralized, schema-driven settings engine and REST contract**. Do not begin by adding a large number of isolated inputs to the current `settings()` function. That would increase UI complexity without guaranteeing persistence or frontend behavior.
+
+
+## 8. Follow-up source audit — exact editor/REST/frontend findings
+
+The follow-up pass traced the settings panel, document sanitizer, frontend renderer, and existing smoke-test strategy. It confirms that the initial audit's gaps are structural, not just missing labels.
+
+### 8.1 Settings-panel behavior verified
+
+The current `settings()` implementation is a single function and builds controls through conditional branches. The following behaviors are directly visible in source:
+
+| Element type | Current editable content/settings | Finding |
+|---|---|---|
+| Heading | Text, heading level, dynamic binding, generic CSS | Basic controls only; no module-specific typography/design groups |
+| Text | Content, dynamic binding, generic CSS | No rich text/editor toolbar or text-specific advanced options |
+| Image | URL, alt text, dynamic binding, generic CSS | URL is manually entered; no media picker, dimensions, fit, caption, link target, lightbox |
+| Button | Text, URL, dynamic binding, generic CSS | No target/rel, icon, icon placement, button sizing or dedicated button states |
+| Video | URL, generic CSS | No provider/embed options, poster, aspect ratio, autoplay/mute/controls |
+| Gallery | Item URL, alt, link, title, generic CSS | No gallery mode, columns, gap, crop, lightbox or overlay controls |
+| Slider | Item URL, alt, link, title, generic CSS | No controls, pagination, autoplay, transition or timing settings |
+| Tabs | Item title/content, generic CSS | No active-state styling, orientation or interaction settings |
+| Accordion | Item title/content, generic CSS | No icon, multi-open behavior or state styling |
+| Blog / Portfolio | Post type, count, columns, generic CSS | No taxonomy/filter controls, metadata toggles, pagination design or card configuration |
+| Query Loop | Post type, count, order, child template | Basic query only; no taxonomy/date/author/exclude controls or pagination controls |
+| Form | Title, email, submit text, success text, webhook, fields/options/required/conditional display | More developed than basic modules, but no field-level design, notifications workflow UI, spam controls or robust conditional operators |
+| WooCommerce grids | Count, columns, category, sort, pagination | Basic query options |
+| Individual WooCommerce elements | Informational note only | No element-specific controls |
+| Section / Fullwidth / Specialty / Row / Column / Container / Columns | Generic content field, generic CSS/layout controls, column add/remove for Columns | No dedicated layout settings groups; irrelevant Content field is also exposed |
+
+**Confirmed UI defect:** the fallback branch `else if(n.type!=='form')` adds a generic Content textarea to almost every type not explicitly handled in the immediately preceding conditional chain. That includes layout nodes, Blog/Portfolio, Video-adjacent cases excluded by their explicit branch, and WooCommerce element nodes. This creates irrelevant controls and obscures the actual settings model. The fix belongs in the schema-driven renderer, not another set of special-case conditions.
+
+**Confirmed layout gap:** Section, Fullwidth Section, Specialty Section, Row and Column are not distinguished in the settings panel. They share generic fields. The Columns node has add/remove column buttons, but no proper per-column width/ratio controls beyond a generic grid-template-columns string.
+
+**Confirmed media workflow gap:** image, gallery and slider assets are URL text fields. No WordPress media modal is wired into those module settings.
+
+### 8.2 REST persistence contract verified
+
+The document sanitizer reconstructs each node's settings from an explicit allow-list. It persists common content fields, module items, form fields, dynamic binding, WooCommerce query settings, generic desktop/tablet/mobile style buckets, visibility flags and style preset references.
+
+The current `sanitize_style()` accepts a limited generic property set:
+- dimensions/spacing and typography primitives as filtered strings;
+- hex colors;
+- selected layout tokens;
+- grid-template-columns with a constrained grammar;
+- preset shadows;
+- gradient-only background image values;
+- constrained filter and transform functions;
+- animation presets/duration/delay/iteration/timing;
+- recursively sanitized hover styles.
+
+Consequences:
+1. A new editor field is not persistent until its value is added to the node sanitizer or a dedicated sanitizer.
+2. A value may survive REST but still do nothing unless the renderer maps it to CSS/markup/behavior.
+3. Several generic enum fields are passed through `sanitize_key()` rather than checked against a strict allow-list. This is not a raw-CSS injection path by itself, but it can preserve unsupported CSS tokens that render ineffectively.
+4. `sanitize_module_items()` uses one shared item shape for gallery, slider, tabs and accordion; this is insufficient for future module-specific item schemas.
+5. `sanitize_nodes()` limits nesting depth to 10 and each sibling list to 200 nodes; the frontend renderer has a separate depth limit of 8 and renders up to 300 siblings. The editor/REST/frontend limits are therefore not identical and should be normalized.
+
+### 8.3 Frontend renderer parity verified
+
+The renderer outputs:
+- Heading and text markup;
+- image and button markup;
+- divider and spacer;
+- nested layout wrappers;
+- form output through the Forms class;
+- native WooCommerce callbacks/shortcodes;
+- Gallery/Slider image lists;
+- CSS-radio Tabs and native details Accordion;
+- Blog/Portfolio WP_Query grids;
+- Video through WordPress oEmbed;
+- Query Loop child templates and custom module output through extension hooks.
+
+Important limitations:
+- Canvas module previews are hand-built DOM previews, not the same renderer output; e.g. Video is shown as URL text, Tabs/Accordion as stacked cards, and dynamic/WooCommerce output is not live-equivalent.
+- Gallery and Slider currently share the same horizontal/scroll-oriented item rendering path. The frontend CSS makes Gallery a grid and Slider a horizontal scroller, but there are no slider controls or autoplay behavior.
+- Tabs use a CSS selector implementation with hard-coded support for up to 12 panels.
+- Accordion renders the first item open by default; no configurable initial/open state is exposed.
+- Blog/Portfolio output is a simple image/title/excerpt card grid; the editor's post type/count/columns controls do not expose broader query or card options.
+- WooCommerce individual elements call native template functions with no element-specific setting payload; several types share the same callback (for example product image/gallery).
+- The renderer emits per-node `<style>` blocks for responsive and hover rules during node rendering. This works as a basic mechanism but is not an optimized consolidated stylesheet strategy.
+
+### 8.4 Existing automated tests: coverage quality
+
+The smoke tests largely assert that expected strings, function names, or code fragments exist. They are useful regression tripwires but do not execute the settings UI in a DOM, invoke REST sanitization with representative payloads, render actual frontend HTML in WordPress, or verify CSS in a browser.
+
+Therefore, a green smoke-test run can confirm source wiring, but it cannot establish:
+- that a setting control appears for the correct element;
+- that changing it updates state correctly;
+- that the REST sanitizer preserves the intended value;
+- that a saved/reloaded document retains it;
+- that the frontend output visibly changes;
+- that desktop/tablet/mobile inheritance matches the editor preview.
+
+### 8.5 Required architecture decisions before adding controls
+
+1. Introduce a single declarative registry keyed by element type, with Content / Design / Advanced groups, field type, default, options, unit, responsive support, validation and visibility dependencies.
+2. Use the same schema metadata to drive editor field rendering and client-side defaults; keep server-side sanitization authoritative and separately tested.
+3. Replace the generic fallback Content field with explicit content schemas per module.
+4. Define separate settings schemas for Section, Row, Column, Container and Columns. Do not model a layout as a generic module.
+5. Use per-module item schemas for Gallery, Slider, Tabs and Accordion.
+6. Add WordPress media-library selection for image-bearing fields.
+7. Create a shared style-property contract so editor, REST sanitizer and frontend renderer cannot silently drift.
+8. Add executable tests for field visibility, defaults, sanitizer round trips, responsive inheritance and rendered output before declaring a setting complete.
+
+### 8.6 Follow-up audit status
+
+This is a deeper source-level audit of the settings panel, REST sanitizer, renderer and smoke tests. It is still **not** a browser-level or XAMPP audit. No real WordPress save/reload, media modal, WooCommerce checkout, or frontend visual regression test has been performed. The next implementation phase can now begin with the schema/field engine and REST contract, but should retain staging/browser verification as a release blocker.
