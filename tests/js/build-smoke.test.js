@@ -293,3 +293,30 @@ test('responsive editing supports custom breakpoints and inherited device styles
   assert.match(renderer, /Settings::get\(\)\['breakpoints'\]/);
   assert.match(renderer, /min-width:/);
 });
+
+
+test('dynamic content supports protected custom fields and safe node bindings', () => {
+  assert.match(rest, /'\/custom-fields\/\(\?P<id>/);
+  assert.match(rest, /function get_custom_fields/);
+  assert.match(rest, /function save_custom_fields/);
+  assert.match(rest, /_nirmaan_builder_custom_fields/);
+  assert.match(rest, /sanitize_textarea_field/);
+  assert.match(rest, /'post_title','post_excerpt','post_permalink','post_date','post_author','featured_image','custom_field'/);
+  assert.match(builder, /Builder Custom Fields/);
+  assert.match(builder, /Save custom fields/);
+  assert.match(builder, /Dynamic Content/);
+  assert.match(renderer, /function dynamic_value/);
+  assert.match(renderer, /post_title/);
+  assert.match(renderer, /custom_field/);
+});
+
+test('Query Loop supports bounded public post queries and nested dynamic templates', () => {
+  assert.match(builder, /\['query_loop','Query Loop'\]/);
+  assert.match(builder, /Posts per page \(1–24\)/);
+  assert.match(rest, /'query_loop'/);
+  assert.match(rest, /posts_per_page/);
+  assert.match(renderer, /new \\WP_Query/);
+  assert.match(renderer, /nb-query-item/);
+  assert.match(renderer, /wp_reset_postdata/);
+  assert.match(renderer, /render_nodes\(\$n\['children'\]\?\?array\(\),\$depth\+1\)/);
+});
