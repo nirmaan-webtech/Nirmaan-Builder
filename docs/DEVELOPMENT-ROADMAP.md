@@ -214,9 +214,9 @@
 - [ ] Animation controls
 - [ ] Custom CSS per element
 - [x] Global design presets
-- [ ] Copy styles
-- [ ] Paste styles
-- [ ] Extend styles to multiple elements
+- [x] Copy styles
+- [x] Paste styles
+- [x] Extend styles to multiple elements
 - [ ] Find and replace design values
 - [ ] CSS variables and design tokens
 
