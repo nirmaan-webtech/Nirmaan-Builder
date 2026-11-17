@@ -213,7 +213,7 @@
 - [ ] Transition controls
 - [ ] Animation controls
 - [ ] Custom CSS per element
-- [ ] Global design presets
+- [x] Global design presets
 - [ ] Copy styles
 - [ ] Paste styles
 - [ ] Extend styles to multiple elements
@@ -435,7 +435,7 @@
 - Data safety: theme switching must not delete builder content.
 
 ## Additional scope requirements
-- Global Preset Synchronization: shared presets update all elements that use them.
+- [x] Global Preset Synchronization: shared presets update all elements that use them.
 - Builder Compatibility Layer: compatibility with existing themes, Gutenberg, third-party plugins and WooCommerce.
 - Developer Extensibility: documented custom modules, hooks, filters, APIs and extension points.
 
