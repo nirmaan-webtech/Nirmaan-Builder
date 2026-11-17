@@ -566,3 +566,20 @@ test('repository is packaged as a WordPress theme, not a plugin', () => {
   assert.match(bootstrap, /load_theme_textdomain/);
   assert.doesNotMatch(bootstrap, /load_plugin_textdomain/);
 });
+
+test('Canvas parity modules are allow-listed, persisted and rendered with real frontend output', () => {
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  for (const type of ['gallery','video','slider','tabs','accordion','blog','portfolio','fullwidth_section','specialty_section']) {
+    assert.ok(builder.includes("['"+type+"'"), type+' missing from editor module palette');
+    assert.ok(rest.includes("'"+type+"'"), type+' missing from REST sanitizer');
+  }
+  for (const type of ['gallery','video','slider','tabs','accordion','blog','portfolio']) assert.ok(renderer.includes("'"+type+"'"),type+' missing from frontend renderer');
+  assert.match(renderer, /wp_oembed_get/);
+  assert.match(renderer, /nb-tab-radio/);
+  assert.match(renderer, /<details/);
+  assert.match(renderer, /new \\\\WP_Query/);
+  assert.match(rest, /sanitize_module_items/);
+  assert.match(builder, /nb-preview-gallery/);
+  assert.match(builder, /nb-preview-panels/);
+  assert.match(builder, /query_columns/);
+});
