@@ -18,3 +18,5 @@
 .nb-hover-settings{background:#f8fafc;border:1px solid #dbe3ec;border-radius:4px;padding:10px}.nb-hover-settings p{font-size:11px;color:#64748b;margin:4px 0 8px}.nb-hover-settings label{margin-top:8px}
 
 .nb-breakpoint-settings{border-top:1px solid #dcdcde;margin-top:14px;padding-top:10px}.nb-breakpoint-settings p{font-size:11px;color:#646970}.nb-breakpoint-settings input{max-width:120px}.nb-breakpoint-settings .button{margin-top:8px}
+
+.nb-preview-gallery,.nb-preview-slider{display:flex;gap:10px;overflow:auto}.nb-preview-gallery img,.nb-preview-slider img{width:110px;height:80px;object-fit:cover;border-radius:4px}.nb-preview-panels{display:grid;gap:8px}.nb-preview-panel{border:1px solid #cbd5e1;padding:10px;border-radius:4px}.nb-resize-handle{position:absolute;right:0;bottom:0;width:14px;height:14px;padding:0;border:0;background:#2271b1;cursor:nwse-resize;touch-action:none;z-index:20}.nb-editor-element.is-primary-selected{position:relative}.nb-editor-element.is-primary-selected>.nb-resize-handle:after{content:'';position:absolute;inset:3px;border-right:2px solid #fff;border-bottom:2px solid #fff}
