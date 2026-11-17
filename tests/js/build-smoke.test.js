@@ -200,7 +200,7 @@ test('Theme Builder dashboard supports template search, status, rename and dupli
   assert.match(admin, /nirmaan-save-template-details/);
   assert.match(admin, /nirmaan-duplicate-template/);
   assert.match(actions, /searchTemplates/);
-  assert.match(actions, /templates\/'+b\.dataset\.id\+'\/duplicate/);
+  assert.match(actions, /duplicate-template/);
   assert.match(rest, /function duplicate_template/);
   assert.match(rest, /invalid_template_status/);
   assert.match(rest, /'status'=>get_post_status\(\$id\)/);
