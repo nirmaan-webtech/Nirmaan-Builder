@@ -117,8 +117,8 @@ test('design system exposes sanitized global tokens and advanced element styles'
   assert.match(rest, /boxShadow/);
   assert.match(rest, /flexDirection/);
   assert.match(builder, /Letter spacing/);
-  assert.match(builder, /Box shadow/);
+  assert.match(builder, /Shadow preset/);
   assert.match(builder, /Flex direction/);
   const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
-  assert.match(renderer, /'boxShadow'=>'box-shadow'/);
+  assert.match(renderer, /'boxShadow'=>'box-shadow'/);\n  assert.match(renderer, /$shadows=array/);
 });
