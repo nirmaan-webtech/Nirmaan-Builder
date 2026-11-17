@@ -238,6 +238,8 @@
    const pagination=document.createElement('label');const check=document.createElement('input');check.type='checkbox';check.checked=!!s.woo.paginate;check.onchange=()=>{checkpoint();s.woo.paginate=check.checked;markChanged('Pagination setting updated');};pagination.appendChild(check);pagination.appendChild(document.createTextNode(' Enable pagination'));p.appendChild(pagination);
    const note=document.createElement('p');note.textContent=t('The grid uses WooCommerce product queries and the active theme’s product loop templates.');p.appendChild(note);
   } else if(['product_title','product_price','product_image','product_gallery','product_add_to_cart','product_description','product_rating','product_meta','product_sale_flash','product_tabs','product_sku','product_stock','product_categories','product_breadcrumbs','cart','checkout','mini_cart'].includes(n.type)){
+   if(n.type==='product_title'){field(p,'Product title HTML tag (h1–h6)','woo_title_tag',s.woo_title_tag||'h1',v=>{s.woo_title_tag=v;});}
+   if(n.type==='product_image'){field(p,'Product image size (thumbnail/medium/large/full)','woo_image_size',s.woo_image_size||'large',v=>{s.woo_image_size=v;});}
    const note=document.createElement('p');note.textContent=t('This element renders live WooCommerce data and native WooCommerce functionality on the frontend. Preview it on a product, cart or checkout page.');p.appendChild(note);
   }
   if(n.type==='form'){
