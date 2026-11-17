@@ -279,3 +279,17 @@ test('advanced design controls are editable, sanitized and rendered on frontend'
   assert.ok(renderer.includes("'filter'=>'filter'"));
   assert.ok(renderer.includes("'transform'=>'transform'"));
 });
+
+
+test('responsive editing supports custom breakpoints and inherited device styles', () => {
+  const settings = fs.readFileSync('includes/class-nirmaan-builder-settings.php', 'utf8');
+  assert.match(settings, /'breakpoints' => array\( 'tablet' => 1024, 'mobile' => 767 \)/);
+  assert.match(settings, /Mobile must be narrower than tablet/);
+  assert.match(settings, /$out\['breakpoints'\]/);
+  assert.match(builder, /function getInheritedNodeStyle/);
+  assert.match(builder, /Reset '\+device\+' overrides/);
+  assert.match(builder, /Save breakpoints/);
+  assert.match(builder, /responsiveBreakpoints\.tablet/);
+  assert.match(renderer, /Settings::get\(\)\['breakpoints'\]/);
+  assert.match(renderer, /min-width:/);
+});
