@@ -75,10 +75,10 @@ test('layers support collapse, rename, visibility, lock and wireframe view', () 
   assert.match(admin, /id="nirmaan-view-toggle"/);
 });
 
-test('layers support safe same-level drag reordering', () => {
+test('layers support safe drag reordering and nested moves', () => {
   assert.match(builder, /nb-layer-drop-target/);
-  assert.match(builder, /source\.nodes!==target\.nodes/);
-  assert.match(builder, /const insertAt=current\.index/);
+  assert.match(builder, /containsId\(source\.node,target\.node\.id\)/);
+  assert.match(builder, /refreshed\.node\.children\.push\(moving\)/);
   assert.match(builder, /wrap\.draggable=!n\.settings\.locked/);
 });
 
