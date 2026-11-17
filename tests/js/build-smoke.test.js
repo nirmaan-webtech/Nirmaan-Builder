@@ -6,6 +6,7 @@ const actions = fs.readFileSync('assets/js/admin-actions.js', 'utf8');
 const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
 const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
 const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+const editorCss = fs.readFileSync('assets/css/editor.css', 'utf8');
 const frontendEditor = fs.readFileSync('assets/js/frontend-edit.js', 'utf8');
 const gutenberg = fs.readFileSync('assets/js/gutenberg.js', 'utf8');
 const contentTypes = fs.readFileSync('includes/class-nirmaan-builder-content.php', 'utf8');
@@ -645,7 +646,7 @@ test('layout Advanced HTML attributes are sanitized, persisted and rendered', ()
   assert.match(rest, /'css_class'=>implode\(' ',array_slice/);
   assert.match(renderer, /\$s\['css_class'\]/);
   assert.match(renderer, /\$s\['html_id'\]/);
-  assert.match(renderer, /\$html_attributes/);
+  assert.match(renderer, /\$layout_attributes/);
 });
 
 
@@ -655,7 +656,7 @@ test('column widths are pointer-resizable and per-side spacing is persisted and 
     assert.ok(rest.includes("'"+key+"'"), key + ' is not sanitized');
   }
   assert.match(builder, /nb-column-width-handle/);
-  assert.match(builder, /Drag to adjust column width/);
+  assert.match(builder, /Drag to resize and balance adjacent column/);
   assert.match(builder, /style\.width=value/);
   for (const property of ['padding-top','padding-right','padding-bottom','padding-left','margin-top','margin-right','margin-bottom','margin-left']) {
     assert.ok(renderer.includes("'"+property+"'"), property + ' is not rendered');
@@ -680,5 +681,5 @@ test('row column resizing balances an adjacent column and persists both widths',
   assert.match(builder, /targetStyle\.flexBasis=value/);
   assert.ok(rest.includes("'flexBasis'"));
   assert.ok(renderer.includes("'flexBasis'=>'flex-basis'"));
-  assert.match(admin, /nb-column-width-handle/);
+  assert.match(editorCss, /nb-column-width-handle/);
 });
