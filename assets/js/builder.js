@@ -125,6 +125,64 @@
    },definition.type==='number'?'number':(definition.type==='textarea'?'textarea':'text'));
   });
  }
+ const layoutSchemas={
+  section:[
+   {key:'width',label:'Section width',default:'100%'},
+   {key:'maxWidth',label:'Content max width',default:'1200px'},
+   {key:'minHeight',label:'Minimum height',default:'',optional:true},
+   {key:'padding',label:'Section padding',default:'40px 0'},
+   {key:'margin',label:'Section margin',default:'0'},
+   {key:'backgroundColor',label:'Background color',default:''},
+   {key:'overflow',label:'Overflow',default:'visible'}
+  ],
+  fullwidth_section:[
+   {key:'width',label:'Fullwidth section width',default:'100%'},
+   {key:'minHeight',label:'Minimum height',default:'',optional:true},
+   {key:'padding',label:'Section padding',default:'40px 0'},
+   {key:'backgroundColor',label:'Background color',default:''},
+   {key:'overflow',label:'Overflow',default:'visible'}
+  ],
+  specialty_section:[
+   {key:'width',label:'Specialty section width',default:'100%'},
+   {key:'maxWidth',label:'Content max width',default:'1200px'},
+   {key:'padding',label:'Section padding',default:'40px 0'},
+   {key:'gap',label:'Column gap',default:'24px'},
+   {key:'backgroundColor',label:'Background color',default:''}
+  ],
+  row:[
+   {key:'display',label:'Row display (flex/grid)',default:'flex'},
+   {key:'width',label:'Row width',default:'100%'},
+   {key:'maxWidth',label:'Row max width',default:'1080px'},
+   {key:'flexDirection',label:'Column direction',default:'row'},
+   {key:'flexWrap',label:'Wrap columns',default:'nowrap'},
+   {key:'justifyContent',label:'Horizontal alignment',default:'center'},
+   {key:'alignItems',label:'Vertical alignment',default:'stretch'},
+   {key:'gap',label:'Column gutter',default:'24px'},
+   {key:'padding',label:'Row padding',default:'0'}
+  ],
+  column:[
+   {key:'width',label:'Column width',default:'100%'},
+   {key:'minHeight',label:'Minimum height',default:'',optional:true},
+   {key:'padding',label:'Column padding',default:'0'},
+   {key:'margin',label:'Column margin',default:'0'},
+   {key:'backgroundColor',label:'Background color',default:''},
+   {key:'overflow',label:'Overflow',default:'visible'}
+  ]
+ };
+ function renderLayoutSchema(parent,node,style,visibleStyle){
+  const definitions=layoutSchemas[node.type];
+  if(!definitions)return;
+  const wrap=document.createElement('div');wrap.className='nb-responsive-settings nb-design-panel nb-layout-schema';
+  const heading=document.createElement('h3');heading.textContent=t(node.type.replaceAll('_',' ')+' settings');wrap.appendChild(heading);
+  const note=document.createElement('p');note.textContent=t('These layout controls write to the active responsive style and are sanitized and rendered by the shared style pipeline.');wrap.appendChild(note);
+  definitions.forEach(definition=>{
+   const value=visibleStyle[definition.key]??definition.default??'';
+   field(wrap,definition.label,definition.key,value,next=>{
+    style[definition.key]=next;
+   });
+  });
+  parent.appendChild(wrap);
+ }
  function settings(){const p=document.getElementById('nirmaan-settings');p.replaceChildren();renderStyleActions(p);renderBreakpointControls(p);const r=selected?find(selected):null;if(!r){const note=document.createElement('p');note.textContent=t('Select an element on the canvas.');p.appendChild(note);return;}const n=r.node,s=n.settings;
   if(cfg.postId)renderCustomFields(p);
   if(['shop_products','product_archive','related_products'].includes(n.type)){
@@ -183,6 +241,7 @@
   const style=s[device]||(s[device]={});const visibleStyle=getInheritedNodeStyle(n,device);[['fontSize','Font size (e.g. 18px)'],['fontWeight','Font weight (300–800)'],['lineHeight','Line height'],['letterSpacing','Letter spacing'],['width','Width (e.g. 100%)'],['maxWidth','Maximum width'],['minHeight','Minimum height'],['padding','Padding'],['margin','Margin'],['gap','Gap'],['color','Text color (#hex)'],['backgroundColor','Background color (#hex)'],['backgroundImage','Gradient (e.g. linear-gradient(135deg, #111827, #2563eb))'],['borderColor','Border color (#hex)'],['borderWidth','Border width'],['borderStyle','Border style'],['textAlign','Text align (left/center/right)'],['borderRadius','Border radius'],['boxShadow','Shadow preset (none/soft/medium/strong)'],['opacity','Opacity (0–1)'],['filter','Filter (e.g. blur(2px) brightness(1.1))'],['transform','Transform (e.g. rotate(2deg) scale(1.02))'],['animationName','Animation (none/float/pulse/bounce/fade-in/slide-up/spin)'],['animationDuration','Animation duration (e.g. 1.2s)'],['animationDelay','Animation delay (e.g. 0s)'],['animationIterationCount','Animation iterations (1–20)'],['animationTimingFunction','Animation timing (ease/linear/ease-in/ease-out/ease-in-out)']].forEach(([k,l])=>field(responsive,l,k,visibleStyle[k]||'',v=>style[k]=v));
   const clearOverrides=document.createElement('button');clearOverrides.type='button';clearOverrides.className='button';clearOverrides.textContent=t('Reset ')+device+' overrides';clearOverrides.onclick=()=>{if(!s[device]||!Object.keys(s[device]).length)return;checkpoint();delete s[device];render();markChanged(device+' styles now inherit from smaller breakpoints');};responsive.appendChild(clearOverrides);
   const layout=document.createElement('div');layout.className='nb-responsive-settings nb-design-panel';const lh=document.createElement('h3');lh.textContent=t('Layout');layout.appendChild(lh);[['display','Display (block/flex/grid)'],['flexDirection','Flex direction'],['flexWrap','Flex wrap (nowrap/wrap)'],['justifyContent','Justify content'],['alignItems','Align items'],['gridTemplateColumns','Column widths (e.g. 1fr 2fr)'],['position','Position (static/relative/absolute/fixed/sticky)'],['top','Top offset'],['right','Right offset'],['bottom','Bottom offset'],['left','Left offset'],['zIndex','Z-index'],['overflow','Overflow (visible/hidden/auto/scroll)']].forEach(([k,l])=>field(layout,l,k,visibleStyle[k]||'',v=>style[k]=v));responsive.appendChild(layout);
+  renderLayoutSchema(responsive,n,style,visibleStyle);
   const hoverPanel=document.createElement('div');hoverPanel.className='nb-responsive-settings nb-hover-settings nb-design-panel';const hoverTitle=document.createElement('h3');hoverTitle.textContent=t('Hover state (')+device+')';hoverPanel.appendChild(hoverTitle);const hoverHint=document.createElement('p');hoverHint.textContent=t('Styles below apply only while the pointer is over this element.');hoverPanel.appendChild(hoverHint);const hoverStyle=style.hover||(style.hover={});const inheritedHover=visibleStyle.hover||{};[['color','Hover text color'],['backgroundColor','Hover background color'],['borderColor','Hover border color'],['opacity','Hover opacity (0–1)'],['transform','Hover transform (e.g. scale(1.03))'],['filter','Hover filter (e.g. brightness(1.1))']].forEach(([key,label])=>field(hoverPanel,label,key,hoverStyle[key]||'',value=>{hoverStyle[key]=value;}));responsive.appendChild(hoverPanel);
   const hide=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!s['hide_'+device];cb.onchange=()=>{checkpoint();s['hide_'+device]=cb.checked;status(t('Unsaved changes'));};hide.append(cb,' Hide on '+device);responsive.appendChild(hide);p.appendChild(responsive);
   renderStylePresetControls(p,n);
