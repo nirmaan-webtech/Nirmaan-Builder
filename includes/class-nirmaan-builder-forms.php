@@ -50,7 +50,7 @@ class Forms {
    else{$input_type=in_array($type,array('email','number','tel','url','date'),true)?$type:'text';$html.='<input type="'.esc_attr($input_type).'" name="fields['.esc_attr($name).']"'. $attr .' maxlength="500">';}
    $html.='</div>';
   }
-  if(!empty($payload['consent_required'])){$html.='<label class="nb-form-consent"><input type="checkbox" name="consent" value="1" required> '.esc_html($payload['consent_label']);if(!empty($payload['privacy_policy_url']))$html.=' <a href="'.esc_url($payload['privacy_policy_url']).'" target="_blank" rel="noopener noreferrer">'.esc_html__('Privacy policy','nirmaan-builder').'</a>';$html.='</label>';}$html.='<button type="submit">'.esc_html($settings['submit_label']??__('Submit','nirmaan-builder')).'</button><p class="nb-form-status" role="status" aria-live="polite"></p></form>';
+  if(!empty($payload['consent_required'])){$html.='<label class="nb-form-consent"><input type="checkbox" name="consent" value="1" required> '.esc_html($payload['consent_label']);if(!empty($payload['privacy_policy_url']))$html.=' <a href="'.esc_url($payload['privacy_policy_url']).'" target="_blank" rel="noopener noreferrer">'.esc_html__('Privacy policy','nirmaan-builder').'</a>';$html.='</label>';}$html.='<button type="submit" data-processing-label="'.esc_attr($settings['processing_label']??__('Sending…','nirmaan-builder')).'">'.esc_html($settings['submit_label']??__('Submit','nirmaan-builder')).'</button><p class="nb-form-status" role="status" aria-live="polite"></p></form>';
   return $html;
  }
  public function submit( $request ) {
