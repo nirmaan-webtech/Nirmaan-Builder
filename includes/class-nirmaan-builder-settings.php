@@ -31,6 +31,7 @@ final class Settings {
    'spacing_scale' => '8px',
    'shadow_style' => 'soft',
    'custom_css' => '',
+   'breakpoints' => array( 'tablet' => 1024, 'mobile' => 767 ),
   );
  }
 
@@ -68,6 +69,11 @@ final class Settings {
   $out['spacing_scale'] = preg_match( '/^\\d{1,3}(px|rem)$/', $spacing ) ? $spacing : '8px';
   $shadow = sanitize_key( $input['shadow_style'] ?? $out['shadow_style'] );
   $out['shadow_style'] = in_array( $shadow, array( 'none', 'soft', 'medium', 'strong' ), true ) ? $shadow : 'soft';
+  $breakpoints = is_array( $input['breakpoints'] ?? null ) ? $input['breakpoints'] : $out['breakpoints'];
+  $tablet = min( 1600, max( 480, absint( $breakpoints['tablet'] ?? 1024 ) ) );
+  $mobile = min( 1023, max( 320, absint( $breakpoints['mobile'] ?? 767 ) ) );
+  if ( $mobile >= $tablet ) { $tablet = 1024; $mobile = 767; }
+  $out['breakpoints'] = array( 'tablet' => $tablet, 'mobile' => $mobile );
   $out['custom_css'] = substr( wp_strip_all_tags( (string) ( $input['custom_css'] ?? $out['custom_css'] ) ), 0, 20000 );
   return $out;
  }
