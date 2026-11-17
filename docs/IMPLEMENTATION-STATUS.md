@@ -151,3 +151,11 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Internationalized core admin/editor labels and documented POT/JSON catalog generation in `languages/README.md`.
 - Added smoke tests for WPML/Polylang integration hooks and translation script wiring.
 - Automated CI is repository-level validation only. Before production, verify the current supported WPML/Polylang versions on a real staging site, including translated page editing, language-specific templates, form labels/options, and role-based REST permissions.
+
+
+## Phase 21 – WordPress Media Library integration (first implementation slice)
+- Loaded the native WordPress media modal on the Visual Editor screen.
+- Added a reusable Media Library field for selecting and clearing image attachments.
+- Wired the Image module and Gallery/Slider item image controls to the native image picker; selected attachment URLs are stored in the existing document fields, so no new REST schema keys are introduced.
+- Added source-level regression assertions for enqueueing and picker wiring.
+- Remaining: verify attachment selection in a real WordPress browser, add image metadata/size controls, and implement media selection for any additional image-bearing modules. This source-level change is not browser QA.
