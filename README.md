@@ -39,3 +39,7 @@ This release changes Nirmaan Builder from a plugin package to a theme package. W
 - GitHub Actions – PHP syntax validation and JavaScript checks.
 
 Automated checks do not replace WordPress staging/browser testing. Validate the theme with the target WordPress version, active plugins, WooCommerce checkout/payment gateways and multilingual plugins before production use.
+
+
+## Custom module API
+Third-party theme extensions can register module definitions with the `nirmaan_builder_custom_module_definitions` filter. Return an associative array keyed by a lowercase module type, with `label` and optional `default_settings`. Sanitize custom settings through `nirmaan_builder_sanitize_custom_module_settings` and return frontend markup through `nirmaan_builder_render_custom_module`. The renderer applies `wp_kses_post()` to custom output; modules requiring markup outside that allow-list should provide an appropriate safe WordPress rendering integration rather than disabling output sanitization.
