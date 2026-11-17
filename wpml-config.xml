@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<wpml-config>
+  <custom-types>
+    <custom-type translate="1">nirmaan_template</custom-type>
+    <custom-type translate="1">nirmaan_library</custom-type>
+  </custom-types>
+  <custom-fields>
+    <custom-field action="translate">_nirmaan_builder_document</custom-field>
+    <custom-field action="copy">_nirmaan_builder_enabled</custom-field>
+    <custom-field action="translate">_nirmaan_builder_custom_fields</custom-field>
+    <custom-field action="translate">_nirmaan_template_parts</custom-field>
+    <custom-field action="copy">_nirmaan_conditions</custom-field>
+    <custom-field action="copy">_nirmaan_priority</custom-field>
+    <custom-field action="copy">_nirmaan_part_settings</custom-field>
+    <custom-field action="copy">_nirmaan_global</custom-field>
+    <custom-field action="copy">_nirmaan_category</custom-field>
+    <custom-field action="translate">_nirmaan_library_document</custom-field>
+  </custom-fields>
+</wpml-config>
