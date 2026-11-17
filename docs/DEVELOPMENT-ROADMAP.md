@@ -134,25 +134,25 @@
 - [ ] Editor state management
 
 ## Phase 8 – Layout and Structure System
-- [ ] Section system
-- [ ] Row system
-- [ ] Column system
-- [ ] Multiple column layouts
-- [ ] Custom column widths
-- [ ] Nested rows
-- [ ] Nested sections
+- [x] Section system
+- [x] Row system
+- [x] Column system
+- [x] Multiple column layouts
+- [x] Custom column widths
+- [x] Nested rows
+- [x] Nested sections
 - [ ] Drag-and-drop positioning
 - [ ] Element alignment
-- [ ] Margin controls
-- [ ] Padding controls
-- [ ] Width and height controls
-- [ ] Minimum and maximum dimensions
-- [ ] Background controls
-- [ ] Border controls
-- [ ] Shadow controls
-- [ ] Position controls
-- [ ] Z-index controls
-- [ ] Overflow controls
+- [x] Margin controls
+- [x] Padding controls
+- [x] Width and height controls
+- [x] Minimum and maximum dimensions
+- [x] Background controls
+- [x] Border controls
+- [x] Shadow controls
+- [x] Position controls
+- [x] Z-index controls
+- [x] Overflow controls
 
 ## Phase 9 – Layers and Wireframe
 - [ ] Layers panel
