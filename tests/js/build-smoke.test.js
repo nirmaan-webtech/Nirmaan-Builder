@@ -60,7 +60,7 @@ test('editor exposes layers, duplicate, undo/redo and keyboard shortcuts', () =>
   assert.match(builder, /nirmaan-undo/);
   assert.match(builder, /nirmaan-redo/);
   assert.match(builder, /const checkpoint=/);
-  assert.match(builder, /textContent='Duplicate'/);
+  assert.match(builder, /textContent=t\('Duplicate'\)/);
   assert.match(builder, /e\.key\.toLowerCase\(\)==='d'/);
   assert.match(builder, /e\.shiftKey\?redo\(\):undo\(\)/);
   const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
@@ -291,7 +291,7 @@ test('responsive editing supports custom breakpoints and inherited device styles
   assert.match(settings, /\$mobile >= \$tablet/);
   assert.ok(settings.includes("$out['breakpoints']"));
   assert.match(builder, /function getInheritedNodeStyle/);
-  assert.match(builder, /Reset '\+device\+' overrides/);
+  assert.match(builder, /t\('Reset '\)\+device\+' overrides/);
   assert.match(builder, /Save breakpoints/);
   assert.match(builder, /responsiveBreakpoints\.tablet/);
   assert.match(renderer, /Settings::get\(\)\['breakpoints'\]/);
@@ -478,4 +478,91 @@ test('Phase 19 submissions can be deleted only by an authorized administrator wi
   assert.match(forms, /current_user_can\('manage_options'\)/);
   assert.match(forms, /check_admin_referer\('nirmaan_delete_submission_\'/);
   assert.match(forms, /wp_delete_post\(\$id,true\)/);
+});
+
+test('Phase 20 registers granular builder roles and a protected role editor', () => {
+  const roles = fs.readFileSync('includes/class-nirmaan-builder-roles.php', 'utf8');
+  const plugin = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  assert.match(plugin, /class-nirmaan-builder-roles\.php/);
+  assert.match(plugin, /Roles::register_hooks/);
+  for (const capability of ['use_nirmaan_builder','edit_nirmaan_content','use_nirmaan_modules','use_nirmaan_advanced_modules','edit_nirmaan_design','manage_nirmaan_library','manage_nirmaan_templates','manage_nirmaan_settings','manage_nirmaan_roles']) {
+    assert.ok(roles.includes(capability), capability + ' capability missing');
+  }
+  assert.match(roles, /add_role\( 'nirmaan_builder'/);
+  assert.match(roles, /check_admin_referer\( 'nirmaan_builder_save_roles'/);
+  assert.match(roles, /current_user_can\( 'manage_nirmaan_roles' \)/);
+  assert.match(admin, /nirmaan-roles/);
+  assert.match(admin, /Roles::render_page/);
+});
+
+test('Phase 20 gates REST content, templates, library and design actions by granular capabilities', () => {
+  assert.match(rest, /current_user_can\('use_nirmaan_builder'\)/);
+  assert.match(rest, /current_user_can\('edit_nirmaan_content'\)/);
+  assert.match(rest, /current_user_can\('manage_nirmaan_templates'\)/);
+  assert.match(rest, /current_user_can\('manage_nirmaan_library'\)/);
+  assert.match(rest, /current_user_can\('manage_nirmaan_settings'\)/);
+  assert.match(rest, /current_user_can\('edit_nirmaan_design'\)/);
+  assert.match(rest, /use_nirmaan_advanced_modules/);
+  assert.match(admin, /manage_nirmaan_settings/);
+  assert.match(admin, /manage_nirmaan_templates/);
+  assert.match(admin, /manage_nirmaan_library/);
+});
+
+test('Phase 20 hides and rejects advanced modules for roles without the advanced-module capability', () => {
+  assert.match(builder, /cfg\.canUseAdvancedModules/);
+  assert.match(rest, /array_diff\(\$allowed,array\('form','query_loop'/);
+  assert.match(rest, /nodes_require_advanced_modules/);
+  assert.match(rest, /post_requires_advanced_modules/);
+});
+
+test('Phase 20 multilingual integrations register translatable builder content safely', () => {
+  const multilingual = fs.readFileSync('includes/class-nirmaan-builder-multilingual.php', 'utf8');
+  const plugin = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  const wpml = fs.readFileSync('wpml-config.xml', 'utf8');
+  assert.match(plugin, /class-nirmaan-builder-multilingual\.php/);
+  assert.match(multilingual, /pll_get_post_types/);
+  assert.match(multilingual, /pll_copy_post_metas/);
+  assert.match(multilingual, /wpml_register_single_string/);
+  assert.match(multilingual, /wpml_translate_single_string/);
+  assert.match(multilingual, /pll_register_string/);
+  assert.match(multilingual, /pll__/);
+  assert.match(multilingual, /_nirmaan_builder_document/);
+  assert.match(renderer, /Multilingual::translate_document/);
+  assert.match(wpml, /nirmaan_template/);
+  assert.match(wpml, /nirmaan_library/);
+  assert.match(wpml, /action="copy"/);
+});
+
+test('Phase 20 scripts load WordPress gettext runtime for translations', () => {
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  for (const file of [admin, forms]) {
+    assert.match(file, /wp_set_script_translations/);
+    assert.match(file, /wp-i18n/);
+  }
+  for (const file of [builder, actions, gutenberg, fs.readFileSync('assets/js/forms.js', 'utf8')]) {
+    assert.match(file, /wp\.i18n/);
+    assert.match(file, /nirmaan-builder/);
+  }
+});
+
+
+test('repository is packaged as a WordPress theme, not a plugin', () => {
+  const theme = fs.readFileSync('style.css', 'utf8');
+  const functions = fs.readFileSync('functions.php', 'utf8');
+  const header = fs.readFileSync('header.php', 'utf8');
+  const footer = fs.readFileSync('footer.php', 'utf8');
+  const bootstrap = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  assert.match(theme, /Theme Name:\s*Nirmaan Builder/);
+  assert.match(functions, /get_template_directory\(\)/);
+  assert.match(functions, /Theme::instance\(\)->boot/);
+  assert.match(header, /wp_head\(\)/);
+  assert.match(header, /wp_body_open\(\)/);
+  assert.match(footer, /wp_footer\(\)/);
+  assert.match(bootstrap, /class Theme/);
+  assert.match(bootstrap, /class-nirmaan-builder-content\.php/);
+  assert.match(bootstrap, /load_theme_textdomain/);
+  assert.doesNotMatch(bootstrap, /load_plugin_textdomain/);
 });

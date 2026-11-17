@@ -1,0 +1,36 @@
+/*
+Theme Name: Nirmaan Builder
+Theme URI: https://github.com/nirmaan-webtech/Nirmaan-Builder
+Author: Nirmaan WebTech
+Author URI: https://github.com/nirmaan-webtech
+Description: A visual WordPress theme with integrated Theme Options, Theme Builder, reusable Library, responsive layouts, forms and WooCommerce elements.
+Version: 0.3.0
+Requires at least: 6.4
+Requires PHP: 8.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: nirmaan-builder
+Domain Path: /languages
+Tags: full-width-template, custom-logo, custom-menu, featured-images, threaded-comments, translation-ready
+*/
+:root{--nb-theme-content-width:1200px;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1f2937;background:#fff;line-height:1.6}
+a{color:inherit}
+.nb-theme-site-header,.nb-theme-site-footer{width:100%;padding:18px 24px}
+.nb-theme-site-header{border-bottom:1px solid #e5e7eb}
+.nb-theme-site-footer{border-top:1px solid #e5e7eb;margin-top:48px}
+.nb-theme-shell{max-width:var(--nb-container-width,var(--nb-theme-content-width));margin-inline:auto;padding:0 20px}
+.nb-theme-brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:700;font-size:1.2rem}
+.nb-theme-brand img{max-height:56px;width:auto}
+.nb-theme-nav ul{display:flex;gap:20px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+.nb-theme-header-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.nb-theme-content{min-height:55vh;padding-block:32px}
+.nb-theme-content img{max-width:100%;height:auto}
+.nb-theme-content .alignwide{max-width:min(100%,1400px);margin-inline:auto}
+.nb-theme-content .alignfull{width:100%;max-width:none}
+.nb-theme-entry-title{margin:0 0 24px;line-height:1.15}
+.nb-theme-post{margin-bottom:36px}
+.nb-theme-pagination{margin-block:32px}
+@media(max-width:700px){.nb-theme-header-inner{align-items:flex-start;flex-direction:column}.nb-theme-nav ul{gap:12px}.nb-theme-site-header,.nb-theme-site-footer{padding:16px}.nb-theme-content{padding-block:20px}}

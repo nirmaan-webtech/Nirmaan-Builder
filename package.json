@@ -2,7 +2,7 @@
   "name": "nirmaan-builder",
   "version": "0.1.0",
   "private": true,
-  "description": "React editor workspace for the Nirmaan Builder WordPress plugin.",
+  "description": "WordPress theme and integrated visual builder for Nirmaan WebTech.",
   "scripts": {
     "build": "node --check assets/js/builder.js && node --check assets/js/admin-actions.js && node --check assets/js/gutenberg.js && node --check assets/js/frontend-edit.js && node --check assets/js/forms.js",
     "test": "node --test tests/js/*.test.js",

@@ -1,5 +1,6 @@
 (function (wp, config) {
  'use strict';
+ const t = (value) => wp && wp.i18n ? wp.i18n.__(value, 'nirmaan-builder') : value;
  if (!wp || !wp.plugins || !wp.editPost || !wp.element || !wp.data || !config) return;
  const el = wp.element.createElement;
  const PluginSidebar = wp.editPost.PluginSidebar;
@@ -18,17 +19,17 @@
   }, []);
   const builderUrl = config.builderUrl + '&post_id=' + encodeURIComponent(postId);
   return el(PluginSidebar, { name: 'nirmaan-builder-sidebar', title: config.label, icon: 'layout' },
-   el(PanelBody, { title: 'Frontend output', initialOpen: true },
+   el(PanelBody, { title: t('Frontend output'), initialOpen: true },
     el(ToggleControl, {
-     label: 'Use Nirmaan Builder output',
+     label: t('Use Nirmaan Builder output'),
      checked: enabled,
-     help: enabled ? 'The Builder layout replaces native post content on the frontend.' : 'The native Gutenberg content remains the frontend output.',
+     help: enabled ? t('The Builder layout replaces native post content on the frontend.') : t('The native Gutenberg content remains the frontend output.'),
      onChange: function (value) {
       dispatch.editPost({ meta: Object.assign({}, meta, { _nirmaan_builder_enabled: !!value }) });
      }
     }),
-    el(Notice, { status: 'info', isDismissible: false }, 'Gutenberg content is preserved separately. Save the post after changing this setting.'),
-    el(Button, { variant: 'primary', disabled: !postId, onClick: function () { window.location.href = builderUrl; } }, 'Open Visual Builder')
+    el(Notice, { status: 'info', isDismissible: false }, t('Gutenberg content is preserved separately. Save the post after changing this setting.')),
+    el(Button, { variant: 'primary', disabled: !postId, onClick: function () { window.location.href = builderUrl; } }, t('Open Visual Builder'))
    )
   );
  }
