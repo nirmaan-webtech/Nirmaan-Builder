@@ -128,8 +128,7 @@
   video:[{key:'url',label:'Video URL',type:'text'}],
   spacer:[{key:'height',label:'Height (px)',type:'number',default:32,min:0,max:1200}]
  };
- const settingsSchemas={content:contentSchemas,layout:layoutSchemas};\n function renderSchemaFields(parent,node,definitions,values,onChange){(definitions||[]).forEach(definition=>{const value=values[definition.key]??definition.default??'';if(definition.type==='media'){mediaField(parent,definition.label,definition.key,value,next=>onChange(definition,next));return;}renderField(parent,definition,value,next=>onChange(definition,next));});}
- function renderContentSchema(parent,node){renderSchemaFields(parent,node,settingsSchemas.content[node.type],node.settings,(definition,value)=>{node.settings[definition.key]=value;});}
+
  const layoutSchemas={
   section:[
    {key:'width',label:'Section width',type:'text',default:'100%',placeholder:'100% or 1200px'},
@@ -183,6 +182,9 @@
    {key:'marginLeft',label:'Margin left',type:'text',default:'0'}
   ]
  };
+ const settingsSchemas={content:contentSchemas,layout:layoutSchemas};
+ function renderSchemaFields(parent,node,definitions,values,onChange){(definitions||[]).forEach(definition=>{const value=values[definition.key]??definition.default??'';if(definition.type==='media'){mediaField(parent,definition.label,definition.key,value,next=>onChange(definition,next));return;}renderField(parent,definition,value,next=>onChange(definition,next));});}
+ function renderContentSchema(parent,node){renderSchemaFields(parent,node,settingsSchemas.content[node.type],node.settings,(definition,value)=>{node.settings[definition.key]=value;});}
  function renderLayoutSchema(parent,node,style,visibleStyle){
   const definitions=layoutSchemas[node.type];
   if(!definitions)return;
