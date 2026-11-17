@@ -6,3 +6,5 @@
 .nb-layer-item{border-radius:4px}.nb-layer-item[draggable=true]{cursor:grab}.nb-layer-item[draggable=true]:active{cursor:grabbing}.nb-layer-item.nb-layer-drop-target{outline:2px dashed #2271b1;background:#eef6fc}
 
 .nirmaan-editor-main{overflow-x:auto}.nirmaan-canvas{box-sizing:border-box;transition:width .2s,max-width .2s}.nirmaan-canvas[data-preview-device=tablet],.nirmaan-canvas[data-preview-device=mobile]{border:1px solid #94a3b8;box-shadow:0 4px 18px #15223824}.nirmaan-canvas[data-preview-device=mobile]{border-radius:18px;padding:22px 14px}.nirmaan-canvas[data-preview-device=tablet]{padding:28px}.nb-editor-element.is-device-hidden{display:none!important}.nirmaan-preview-controls{display:flex;align-items:center;gap:4px}.nirmaan-preview-controls .button{min-width:34px;padding:0 8px}
+
+.nb-responsive-settings input{box-sizing:border-box}.nb-responsive-settings h3{margin:14px 0 8px;color:#172033}.nb-responsive-settings label{font-size:12px}.nb-responsive-settings input:focus{border-color:#2271b1;box-shadow:0 0 0 1px #2271b1}
