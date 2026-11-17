@@ -42,13 +42,13 @@ class Forms {
    $name=sanitize_key($field['name']??('field_'.($index+1)));if(!$name)continue;
    $label=sanitize_text_field($field['label']??$name);$type=sanitize_key($field['type']??'text');$required=!empty($field['required']);$attr=$required?' required':'';
    $show_if=is_array($field['show_if']??null)?$field['show_if']:array();$depends_on=sanitize_key($show_if['field']??'');$equals=sanitize_text_field($show_if['equals']??'');$condition=$depends_on?' data-nb-depends="'.esc_attr($depends_on).'" data-nb-equals="'.esc_attr($equals).'"':'';
-   $html.='<label class="nb-form-field"'.$condition.'><span>'.esc_html($label).($required?' *':'').'</span>';
+   $html.='<div class="nb-form-field"'.$condition.'><span>'.esc_html($label).($required?' *':'').'</span>';
    if('textarea'===$type){$html.='<textarea name="fields['.esc_attr($name).']"'. $attr .' maxlength="5000"></textarea>';}
    elseif(in_array($type,array('select','checkbox'),true)&&'select'===$type){$html.='<select name="fields['.esc_attr($name).']"'.$attr.'><option value="">'.esc_html__('Choose an option','nirmaan-builder').'</option>';foreach(array_slice((array)($field['options']??array()),0,30) as $option)$html.='<option value="'.esc_attr($option).'">'.esc_html($option).'</option>';$html.='</select>';}
    elseif('checkbox'===$type){$html.='<input type="checkbox" name="fields['.esc_attr($name).']" value="1"'.($required?' required':'').'>';}
    elseif('radio'===$type){foreach(array_slice((array)($field['options']??array()),0,30) as $option){$html.='<label class="nb-form-choice"><input type="radio" name="fields['.esc_attr($name).']" value="'.esc_attr($option).'"'.($required?' required':'').'> '.esc_html($option).'</label>';}}
    else{$input_type=in_array($type,array('email','number','tel','url','date'),true)?$type:'text';$html.='<input type="'.esc_attr($input_type).'" name="fields['.esc_attr($name).']"'. $attr .' maxlength="500">';}
-   $html.='</label>';
+   $html.='</div>';
   }
   $html.='<button type="submit">'.esc_html($settings['submit_label']??__('Submit','nirmaan-builder')).'</button><p class="nb-form-status" role="status" aria-live="polite"></p></form>';
   return $html;
@@ -90,7 +90,7 @@ class Forms {
   echo '<div class="wrap"><h1>'.esc_html__('Form Submissions','nirmaan-builder').'</h1>';
   if(!$items){echo '<p>'.esc_html__('No submissions received yet.','nirmaan-builder').'</p></div>';return;}
   echo '<table class="widefat striped"><thead><tr><th>'.esc_html__('Received','nirmaan-builder').'</th><th>'.esc_html__('Form','nirmaan-builder').'</th><th>'.esc_html__('Submitted data','nirmaan-builder').'</th></tr></thead><tbody>';
-  foreach($items as $item){$fields=get_post_meta($item->ID,'_nb_submission_fields',true);echo '<tr><td>'.esc_html(get_the_date('Y-m-d H:i',$item)).'</td><td>'.esc_html(get_post_meta($item->ID,'_nb_form_id',true)).'</td><td>';if(is_array($fields))foreach($fields as $key=>$value)echo '<strong>'.esc_html($key).':</strong> '.esc_html((string)$value).'<br>';echo '</td></tr>';}
+  foreach($items as $item){$fields=get_post_meta($item->ID,'_nb_submission_fields',true);echo '<tr><td>'.esc_html(get_the_date('Y-m-d H:i',$item)).'</td><td>'.esc_html(get_post_meta($item->ID,'_nb_form_id',true)).'</td><td>';if(is_array($fields))foreach($fields as $key=>$value)echo '<strong>'.esc_html($key).':</strong> '.esc_html((string)$value).'<br>';$delete=wp_nonce_url(admin_url('admin-post.php?action=nirmaan_delete_submission&submission_id='.$item->ID),'nirmaan_delete_submission_'.$item->ID);echo '<a href="'.esc_url($delete).'">'.esc_html__('Delete','nirmaan-builder').'</a></td></tr>';}
   echo '</tbody></table></div>';
  }
  public function delete_submission() {
