@@ -427,3 +427,23 @@ test('History saving serializes autosaves before manual save and preserves edits
   assert.match(rest, /Invalid revision part for this document type/);
   assert.match(rest, /public function list_revisions/);
 });
+
+test('Forms support visual configuration, secure submissions and admin inbox', () => {
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  const formsJs = fs.readFileSync('assets/js/forms.js', 'utf8');
+  assert.ok(builder.includes("['form','Form']"));
+  assert.ok(builder.includes('Form fields'));
+  assert.ok(builder.includes('notification_email'));
+  assert.match(rest, /'form_fields'=>\$this->sanitize_form_fields/);
+  assert.match(rest, /function sanitize_form_fields/);
+  assert.match(renderer, /Forms::render/);
+  assert.match(forms, /register_rest_route\( 'nirmaan-builder\/v1', '\/form-submit'/);
+  assert.match(forms, /hash_hmac\('sha256'/);
+  assert.match(forms, /form_rate_limited/);
+  assert.match(forms, /sanitize_email/);
+  assert.match(forms, /wp_insert_post/);
+  assert.match(forms, /_nb_submission_fields/);
+  assert.match(forms, /function render_submissions/);
+  assert.match(formsJs, /form\[data-nb-form\]/);
+  assert.match(formsJs, /fetch\(form.action/);
+});
