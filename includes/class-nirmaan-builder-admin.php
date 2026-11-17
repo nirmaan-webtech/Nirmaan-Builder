@@ -42,6 +42,15 @@ class Admin{
  <label>Section spacing<input name="section_spacing" value="<?php echo esc_attr($s['section_spacing']);?>" placeholder="32px"></label>
  <label>Button radius<input name="button_radius" value="<?php echo esc_attr($s['button_radius']);?>" placeholder="4px"></label>
  </section>
+ <section class="nb-settings-card"><h2>Design System Tokens</h2>
+ <?php foreach(array('accent_color'=>'Accent','surface_color'=>'Surface','border_color'=>'Border','muted_color'=>'Muted text') as $key=>$label):?>
+ <label><?php echo esc_html($label);?><input type="color" name="<?php echo esc_attr($key);?>" value="<?php echo esc_attr($s[$key]);?>"></label><?php endforeach;?>
+ <label>Heading font<select name="heading_font_family"><?php foreach(array('inherit'=>'Inherit body font','system'=>'System UI','Arial, sans-serif'=>'Arial','Georgia, serif'=>'Georgia','Tahoma, sans-serif'=>'Tahoma','Verdana, sans-serif'=>'Verdana') as $value=>$label):?><option value="<?php echo esc_attr($value);?>" <?php selected($s['heading_font_family'],$value);?>><?php echo esc_html($label);?></option><?php endforeach;?></select></label>
+ <label>Base font weight<select name="font_weight"><?php foreach(array('300','400','500','600','700','800') as $weight):?><option value="<?php echo esc_attr($weight);?>" <?php selected($s['font_weight'],$weight);?>><?php echo esc_html($weight);?></option><?php endforeach;?></select></label>
+ <label>Line height<input name="line_height" value="<?php echo esc_attr($s['line_height']);?>"></label>
+ <label>Spacing unit<input name="spacing_scale" value="<?php echo esc_attr($s['spacing_scale']);?>" placeholder="8px"></label>
+ <label>Global shadow<select name="shadow_style"><?php foreach(array('none'=>'None','soft'=>'Soft','medium'=>'Medium','strong'=>'Strong') as $value=>$label):?><option value="<?php echo esc_attr($value);?>" <?php selected($s['shadow_style'],$value);?>><?php echo esc_html($label);?></option><?php endforeach;?></select></label>
+ </section>
  <section class="nb-settings-card nb-settings-wide"><h2>Custom CSS</h2><p>CSS is applied on the public frontend. Only trusted administrators should have access to this setting.</p><textarea name="custom_css" rows="8" spellcheck="false"><?php echo esc_textarea($s['custom_css']);?></textarea></section>
  </div>
  <p><button type="submit" class="button button-primary">Save Theme Options</button> <button type="button" id="nirmaan-reset-settings" class="button">Reset Defaults</button> <span id="nirmaan-settings-status" role="status" aria-live="polite"></span></p>
