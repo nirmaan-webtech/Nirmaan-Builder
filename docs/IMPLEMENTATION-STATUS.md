@@ -77,10 +77,11 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Expanded per-device element styling with typography, sizing, spacing, border, shadow, opacity and flex layout properties.
 - Added renderer CSS property mapping and smoke coverage. Real WordPress UI, frontend rendering and theme-compatibility validation remain required.
 
-## Global Styles and Reusable Design Presets (PR in progress)
-- Added a permission-protected REST collection for global style presets, stored in a versioned WordPress option and shared across editor documents/pages.
-- Presets capture desktop, tablet and mobile element style values and can be applied to the currently selected element from the editor.
-- Added preset create, update and delete endpoints, name/category validation, the existing style sanitizer, and a 200-preset cap.
-- Added editor controls to save the selected element's current responsive styles, apply a saved preset, and delete a preset.
-- Presets are copied onto an element when applied; later edits to a preset do not retroactively change elements that already received it. This avoids hidden coupling and accidental site-wide visual changes.
-- Automated checks cover the REST route/sanitization contract and editor workflow markers. Real WordPress permission, persistence, responsive rendering and multi-user tests remain required.
+## Global Styles and Reusable Design Presets (PR #10 merged)
+- Added a permission-protected REST collection for global style presets, stored in a WordPress option and shared across editor documents/pages.
+- Presets capture desktop, tablet and mobile element style values; editor controls support create, apply, update and delete.
+- Added preset name/category validation, responsive style sanitization, and a 200-preset cap.
+- PR #10 originally applied styles as snapshots; PR #11 replaces that behavior with persistent element-to-preset references and live preset resolution in the frontend renderer.
+- Updating a preset now updates every linked element on the next frontend render and in the editor after the preset list refreshes.
+- Elements can be detached while retaining their effective responsive styles. Deleting a preset snapshots its latest styles into linked documents, templates, library items, autosaves and revisions before removing the shared preset.
+- Automated smoke tests cover the reference/sanitization contract, editor controls, renderer resolution and deletion fallback. Live WordPress staging and multi-user browser tests remain required.
