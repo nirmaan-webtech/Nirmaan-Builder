@@ -624,3 +624,15 @@ test('core module content controls are schema-driven and layout/Woo elements get
   assert.match(builder, /else \{renderContentSchema\(p,n\);\}/);
   assert.doesNotMatch(builder, /else if\(n\.type!=='form'\) \{field\(p,'Content'/);
 });
+
+test('Section, Row and Column expose dedicated responsive layout schemas', () => {
+  for (const type of ['section','fullwidth_section','specialty_section','row','column']) {
+    assert.ok(builder.includes(type+':['), type + ' layout schema missing');
+  }
+  assert.match(builder, /function renderLayoutSchema/);
+  assert.match(builder, /renderLayoutSchema\(responsive,n,style,visibleStyle\)/);
+  for (const property of ['width','maxWidth','minHeight','padding','margin','backgroundColor','overflow','flexDirection','flexWrap','justifyContent','alignItems','gap']) {
+    assert.ok(rest.includes("'"+property+"'"), property + ' is not accepted by the REST style sanitizer');
+    assert.ok(renderer.includes("'"+property+"'"), property + ' is not mapped by the frontend renderer');
+  }
+});
