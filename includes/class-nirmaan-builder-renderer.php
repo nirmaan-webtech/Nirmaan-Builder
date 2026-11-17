@@ -53,6 +53,8 @@ class Renderer {
   global $product;
   if(!$product&&get_the_ID())$product=wc_get_product(get_the_ID());
   if(!$product)return '';
+  if('product_title'===$type){$tag=in_array(($settings['woo_title_tag']??'h1'),array('h1','h2','h3','h4','h5','h6'),true)?$settings['woo_title_tag']:'h1';return '<'.$tag.' class="product_title entry-title nb-product-title">'.esc_html($product->get_name()).'</'.$tag.'>';}
+  if('product_image'===$type){$image_id=$product->get_image_id();if(!$image_id)return ''; $size=in_array(($settings['woo_image_size']??'large'),array('thumbnail','medium','large','full'),true)?$settings['woo_image_size']:'large';return '<div class="woocommerce-product-gallery nb-product-image">'.wp_get_attachment_image($image_id,$size,false,array('class'=>'wp-post-image')).'</div>';}
   if('product_sku'===$type){$sku=$product->get_sku();return $sku?'<span class="nb-product-sku">'.esc_html__('SKU:','nirmaan-builder').' '.esc_html($sku).'</span>':'';}
   if('product_stock'===$type)return function_exists('wc_get_stock_html')?wc_get_stock_html($product):'';
   if('product_categories'===$type){$terms=get_the_terms($product->get_id(),'product_cat');if(is_wp_error($terms)||empty($terms))return '';return '<div class="nb-product-categories">'.esc_html__('Categories:','nirmaan-builder').' '.wp_kses_post(wc_get_product_category_list($product->get_id(),', ')).'</div>';}
