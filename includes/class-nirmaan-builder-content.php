@@ -14,6 +14,9 @@ class Content {
 				'supports' => array( 'title', 'revisions' ), 'capability_type' => 'post', 'map_meta_cap' => true,
 			) );
 		}
+
+	}
+	public static function register_meta() {
 		foreach ( get_post_types( array( 'public' => true ), 'names' ) as $post_type ) {
 			register_post_meta( $post_type, '_nirmaan_builder_enabled', array(
 				'type' => 'boolean',
