@@ -4,7 +4,7 @@
   "private": true,
   "description": "React editor workspace for the Nirmaan Builder WordPress plugin.",
   "scripts": {
-    "build": "node --check assets/js/builder.js && node --check assets/js/admin-actions.js",
+    "build": "node --check assets/js/builder.js && node --check assets/js/admin-actions.js && node --check assets/js/gutenberg.js",
     "test": "node --test tests/js/*.test.js",
     "lint:js": "node --check assets/js/builder.js && node --check assets/js/admin-actions.js"
   },
