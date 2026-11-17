@@ -583,3 +583,12 @@ test('Canvas parity modules are allow-listed, persisted and rendered with real f
   assert.match(builder, /nb-preview-panels/);
   assert.match(builder, /query_columns/);
 });
+
+test('Canvas interaction supports element copy/paste, resize and root drop targets', () => {
+  assert.match(builder, /nodeClipboard/);
+  assert.match(builder, /Element pasted/);
+  assert.match(builder, /nb-resize-handle/);
+  assert.match(builder, /setPointerCapture/);
+  assert.match(builder, /canvas\\.addEventListener\\('drop'/);
+  assert.match(rest, /fullwidth_section','specialty_section/);
+});
