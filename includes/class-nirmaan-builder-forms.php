@@ -70,7 +70,7 @@ class Forms {
    elseif('number'===$type){$value=is_scalar($value)?(string)$value:'';if(''!==$value&&!is_numeric($value))$errors[$name]=__('Enter a valid number.','nirmaan-builder');}
    elseif('url'===$type){$value=esc_url_raw(is_scalar($value)?(string)$value:'');if(''!==$value&&!wp_http_validate_url($value))$errors[$name]=__('Enter a valid URL.','nirmaan-builder');}
    elseif('tel'===$type){$value=sanitize_text_field(is_scalar($value)?(string)$value:'');if(''!==$value&&!preg_match('/^[0-9+().\\s-]{5,30}$/',$value))$errors[$name]=__('Enter a valid phone number.','nirmaan-builder');}
-   elseif('date'===$type){$value=sanitize_text_field(is_scalar($value)?(string)$value:'');$date=\\DateTime::createFromFormat('!Y-m-d',$value);if(''!==$value&&(!$date||$date->format('Y-m-d')!==$value))$errors[$name]=__('Enter a valid date.','nirmaan-builder');}
+   elseif('date'===$type){$value=sanitize_text_field(is_scalar($value)?(string)$value:'');$date=\DateTime::createFromFormat('!Y-m-d',$value);if(''!==$value&&(!$date||$date->format('Y-m-d')!==$value))$errors[$name]=__('Enter a valid date.','nirmaan-builder');}
    elseif(in_array($type,array('select','radio'),true)){$value=sanitize_text_field(is_scalar($value)?(string)$value:'');$options=array_map('sanitize_text_field',array_slice((array)($field['options']??array()),0,30));if(''!==$value&&!in_array($value,$options,true))$errors[$name]=__('Choose a valid option.','nirmaan-builder');}
    else $value=sanitize_text_field(is_scalar($value)?(string)$value:'');
    if($required&&''===$value)$errors[$name]=__('This field is required.','nirmaan-builder');
