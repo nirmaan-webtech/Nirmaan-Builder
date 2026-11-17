@@ -82,13 +82,17 @@ class Rest {
   }unset($node);return array($changed,$nodes);
  }
  private function preserve_deleted_preset_references($id,$styles){
-  $post_types=array_values(get_post_types(array(),'names'));$post_ids=get_posts(array('post_type'=>$post_types,'post_status'=>'any','numberposts'=>-1,'fields'=>'ids'));
-  foreach($post_ids as $post_id){
-   foreach(array('_nirmaan_builder_document','_nirmaan_library_document') as $key){$doc=get_post_meta($post_id,$key,true);if(is_array($doc)&&isset($doc['nodes'])){list($changed,$doc['nodes'])=$this->snapshot_preset_nodes($doc['nodes'],$id,$styles);if($changed)update_post_meta($post_id,$key,$doc);}}
-   $parts=get_post_meta($post_id,'_nirmaan_template_parts',true);if(is_array($parts)){$changed=false;foreach($parts as &$part){if(is_array($part)&&isset($part['nodes'])){list($part_changed,$part['nodes'])=$this->snapshot_preset_nodes($part['nodes'],$id,$styles);$changed=$changed||$part_changed;}}unset($part);if($changed)update_post_meta($post_id,'_nirmaan_template_parts',$parts);}
-   $drafts=get_post_meta($post_id,'_nirmaan_builder_autosaves',true);if(is_array($drafts)){$changed=false;foreach($drafts as &$draft){if(is_array($draft['document']['nodes']??null)){list($draft_changed,$draft['document']['nodes'])=$this->snapshot_preset_nodes($draft['document']['nodes'],$id,$styles);$changed=$changed||$draft_changed;}}unset($draft);if($changed)update_post_meta($post_id,'_nirmaan_builder_autosaves',$drafts);}
-   $revisions=get_post_meta($post_id,'_nirmaan_builder_revisions',true);if(is_array($revisions)){$changed=false;foreach($revisions as &$revision){if(is_array($revision['document']['nodes']??null)){list($revision_changed,$revision['document']['nodes'])=$this->snapshot_preset_nodes($revision['document']['nodes'],$id,$styles);$changed=$changed||$revision_changed;}}unset($revision);if($changed)update_post_meta($post_id,'_nirmaan_builder_revisions',$revisions);}
-  }
+  $post_types=array_values(get_post_types(array(),'names'));$page=1;
+  do{
+   $post_ids=get_posts(array('post_type'=>$post_types,'post_status'=>array_keys(get_post_stati()),'numberposts'=>100,'paged'=>$page,'fields'=>'ids','meta_query'=>array('relation'=>'OR',array('key'=>'_nirmaan_builder_document','compare'=>'EXISTS'),array('key'=>'_nirmaan_library_document','compare'=>'EXISTS'),array('key'=>'_nirmaan_template_parts','compare'=>'EXISTS'),array('key'=>'_nirmaan_builder_autosaves','compare'=>'EXISTS'),array('key'=>'_nirmaan_builder_revisions','compare'=>'EXISTS'))));
+   foreach($post_ids as $post_id){
+    foreach(array('_nirmaan_builder_document','_nirmaan_library_document') as $key){$doc=get_post_meta($post_id,$key,true);if(is_array($doc)&&isset($doc['nodes'])){list($changed,$doc['nodes'])=$this->snapshot_preset_nodes($doc['nodes'],$id,$styles);if($changed)update_post_meta($post_id,$key,$doc);}}
+    $parts=get_post_meta($post_id,'_nirmaan_template_parts',true);if(is_array($parts)){$changed=false;foreach($parts as &$part){if(is_array($part)&&isset($part['nodes'])){list($part_changed,$part['nodes'])=$this->snapshot_preset_nodes($part['nodes'],$id,$styles);$changed=$changed||$part_changed;}}unset($part);if($changed)update_post_meta($post_id,'_nirmaan_template_parts',$parts);}
+    $drafts=get_post_meta($post_id,'_nirmaan_builder_autosaves',true);if(is_array($drafts)){$changed=false;foreach($drafts as &$draft){if(is_array($draft['document']['nodes']??null)){list($draft_changed,$draft['document']['nodes'])=$this->snapshot_preset_nodes($draft['document']['nodes'],$id,$styles);$changed=$changed||$draft_changed;}}unset($draft);if($changed)update_post_meta($post_id,'_nirmaan_builder_autosaves',$drafts);}
+    $revisions=get_post_meta($post_id,'_nirmaan_builder_revisions',true);if(is_array($revisions)){$changed=false;foreach($revisions as &$revision){if(is_array($revision['document']['nodes']??null)){list($revision_changed,$revision['document']['nodes'])=$this->snapshot_preset_nodes($revision['document']['nodes'],$id,$styles);$changed=$changed||$revision_changed;}}unset($revision);if($changed)update_post_meta($post_id,'_nirmaan_builder_revisions',$revisions);}
+   }
+   $page++;
+  }while(count($post_ids)===100);
  }
  public function delete_style_preset($r){
   $id=sanitize_key($r['id']);$items=$this->style_presets();if(!isset($items[$id]))return new \WP_Error('preset_not_found',__('Style preset not found.','nirmaan-builder'),array('status'=>404));
