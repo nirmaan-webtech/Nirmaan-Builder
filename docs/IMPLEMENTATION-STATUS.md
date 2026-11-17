@@ -132,3 +132,12 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Added nonce- and capability-protected deletion for stored submissions.
 - Extended JavaScript syntax validation to include the frontend forms script and added smoke tests for Phase 19 contracts.
 - Updated the master roadmap. Automated smoke tests and PHP syntax checks must pass; live WordPress browser, email transport and webhook endpoint verification are still required before production deployment.
+
+## Phase 20 – User Roles & Advanced Controls (initial implementation)
+- Added granular capabilities for builder access, content editing, standard/advanced modules, global design presets, Library, Theme Builder, Theme Options and role management.
+- Added the `Nirmaan Builder` WordPress role with restricted content editing; granted baseline builder access to the standard Editor role while keeping Theme Options, Theme Builder and role administration restricted.
+- Added an administrator-protected Role Permissions screen. Administrator permissions are fixed; sensitive role-management and global-settings capabilities cannot be granted to non-administrator roles through this screen.
+- Replaced broad WordPress capability checks in admin screens and REST routes with Nirmaan-specific capabilities.
+- Advanced form, query-loop and WooCommerce modules are hidden from users without the advanced-module capability and rejected by REST sanitization. Users cannot edit documents/templates/library items that already contain restricted advanced modules.
+- Role defaults are initialized once so later administrator changes in the Role Permissions screen are not silently overwritten on every request.
+- Remaining Phase 20 work: multilingual compatibility and a full translation-readiness pass. Live multi-role WordPress staging tests remain required, especially role creation, capability changes, ownership boundaries and access-denied REST responses.
