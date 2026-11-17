@@ -175,3 +175,17 @@ test('editor supports responsive style copy, paste and multi-selection extend', 
   assert.match(builder, /delete node\.settings\.style_preset_id/);
   assert.match(builder, /hide_'\+d/);
 });
+
+
+test('template parts support independent activation and display conditions', () => {
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  assert.match(admin, /nirmaan-save-part-settings/);
+  assert.match(admin, /part_active_/);
+  assert.match(admin, /part_condition_/);
+  assert.match(actions, /nirmaan-save-part-settings/);
+  assert.match(rest, /_nirmaan_part_settings/);
+  assert.match(rest, /part_settings/);
+  assert.match(renderer, /function part_is_active/);
+  assert.match(renderer, /part_is_active\(\$id,'body'\)/);
+  assert.match(renderer, /part_is_active\(\$id,\$part\)/);
+});
