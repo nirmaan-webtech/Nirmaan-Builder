@@ -131,7 +131,15 @@
  const settingsSchemas={content:contentSchemas,layout:layoutSchemas};\n function renderSchemaFields(parent,node,definitions,values,onChange){(definitions||[]).forEach(definition=>{const value=values[definition.key]??definition.default??'';if(definition.type==='media'){mediaField(parent,definition.label,definition.key,value,next=>onChange(definition,next));return;}renderField(parent,definition,value,next=>onChange(definition,next));});}\n function renderContentSchema(parent,node){renderSchemaFields(parent,node,settingsSchemas.content[node.type],node.settings,(definition,value)=>{node.settings[definition.key]=value;});}
  const layoutSchemas={
   section:[
-   {key:'width',label:'Section width',default:'100%'},
+   {key:'width',label:'Section width',type:'text',default:'100%',placeholder:'100% or 1200px'},
+   {key:'maxWidth',label:'Content max width',type:'text',default:'1200px'},
+   {key:'minHeight',label:'Minimum height',type:'text',default:'',optional:true,placeholder:'e.g. 400px'},
+   {key:'overflow',label:'Overflow',type:'select',default:'visible',options:[['visible','Visible'],['hidden','Hidden'],['auto','Auto'],['scroll','Scroll']]},
+   {key:'backgroundColor',label:'Background color',type:'color',default:'#ffffff'},
+   {key:'padding',label:'Section padding',type:'text',default:'40px 0'},
+   {key:'margin',label:'Section margin',type:'text',default:'0'},
+   {key:'position',label:'Positioning',type:'select',default:'static',options:[['static','Static'],['relative','Relative'],['sticky','Sticky'],['fixed','Fixed']]},
+   {key:'zIndex',label:'Stacking order (z-index)',type:'number',min:0,max:9999,default:0},
    {key:'maxWidth',label:'Content max width',default:'1200px'},
    {key:'minHeight',label:'Minimum height',default:'',optional:true},
    {key:'padding',label:'Section padding',default:'40px 0'},
@@ -154,7 +162,15 @@
    {key:'backgroundColor',label:'Background color',default:''}
   ],
   row:[
-   {key:'display',label:'Row display (flex/grid)',default:'flex'},
+   {key:'display',label:'Row display',type:'select',default:'flex',options:[['flex','Flex'],['grid','Grid'],['block','Block']]},
+   {key:'flexDirection',label:'Column direction',type:'select',default:'row',options:[['row','Horizontal'],['column','Vertical'],['row-reverse','Horizontal reversed'],['column-reverse','Vertical reversed']]},
+   {key:'flexWrap',label:'Wrap columns',type:'select',default:'nowrap',options:[['nowrap','No wrap'],['wrap','Wrap'],['wrap-reverse','Wrap reversed']]},
+   {key:'justifyContent',label:'Horizontal alignment',type:'select',default:'center',options:[['flex-start','Start'],['center','Center'],['flex-end','End'],['space-between','Space between'],['space-around','Space around'],['space-evenly','Space evenly']]},
+   {key:'alignItems',label:'Vertical alignment',type:'select',default:'stretch',options:[['stretch','Stretch'],['flex-start','Start'],['center','Center'],['flex-end','End'],['baseline','Baseline']]},
+   {key:'gap',label:'Column gutter',type:'text',default:'24px'},
+   {key:'width',label:'Row width',type:'text',default:'100%'},
+   {key:'maxWidth',label:'Row max width',type:'text',default:'1080px'},
+   {key:'padding',label:'Row padding',type:'text',default:'0'}
    {key:'width',label:'Row width',default:'100%'},
    {key:'maxWidth',label:'Row max width',default:'1080px'},
    {key:'flexDirection',label:'Column direction',default:'row'},
@@ -165,7 +181,19 @@
    {key:'padding',label:'Row padding',default:'0'}
   ],
   column:[
-   {key:'width',label:'Column width',default:'100%'},
+   {key:'width',label:'Column width',type:'text',default:'100%',placeholder:'e.g. 50%'},
+   {key:'flexBasis',label:'Column flex basis',type:'text',default:'',optional:true,placeholder:'e.g. 33.333%'},
+   {key:'minHeight',label:'Minimum height',type:'text',default:'',optional:true},
+   {key:'backgroundColor',label:'Background color',type:'color',default:'#ffffff'},
+   {key:'overflow',label:'Overflow',type:'select',default:'visible',options:[['visible','Visible'],['hidden','Hidden'],['auto','Auto'],['scroll','Scroll']]},
+   {key:'paddingTop',label:'Padding top',type:'text',default:'0'},
+   {key:'paddingRight',label:'Padding right',type:'text',default:'0'},
+   {key:'paddingBottom',label:'Padding bottom',type:'text',default:'0'},
+   {key:'paddingLeft',label:'Padding left',type:'text',default:'0'},
+   {key:'marginTop',label:'Margin top',type:'text',default:'0'},
+   {key:'marginRight',label:'Margin right',type:'text',default:'0'},
+   {key:'marginBottom',label:'Margin bottom',type:'text',default:'0'},
+   {key:'marginLeft',label:'Margin left',type:'text',default:'0'}
    {key:'minHeight',label:'Minimum height',default:'',optional:true},
    {key:'paddingTop',label:'Padding top',default:'0'},
    {key:'paddingRight',label:'Padding right',default:'0'},
