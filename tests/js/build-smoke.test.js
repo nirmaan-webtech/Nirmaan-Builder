@@ -144,3 +144,21 @@ test('global style presets are persisted, permission-protected and sanitized', (
   assert.match(builder, /Style preset applied/);
   assert.match(builder, /stylePresetsCache/);
 });
+
+test('global presets stay linked and synchronize through frontend rendering', () => {
+  assert.match(rest, /'style_preset_id'=>sanitize_key/);
+  assert.match(rest, /'preset_fallback'=>array/);
+  assert.match(rest, /function snapshot_preset_nodes/);
+  assert.match(rest, /preserve_deleted_preset_references/);
+  assert.match(rest, /references_preserved/);
+  assert.match(builder, /function getNodeStyle/);
+  assert.match(builder, /Linked to global style preset/);
+  assert.match(builder, /Update selected preset from this element/);
+  assert.match(builder, /linked elements will sync/);
+  assert.match(builder, /Detach preset/);
+  assert.match(builder, /getNodeStyle\(n,'desktop'\)/);
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  assert.match(renderer, /function get_style_preset/);
+  assert.match(renderer, /preset\['desktop'\]/);
+  assert.match(renderer, /preset\[\$device\]/);
+});
