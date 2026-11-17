@@ -23,19 +23,20 @@ final class Roles {
   $all = array_keys( self::capabilities() );
   $admin = get_role( 'administrator' );
   if ( $admin ) { foreach ( $all as $cap ) { $admin->add_cap( $cap ); } }
-  $editor = get_role( 'editor' );
-  if ( $editor ) {
-   foreach ( array( 'use_nirmaan_builder', 'edit_nirmaan_content', 'use_nirmaan_modules', 'edit_nirmaan_design', 'manage_nirmaan_library' ) as $cap ) { $editor->add_cap( $cap ); }
-  }
-  add_role( 'nirmaan_builder', __( 'Nirmaan Builder', 'nirmaan-builder' ), array(
-   'read' => true, 'edit_posts' => true, 'upload_files' => true,
-   'use_nirmaan_builder' => true, 'edit_nirmaan_content' => true,
-   'use_nirmaan_modules' => true, 'edit_nirmaan_design' => true,
-   'manage_nirmaan_library' => true,
-  ) );
-  $builder = get_role( 'nirmaan_builder' );
-  if ( $builder ) {
-   foreach ( array( 'use_nirmaan_builder', 'edit_nirmaan_content', 'use_nirmaan_modules', 'edit_nirmaan_design', 'manage_nirmaan_library' ) as $cap ) { $builder->add_cap( $cap ); }
+  if ( ! get_option( 'nirmaan_builder_roles_initialized' ) ) {
+   $editor = get_role( 'editor' );
+   if ( $editor ) {
+    foreach ( array( 'use_nirmaan_builder', 'edit_nirmaan_content', 'use_nirmaan_modules', 'edit_nirmaan_design', 'manage_nirmaan_library' ) as $cap ) { $editor->add_cap( $cap ); }
+   }
+   add_role( 'nirmaan_builder', __( 'Nirmaan Builder', 'nirmaan-builder' ), array(
+    'read' => true, 'edit_posts' => true, 'upload_files' => true,
+    'use_nirmaan_builder' => true, 'edit_nirmaan_content' => true,
+    'use_nirmaan_modules' => true, 'edit_nirmaan_design' => true,
+    'manage_nirmaan_library' => true,
+   ) );
+   update_option( 'nirmaan_builder_roles_initialized', 1, false );
+  } elseif ( ! get_role( 'nirmaan_builder' ) ) {
+   add_role( 'nirmaan_builder', __( 'Nirmaan Builder', 'nirmaan-builder' ), array( 'read' => true, 'edit_posts' => true, 'upload_files' => true, 'use_nirmaan_builder' => true, 'edit_nirmaan_content' => true, 'use_nirmaan_modules' => true, 'edit_nirmaan_design' => true, 'manage_nirmaan_library' => true ) );
   }
  }
  public static function render_page() {
