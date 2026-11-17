@@ -647,3 +647,17 @@ test('layout Advanced HTML attributes are sanitized, persisted and rendered', ()
   assert.match(renderer, /\$s\['html_id'\]/);
   assert.match(renderer, /\$html_attributes/);
 });
+
+
+test('column widths are pointer-resizable and per-side spacing is persisted and rendered', () => {
+  for (const key of ['paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft']) {
+    assert.ok(builder.includes("key:'"+key+"'"), key + ' control missing');
+    assert.ok(rest.includes("'"+key+"'"), key + ' is not sanitized');
+  }
+  assert.match(builder, /nb-column-width-handle/);
+  assert.match(builder, /Drag to adjust column width/);
+  assert.match(builder, /style\.width=value/);
+  for (const property of ['padding-top','padding-right','padding-bottom','padding-left','margin-top','margin-right','margin-bottom','margin-left']) {
+    assert.ok(renderer.includes("'"+property+"'"), property + ' is not rendered');
+  }
+});
