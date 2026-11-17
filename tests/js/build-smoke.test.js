@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const builder = fs.readFileSync('assets/js/builder.js', 'utf8');
 const actions = fs.readFileSync('assets/js/admin-actions.js', 'utf8');
+const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
 const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
 const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
 
