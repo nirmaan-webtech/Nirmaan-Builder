@@ -179,7 +179,7 @@ class Rest {
  private function sanitize_style($style,$allow_hover=true){
   if(!is_array($style))return array();
   $out=array();
-  $simple=array('padding','margin','fontSize','fontWeight','lineHeight','letterSpacing','borderWidth','width','maxWidth','minHeight','borderRadius','opacity','gap','top','right','bottom','left','zIndex');
+  $simple=array('padding','margin','paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft','fontSize','fontWeight','lineHeight','letterSpacing','borderWidth','width','maxWidth','minHeight','borderRadius','opacity','gap','top','right','bottom','left','zIndex');
   foreach($simple as $key)if(isset($style[$key]))$out[$key]=preg_replace('/[^0-9a-zA-Z.%\\- ]/','',substr((string)$style[$key],0,32));
   foreach(array('color','backgroundColor','borderColor') as $key)if(isset($style[$key]))$out[$key]=sanitize_hex_color($style[$key])?:'';
   foreach(array('textAlign','display','borderStyle','flexDirection','flexWrap','justifyContent','alignItems','position','overflow') as $key)if(isset($style[$key]))$out[$key]=sanitize_key($style[$key]);
