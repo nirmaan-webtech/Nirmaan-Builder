@@ -141,3 +141,13 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Advanced form, query-loop and WooCommerce modules are hidden from users without the advanced-module capability and rejected by REST sanitization. Users cannot edit documents/templates/library items that already contain restricted advanced modules.
 - Role defaults are initialized once so later administrator changes in the Role Permissions screen are not silently overwritten on every request.
 - Remaining Phase 20 work: multilingual compatibility and a full translation-readiness pass. Live multi-role WordPress staging tests remain required, especially role creation, capability changes, ownership boundaries and access-denied REST responses.
+
+
+## Phase 20 – multilingual and translation-readiness completion
+- Added WPML configuration for translatable Theme Builder templates and Library records. Builder JSON/meta structures are copied intact; visible node strings are registered independently with WPML String Translation to avoid editing serialized JSON.
+- Added Polylang post-type registration, translated-post metadata copying and Polylang string registration/translation.
+- Frontend rendering translates builder text, image alt text, form titles, labels, options and success messages using the current post/template translation context.
+- Added WordPress `wp-i18n` dependencies and `wp_set_script_translations()` for the visual editor, admin actions, Gutenberg sidebar and frontend forms.
+- Internationalized core admin/editor labels and documented POT/JSON catalog generation in `languages/README.md`.
+- Added smoke tests for WPML/Polylang integration hooks and translation script wiring.
+- Automated CI is repository-level validation only. Before production, verify the current supported WPML/Polylang versions on a real staging site, including translated page editing, language-specific templates, form labels/options, and role-based REST permissions.
