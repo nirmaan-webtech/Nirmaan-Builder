@@ -64,3 +64,9 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Added a Revisions control to list and restore saved snapshots; restoring first snapshots the current document.
 - Autosaves are user- and template-part-specific and are cleared after a successful manual save.
 - This remains subject to WordPress staging tests, especially multi-user editing, storage quotas and browser crash scenarios.
+
+## Responsive viewport preview batch (PR in progress)
+- Added desktop (1200px), tablet (768px) and mobile (390px) canvas preview controls.
+- Canvas preview applies device-specific styles with desktop-to-tablet-to-mobile override order.
+- Device visibility settings now hide elements in the matching editor preview.
+- Preview is a constrained editor canvas, not a full browser/device emulator; verify breakpoints on real devices and staging.
