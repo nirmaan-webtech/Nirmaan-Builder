@@ -21,6 +21,15 @@ final class Settings {
    'container_width' => '1200px',
    'section_spacing' => '32px',
    'button_radius' => '4px',
+   'accent_color' => '#0ea5e9',
+   'surface_color' => '#f8fafc',
+   'border_color' => '#e2e8f0',
+   'muted_color' => '#64748b',
+   'heading_font_family' => 'inherit',
+   'font_weight' => '400',
+   'line_height' => '1.6',
+   'spacing_scale' => '8px',
+   'shadow_style' => 'soft',
    'custom_css' => '',
   );
  }
@@ -37,7 +46,7 @@ final class Settings {
    $id = absint( $input[ $key ] ?? 0 );
    $out[ $key ] = $id && wp_attachment_is_image( $id ) ? $id : 0;
   }
-  foreach ( array( 'primary_color', 'secondary_color', 'text_color', 'background_color' ) as $key ) {
+  foreach ( array( 'primary_color', 'secondary_color', 'text_color', 'background_color', 'accent_color', 'surface_color', 'border_color', 'muted_color' ) as $key ) {
    $out[ $key ] = sanitize_hex_color( $input[ $key ] ?? $out[ $key ] ) ?: self::defaults()[ $key ];
   }
   $fonts = array( 'system', 'Arial, sans-serif', 'Georgia, serif', 'Tahoma, sans-serif', 'Verdana, sans-serif' );
@@ -48,6 +57,16 @@ final class Settings {
    if ( ! preg_match( '/^\d{1,4}(px|rem|em|%)$/', $value ) ) { $value = self::defaults()[ $key ]; }
    $out[ $key ] = $value;
   }
+  $heading_fonts = array( 'inherit', 'system', 'Arial, sans-serif', 'Georgia, serif', 'Tahoma, sans-serif', 'Verdana, sans-serif' );
+  $heading_font = sanitize_text_field( $input['heading_font_family'] ?? $out['heading_font_family'] );
+  $out['heading_font_family'] = in_array( $heading_font, $heading_fonts, true ) ? $heading_font : 'inherit';
+  $out['font_weight'] = in_array( (string) ( $input['font_weight'] ?? $out['font_weight'] ), array( '300', '400', '500', '600', '700', '800' ), true ) ? (string) $input['font_weight'] : '400';
+  $line_height = (string) ( $input['line_height'] ?? $out['line_height'] );
+  $out['line_height'] = preg_match( '/^(0?\\.[8-9]|[1-2](\\.[0-9])?)$/', $line_height ) ? $line_height : '1.6';
+  $spacing = sanitize_text_field( $input['spacing_scale'] ?? $out['spacing_scale'] );
+  $out['spacing_scale'] = preg_match( '/^\\d{1,3}(px|rem)$/', $spacing ) ? $spacing : '8px';
+  $shadow = sanitize_key( $input['shadow_style'] ?? $out['shadow_style'] );
+  $out['shadow_style'] = in_array( $shadow, array( 'none', 'soft', 'medium', 'strong' ), true ) ? $shadow : 'soft';
   $out['custom_css'] = substr( wp_strip_all_tags( (string) ( $input['custom_css'] ?? $out['custom_css'] ) ), 0, 20000 );
   return $out;
  }
@@ -63,7 +82,7 @@ final class Settings {
   if ( is_admin() ) { return; }
   $s = self::get();
   $font = 'system' === $s['font_family'] ? '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif' : $s['font_family'];
-  echo '<style id="nirmaan-builder-design-tokens">:root{--nb-primary:' . esc_attr( $s['primary_color'] ) . ';--nb-secondary:' . esc_attr( $s['secondary_color'] ) . ';--nb-text:' . esc_attr( $s['text_color'] ) . ';--nb-background:' . esc_attr( $s['background_color'] ) . ';--nb-font-family:' . esc_attr( $font ) . ';--nb-base-font-size:' . esc_attr( $s['base_font_size'] ) . ';--nb-container-width:' . esc_attr( $s['container_width'] ) . ';--nb-section-spacing:' . esc_attr( $s['section_spacing'] ) . ';--nb-button-radius:' . esc_attr( $s['button_radius'] ) . ';}body{font-family:var(--nb-font-family);font-size:var(--nb-base-font-size);color:var(--nb-text);background-color:var(--nb-background)}.nb-button{background-color:var(--nb-primary);border-radius:var(--nb-button-radius)}</style>';
+  echo '<style id="nirmaan-builder-design-tokens">:root{--nb-primary:' . esc_attr( $s['primary_color'] ) . ';--nb-secondary:' . esc_attr( $s['secondary_color'] ) . ';--nb-text:' . esc_attr( $s['text_color'] ) . ';--nb-background:' . esc_attr( $s['background_color'] ) . ';--nb-font-family:' . esc_attr( $font ) . ';--nb-base-font-size:' . esc_attr( $s['base_font_size'] ) . ';--nb-container-width:' . esc_attr( $s['container_width'] ) . ';--nb-section-spacing:' . esc_attr( $s['section_spacing'] ) . ';--nb-button-radius:' . esc_attr( $s['button_radius'] ) . ';--nb-accent:' . esc_attr( $s['accent_color'] ) . ';--nb-surface:' . esc_attr( $s['surface_color'] ) . ';--nb-border:' . esc_attr( $s['border_color'] ) . ';--nb-muted:' . esc_attr( $s['muted_color'] ) . ';--nb-heading-font:' . esc_attr( 'system' === $s['heading_font_family'] ? '-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif' : $s['heading_font_family'] ) . ';--nb-font-weight:' . esc_attr( $s['font_weight'] ) . ';--nb-line-height:' . esc_attr( $s['line_height'] ) . ';--nb-space-unit:' . esc_attr( $s['spacing_scale'] ) . ';--nb-shadow:' . esc_attr( $s['shadow_style'] ) . ';}body{font-family:var(--nb-font-family);font-size:var(--nb-base-font-size);font-weight:var(--nb-font-weight);line-height:var(--nb-line-height);color:var(--nb-text);background-color:var(--nb-background)}h1,h2,h3,h4,h5,h6{font-family:var(--nb-heading-font);}.nb-button{background-color:var(--nb-primary);border-radius:var(--nb-button-radius)}</style>';
  }
 
  public function print_custom_css() {
