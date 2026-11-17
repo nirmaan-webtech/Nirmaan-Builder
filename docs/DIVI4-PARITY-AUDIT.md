@@ -301,3 +301,21 @@ Limitations:
 - The editor drag handle writes both width and flex-basis; the REST sanitizer and frontend renderer preserve and output both values so the resized column retains its basis after reload.
 - Specialty Section remains a generic nested layout node; dedicated asymmetric specialty presets and structure editing are not implemented.
 - This commit adds source-level regression assertions only. Browser interaction, REST save/reload round-trip, PHP lint and frontend visual testing remain unverified.
+
+
+## 13. Specialty layouts and adjacent-column balancing — implementation slice
+
+Specialty Section now has explicit responsive layout presets:
+- Equal two-column (1:1)
+- Asymmetric two-column (1:2 and 2:1)
+- Three-column asymmetric (1:1:2, 2:1:1 and 1:2:1)
+- Three equal columns (1:1:1)
+
+The preset control writes a validated gridTemplateColumns value into the active responsive style bucket. The editor preview and frontend renderer both use CSS Grid. Default layout behavior stacks to one column on mobile and uses two equal columns on tablet unless the user has saved an explicit breakpoint override.
+
+Row Column resizing now changes the selected column and its adjacent Column together. The pair's combined measured width is conserved while each side is constrained to a minimum share; both width and flex-basis are persisted to the active responsive style bucket and rendered by the frontend.
+
+Implementation boundaries:
+- Adjacent balancing currently applies to direct Column children of a Row. It does not rebalance arbitrary nested grids, Specialty Section grid tracks, or mixed non-Column children.
+- Specialty presets require the Specialty Section to contain the corresponding number of direct child layout columns. The builder does not auto-create or delete child columns when a preset is selected.
+- Browser-level WordPress verification is still a release gate. The repository CI workflow runs PHP syntax, JS syntax and Node smoke assertions; it does not launch WordPress or exercise pointer events in a real browser. A running staging/local WordPress URL and test credentials are required for that final end-to-end pass.
