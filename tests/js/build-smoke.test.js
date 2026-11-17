@@ -415,3 +415,14 @@ test('Library saves selected reusable sections and typed module presets', () => 
   assert.match(rest, /unsupported_import_version/);
   assert.match(rest, /_nirmaan_category/);
 });
+
+
+test('History saving serializes autosaves before manual save and preserves edits made during save', () => {
+  assert.match(builder, /autosaveInFlight=Promise\.resolve\(\)/);
+  assert.match(builder, /await autosaveInFlight\.catch\(\(\)=>\{\}\)/);
+  assert.match(builder, /JSON\.stringify\(doc\)===JSON\.stringify\(snapshot\)/);
+  assert.match(builder, /checkpoint\(\);doc=restored\.document/);
+  assert.match(rest, /Invalid autosave part for this document type/);
+  assert.match(rest, /30\*DAY_IN_SECONDS/);
+  assert.match(rest, /Invalid revision part for this document type/);
+});
