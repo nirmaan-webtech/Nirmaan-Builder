@@ -334,18 +334,18 @@
 - [ ] Content backup and recovery
 
 ## Phase 19 – Forms and Advanced Features
-- [ ] Form builder
-- [ ] Text, email and number fields
-- [ ] Select, checkbox and radio fields
-- [ ] Required field validation
-- [ ] Form submission handling
-- [ ] Email notifications
-- [ ] Submission storage
-- [ ] Spam protection
-- [ ] Custom form success messages
-- [ ] Conditional field visibility
-- [ ] Custom code integration
-- [ ] Third-party integration architecture
+- [x] Form builder
+- [x] Text, email and number fields
+- [x] Select, checkbox and radio fields
+- [x] Required field validation (browser and server-side)
+- [x] Form submission handling
+- [x] Email notifications
+- [x] Submission storage
+- [x] Spam protection (honeypot, signed expiring form token and rate limiting)
+- [x] Custom form success messages
+- [x] Conditional field visibility with server-side validation bypass for hidden fields
+- [x] Custom code integration through the `nirmaan_builder_form_submitted` action hook
+- [x] Third-party integration architecture through validated webhook delivery and the action hook
 
 ## Phase 20 – User Roles and Advanced Controls
 - [ ] Builder role permissions

@@ -447,3 +447,35 @@ test('Forms support visual configuration, secure submissions and admin inbox', (
   assert.match(formsJs, /form\[data-nb-form\]/);
   assert.match(formsJs, /fetch\(form.action/);
 });
+
+test('Phase 19 forms include radio fields, conditional visibility and server-side conditional validation', () => {
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  const formsJs = fs.readFileSync('assets/js/forms.js', 'utf8');
+  assert.match(rest, /'radio'/);
+  assert.match(rest, /'show_if'=>array\('field'=>\$depends_on,'equals'=>\$equals\)/);
+  assert.match(forms, /elseif\('radio'===\$type\)/);
+  assert.match(forms, /data-nb-depends/);
+  assert.match(forms, /\$dependency&&sanitize_text_field/);
+  assert.match(formsJs, /data-nb-depends/);
+  assert.match(formsJs, /field\.hidden=!visible/);
+});
+
+test('Phase 19 forms support configurable success messages, safe webhooks and extension hooks', () => {
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  assert.match(rest, /'success_message'=>sanitize_text_field/);
+  assert.match(rest, /'webhook_url'=>esc_url_raw/);
+  assert.match(forms, /success_message/);
+  assert.match(forms, /wp_http_validate_url/);
+  assert.match(forms, /wp_safe_remote_post/);
+  assert.match(forms, /redirection'=>0/);
+  assert.match(forms, /do_action\('nirmaan_builder_form_submitted'/);
+});
+
+test('Phase 19 submissions can be deleted only by an authorized administrator with a nonce', () => {
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  assert.match(forms, /admin_post_nirmaan_delete_submission/);
+  assert.match(forms, /function delete_submission/);
+  assert.match(forms, /current_user_can\('manage_options'\)/);
+  assert.match(forms, /check_admin_referer\('nirmaan_delete_submission_\'/);
+  assert.match(forms, /wp_delete_post\(\$id,true\)/);
+});

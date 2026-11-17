@@ -122,3 +122,13 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Drag/drop in the layer tree can now move nodes into layout containers as well as reorder siblings; cycle moves are blocked.
 - Existing rename, visibility, lock, wireframe and visual-view controls retained.
 - Automated smoke tests cover the new controls and cycle guard. WordPress/browser interaction testing remains deferred.
+
+## Phase 19 – Forms & Advanced Features completion batch
+- Added Radio fields alongside text, email, textarea, number, telephone, URL, date, select and checkbox fields.
+- Added conditional field visibility driven by an earlier field's exact answer. Hidden conditional fields are disabled in the browser and excluded from required-field validation on the server.
+- Added configurable success messages.
+- Added optional webhook delivery using WordPress safe HTTP requests, bounded timeout and redirects disabled. Submission storage remains authoritative if the remote endpoint is unavailable.
+- Added the `nirmaan_builder_form_submitted` action hook for custom PHP integrations; arbitrary PHP execution is intentionally not exposed in the visual editor.
+- Added nonce- and capability-protected deletion for stored submissions.
+- Extended JavaScript syntax validation to include the frontend forms script and added smoke tests for Phase 19 contracts.
+- Updated the master roadmap. Automated smoke tests and PHP syntax checks must pass; live WordPress browser, email transport and webhook endpoint verification are still required before production deployment.

@@ -1,5 +1,17 @@
 (function(){
  'use strict';
+ document.addEventListener('change',function(event){
+  const form=event.target.closest('form[data-nb-form]');if(!form)return;
+  form.querySelectorAll('[data-nb-depends]').forEach(function(field){
+   const name=field.getAttribute('data-nb-depends'),expected=field.getAttribute('data-nb-equals');
+   const controls=Array.from(form.querySelectorAll('[name="fields['+CSS.escape(name)+']"]'));
+   const current=controls.length?(controls[0].type==='radio'?(controls.find(control=>control.checked)||{}).value||'':controls[0].type==='checkbox'?(controls[0].checked?'1':''):controls[0].value):'';
+   const visible=current===expected;field.hidden=!visible;
+   field.querySelectorAll('input,select,textarea').forEach(control=>{control.disabled=!visible;});
+  });
+ });
+ const initializeForms=function(){document.querySelectorAll('form[data-nb-form]').forEach(function(form){form.dispatchEvent(new Event('change',{bubbles:true}));});};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeForms,{once:true});else initializeForms();
  document.addEventListener('submit',async function(event){
   const form=event.target.closest('form[data-nb-form]');if(!form)return;event.preventDefault();
   const button=form.querySelector('button[type="submit"]'),status=form.querySelector('.nb-form-status');if(button)button.disabled=true;if(status)status.textContent='Sending…';
