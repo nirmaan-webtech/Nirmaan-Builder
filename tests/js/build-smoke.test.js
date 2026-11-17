@@ -123,3 +123,9 @@ test('design system exposes sanitized global tokens and advanced element styles'
   assert.match(renderer, /'boxShadow'=>'box-shadow'/);
   assert.match(renderer, /shadows=array/);
 });
+
+test('design system font weight sanitizer safely falls back when omitted', () => {
+  const settings = fs.readFileSync('includes/class-nirmaan-builder-settings.php', 'utf8');
+  assert.match(settings, /\$weight = \(string\) \( \$input\['font_weight'\] \?\? \$out\['font_weight'\] \)/);
+  assert.match(settings, /\? \$weight : '400'/);
+});
