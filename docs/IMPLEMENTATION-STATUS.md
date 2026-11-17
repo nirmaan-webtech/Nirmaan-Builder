@@ -160,3 +160,18 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Added source-level regression assertions for enqueueing and picker wiring.
 - Remaining: verify attachment selection in a real WordPress browser, add image metadata/size controls, and implement media selection for any additional image-bearing modules. This source-level change is not browser QA.
 \n\n## Phase 22 – centralized schema-driven settings field engine\n- Added one reusable typed field renderer for text, URL, number, color, textarea, select, checkbox and media controls.\n- Added shared schema dispatch for Content and layout settings so both panels use the same field pipeline.\n- Field definitions can supply options, min/max, step, required, placeholder and helper text; numeric bounds are enforced in the editor.\n- Kept existing call sites compatible through the legacy `field()` adapter.\n- Added source-level smoke coverage. Real WordPress interaction and browser validation remain outstanding.\n\n\n## Phase 23 – Section, Row and Column layout controls\n- Expanded the layout schemas with typed selectors for display, flex direction/wrapping, alignment, overflow and positioning.\n- Added section width/max-width, minimum height, spacing, background color and stacking order controls.\n- Added column width/flex-basis, minimum height, background, overflow and per-side padding/margin controls.\n- Added `alignSelf` to the REST style allow-list and frontend CSS property map.\n- Added source-level regression assertions. Full end-to-end REST persistence and visual checks are tracked separately.\n
+
+## Latest parity implementation update (2026-11-17)
+
+Implemented in the current PR branch:
+- Fixed the malformed newline in the centralized JavaScript field engine that prevented the Visual Builder script from loading. Added regression coverage; the follow-up CI run passed.
+- Expanded schema-driven module controls for Image, Button, Gallery, Slider, Tabs, Accordion, Blog, Portfolio and Video.
+- Added REST sanitization/persistence for the new module options and scoped custom CSS declarations.
+- Added frontend rendering for image links/captions/loading mode, button target/size/full-width variants, gallery columns/gap, tabs orientation/alignment, accordion single-open behavior, blog listing visibility, video aspect ratio, and functional slider arrows/dots/autoplay.
+- Added specialty-section default columns and synchronized preset selection with the actual editable column count.
+- Added category/search/offset/excerpt controls to Blog, Portfolio and Query Loop and applied these to frontend WP_Query calls.
+- Added smoke tests for the new settings and slider interactions.
+
+Still not verified as complete:
+- WordPress runtime/browser QA, save/reload/revision round-trip against a real database, WooCommerce runtime rendering, and responsive visual parity require a running WordPress staging site.
+- The remaining Divi 4 parity scope is broader than source-level smoke tests. Do not treat this branch as a complete Divi 4 replacement or production release until runtime tests and the outstanding controls are completed.
