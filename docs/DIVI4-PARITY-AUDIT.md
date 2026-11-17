@@ -298,6 +298,6 @@ Column Design settings now expose independent top/right/bottom/left padding and 
 Limitations:
 - Resizing is limited to a selected Column inside a supported layout parent; it is not yet a complete multi-column constraint solver. Adjacent columns are not automatically rebalanced to preserve a 100% total.
 - The percentage is calculated against the editor's immediate parent width. Nested/gapped layouts may require further refinement.
-- The editor drag handle currently writes a width value; published rendering uses the standard width CSS property and does not yet emit an explicit flex-basis constraint.
+- The editor drag handle writes both width and flex-basis; the REST sanitizer and frontend renderer preserve and output both values so the resized column retains its basis after reload.
 - Specialty Section remains a generic nested layout node; dedicated asymmetric specialty presets and structure editing are not implemented.
 - This commit adds source-level regression assertions only. Browser interaction, REST save/reload round-trip, PHP lint and frontend visual testing remain unverified.
