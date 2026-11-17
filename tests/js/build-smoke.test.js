@@ -163,3 +163,15 @@ test('global presets stay linked and synchronize through frontend rendering', ()
   assert.match(renderer, /preset\['desktop'\]/);
   assert.match(renderer, /preset\[\$device\]/);
 });
+
+test('editor supports responsive style copy, paste and multi-selection extend', () => {
+  assert.match(builder, /function captureStyles/);
+  assert.match(builder, /function applyStyleSnapshot/);
+  assert.match(builder, /function copyStyles/);
+  assert.match(builder, /function pasteStyles/);
+  assert.match(builder, /function extendStyles/);
+  assert.match(builder, /selectNode\(n\.id,e\.ctrlKey\|\|e\.metaKey\)/);
+  assert.match(builder, /Styles extended from first selected element/);
+  assert.match(builder, /delete node\.settings\.style_preset_id/);
+  assert.match(builder, /hide_\+d/);
+});
