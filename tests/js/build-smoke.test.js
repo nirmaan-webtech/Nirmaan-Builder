@@ -600,3 +600,11 @@ test('Element settings are separated into Content, Design and Advanced tabs', ()
   assert.match(builder, /nb-design-panel/);
   assert.match(builder, /nb-custom-fields/);
 });
+
+test('Custom module extension API exposes definitions, sanitization and rendering hooks', () => {
+  assert.match(admin, /nirmaan_builder_custom_module_definitions/);
+  assert.match(builder, /customModules/);
+  assert.match(rest, /nirmaan_builder_sanitize_custom_module_settings/);
+  assert.match(rest, /\$custom_types/);
+  assert.match(renderer, /nirmaan_builder_render_custom_module/);
+});
