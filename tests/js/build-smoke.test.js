@@ -141,7 +141,7 @@ test('global style presets are persisted, permission-protected and sanitized', (
   assert.match(rest, /Maximum of 200 style presets/);
   assert.match(builder, /Reusable Style Presets/);
   assert.match(builder, /Save current styles as preset/);
-  assert.match(builder, /Style preset applied/);
+  assert.match(builder, /Linked to global style preset/);
   assert.match(builder, /stylePresetsCache/);
 });
 
