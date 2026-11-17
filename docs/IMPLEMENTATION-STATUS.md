@@ -102,3 +102,13 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Reused shared duplicate/delete handlers from both keyboard shortcuts and context menu actions.
 - Added automated smoke coverage for the new controls and interactions.
 - Remaining Phase 7 work includes live frontend preview, robust builder loading/error states, full-width preview mode and broader editor state/accessibility handling. Browser-level interaction testing remains deferred.
+
+
+## Layout and Structure System – foundational controls (PR #16)
+- Added Section, Row, Column and Columns modules; these nodes support nested child documents and are accepted by REST sanitization.
+- New Columns layouts start with two Column children and expose Add Column / Remove Last Column controls.
+- Added responsive column track definitions using CSS Grid syntax limited to safe unit tokens (fr, %, px, rem); existing width controls can size individual columns.
+- Added layout settings for flex wrapping, grid columns, positioning offsets, z-index and overflow, with REST whitelist sanitization and frontend renderer mappings.
+- Existing spacing, dimensions, background, border and shadow settings are now marked as covered in the roadmap; actual per-theme visual verification remains deferred.
+- Automated smoke tests cover module registration, REST acceptance, safe grid-column syntax and frontend style mappings.
+- Not yet covered in this batch: pointer-based drag-resizing handles, dedicated section background image/gradient controls, and advanced alignment UI.
