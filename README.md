@@ -1,35 +1,41 @@
-# Nirmaan Builder
+# Nirmaan Builder WordPress Theme
 
-An independent WordPress visual page and theme builder plugin by Nirmaan WebTech.
+Nirmaan Builder is an installable WordPress **theme** by Nirmaan WebTech. The visual builder, Theme Options, Theme Builder, Library, forms, role controls and WooCommerce elements are integrated into the theme. No separate Nirmaan Builder plugin is required.
 
-## Current feature set
-- Recursive page canvas with nested containers/columns, module settings and drag/drop.
-- Desktop, tablet and mobile style controls with per-device visibility.
-- Theme Options for site logo, favicon, global colors, typography, layout defaults and custom CSS.
-- Theme Builder with Header, Body and Footer parts, include/exclude conditions and priority ordering.
-- Reusable Library layouts, JSON import/export and editable live-reference Global Elements.
-- WooCommerce product, product archive, cart, checkout and mini-cart modules using native WooCommerce output.
-- Authenticated REST API with server-side allow-list sanitization.
+## Included builder capabilities
+- Recursive visual page canvas with nested containers and columns.
+- Desktop, tablet and mobile styles with per-device visibility.
+- Theme Options for branding, global colors, typography, layout defaults and custom CSS.
+- Theme Builder with Header, Body and Footer parts, display conditions and priority.
+- Reusable Library layouts, JSON import/export and live-reference Global Elements.
+- Forms, submission management and role-based builder permissions.
+- WPML and Polylang integration hooks and translation-ready strings.
+- WooCommerce product, archive, cart, checkout and mini-cart elements when WooCommerce is active.
 
-This is an evolving builder foundation, **not a complete Divi 4 replacement**. Review [implementation status](docs/IMPLEMENTATION-STATUS.md) before use.
+This remains an evolving builder foundation, **not a complete Divi 4 replacement**. Review docs/IMPLEMENTATION-STATUS.md.
 
 ## Requirements
 - WordPress 6.4+
 - PHP 8.0+
 - Node.js 20+ for JavaScript syntax checks and smoke tests
-- WooCommerce for WooCommerce modules
+- WooCommerce only for WooCommerce elements
 
-## Installation
-1. Download the branch ZIP or the reviewed pull request.
-2. Copy the plugin folder into `wp-content/plugins/nirmaan-builder/`.
-3. Activate Nirmaan Builder.
-4. Edit a Page/Post with the Nirmaan Builder metabox, or open **Nirmaan Builder → Theme Builder**.
-5. Configure branding and global design defaults under **Nirmaan Builder → Theme Option**.
-6. Manage reusable layouts and global elements under **Nirmaan Builder → Library**.
+## Install as a theme
+1. Download the ZIP for branch feature/convert-to-wordpress-theme.
+2. In WordPress, open **Appearance → Themes → Add New → Upload Theme**.
+3. Upload the ZIP and click **Install Now → Activate**.
+4. Open **Nirmaan Builder → Theme Option** to configure global design settings.
+5. Open **Nirmaan Builder → Theme Builder** to create Header, Body and Footer templates.
+6. Use the Nirmaan Builder controls on Pages and Posts to edit content visually.
+
+The theme includes a standard WordPress header/footer fallback. An assigned Nirmaan Builder Header or Footer template replaces the corresponding fallback.
+
+## Important migration note
+This release changes Nirmaan Builder from a plugin package to a theme package. WordPress stores posts, builder documents, templates, library entries and settings in the database, so switching the active theme does not intentionally delete those records. However, keep a database backup before changing themes. Do not keep an older Nirmaan Builder plugin active alongside this theme.
 
 ## Development checks
-- `npm run build` – JavaScript syntax validation.
-- `npm test` – builder feature smoke tests.
+- npm run build – JavaScript syntax validation.
+- npm test – builder feature smoke tests.
 - GitHub Actions – PHP syntax validation and JavaScript checks.
 
-Install on staging and validate with the target theme, WooCommerce version, checkout/payment gateways and extensions before production deployment.
+Automated checks do not replace WordPress staging/browser testing. Validate the theme with the target WordPress version, active plugins, WooCommerce checkout/payment gateways and multilingual plugins before production use.
