@@ -28,7 +28,7 @@
      }
     }),
     el(Notice, { status: 'info', isDismissible: false }, 'Gutenberg content is preserved separately. Save the post after changing this setting.'),
-    el(Button, { variant: 'primary', onClick: function () { window.location.href = builderUrl; } }, 'Open Visual Builder')
+    el(Button, { variant: 'primary', disabled: !postId, onClick: function () { window.location.href = builderUrl; } }, 'Open Visual Builder')
    )
   );
  }
