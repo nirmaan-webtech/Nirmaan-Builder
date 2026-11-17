@@ -227,6 +227,11 @@
    field(p,'Products to show (1–24)','woo_limit',s.woo.limit,v=>{s.woo.limit=Math.max(1,Math.min(24,Number(v)||8));},'number');
    field(p,'Grid columns (1–6)','woo_columns',s.woo.columns,v=>{s.woo.columns=Math.max(1,Math.min(6,Number(v)||4));},'number');
    field(p,'Product category slug (optional)','woo_category',s.woo.category,v=>{s.woo.category=v.trim().toLowerCase().replace(/[^a-z0-9_-]/g,'');});
+   field(p,'Minimum price','woo_min_price',s.woo.min_price??'',v=>{s.woo.min_price=v===''?'':Math.max(0,Number(v)||0);},'number');
+   field(p,'Maximum price','woo_max_price',s.woo.max_price??'',v=>{s.woo.max_price=v===''?'':Math.max(0,Number(v)||0);},'number');
+   const sale=document.createElement('label');const saleCheck=document.createElement('input');saleCheck.type='checkbox';saleCheck.checked=!!s.woo.on_sale;saleCheck.onchange=()=>{checkpoint();s.woo.on_sale=saleCheck.checked;markChanged('Sale filter updated');};sale.append(saleCheck,' Sale products only');p.appendChild(sale);
+   const stock=document.createElement('label');const stockCheck=document.createElement('input');stockCheck.type='checkbox';stockCheck.checked=!!s.woo.in_stock;stockCheck.onchange=()=>{checkpoint();s.woo.in_stock=stockCheck.checked;markChanged('Stock filter updated');};stock.append(stockCheck,' In-stock products only');p.appendChild(stock);
+
    const makeSelect=(label,key,options)=>{const l=document.createElement('label');l.textContent=label;const select=document.createElement('select');options.forEach(([value,title])=>{const option=document.createElement('option');option.value=value;option.textContent=t(title);select.appendChild(option);});select.value=s.woo[key]||options[0][0];select.onfocus=checkpoint;select.onchange=()=>{s.woo[key]=select.value;markChanged('WooCommerce display settings updated');};l.appendChild(select);p.appendChild(l);};
    makeSelect('Sort products','orderby',[['date','Date'],['popularity','Popularity'],['rating','Rating'],['price','Price'],['title','Title'],['menu_order','Menu order'],['rand','Random']]);
    makeSelect('Sort direction','order',[['DESC','Descending'],['ASC','Ascending']]);
@@ -242,6 +247,11 @@
    field(p,'Submit button label','submit_label',s.submit_label||'Submit',v=>s.submit_label=v);
    field(p,'Success message','success_message',s.success_message||'Thank you. Your submission has been received.',v=>s.success_message=v);
    field(p,'Webhook URL (optional)','webhook_url',s.webhook_url||'',v=>s.webhook_url=v);
+   const consent=document.createElement('label');const consentCheck=document.createElement('input');consentCheck.type='checkbox';consentCheck.checked=!!s.form_consent_required;consentCheck.onfocus=checkpoint;consentCheck.onchange=()=>{s.form_consent_required=consentCheck.checked;markChanged('Consent setting updated');};consent.append(consentCheck,' Require consent checkbox');p.appendChild(consent);
+   field(p,'Consent label','form_consent_label',s.form_consent_label||'I agree to the privacy policy',v=>s.form_consent_label=v);
+   field(p,'Privacy policy URL','privacy_policy_url',s.privacy_policy_url||'',v=>s.privacy_policy_url=v);
+   field(p,'Submit button processing label','processing_label',s.processing_label||'Sending…',v=>s.processing_label=v);
+
    const wrap=document.createElement('div');wrap.className='nb-responsive-settings';const title=document.createElement('h3');title.textContent=t('Form fields');wrap.appendChild(title);
    const draw=()=>{wrap.querySelectorAll('.nb-form-field-row').forEach(el=>el.remove());s.form_fields.forEach((item,index)=>{
     const row=document.createElement('div');row.className='nb-form-field-row';
