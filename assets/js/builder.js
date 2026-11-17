@@ -59,14 +59,17 @@
   }
   el.onclick=e=>{if(e.target.closest('.nb-element-controls')||e.target.isContentEditable)return;e.stopPropagation();selectNode(n.id,e.ctrlKey||e.metaKey);render();};el.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();showContextMenu(n.id,e.clientX,e.clientY);};el.ondragstart=e=>{if(n.settings.locked){e.preventDefault();return;}e.dataTransfer.setData('text/plain',n.id);e.dataTransfer.effectAllowed='move';};el.ondragover=e=>{e.preventDefault();el.classList.add('drop-target');};el.ondragleave=()=>el.classList.remove('drop-target');el.ondrop=e=>{e.preventDefault();e.stopPropagation();el.classList.remove('drop-target');const from=find(e.dataTransfer.getData('text/plain')),to=find(n.id);if(!from||!to||from.node.id===to.node.id||from.nodes===to.nodes&&from.index===to.index||containsId(from.node,to.node.id))return;checkpoint();const moving=from.nodes.splice(from.index,1)[0];const refreshed=find(n.id);if(['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'].includes(refreshed.node.type))refreshed.node.children.push(moving);else refreshed.nodes.splice(refreshed.index,0,moving);render();status(t('Unsaved changes'));};
   if(n.type==='column'&&selected===n.id&&!n.settings.locked){
-   const parent=find(n.id)?.parent;
-   if(parent&&['row','columns'].includes(parent.type)){
-    const resize=document.createElement('button');resize.type='button';resize.className='nb-column-width-handle';resize.setAttribute('aria-label',t('Resize column width'));resize.title=t('Drag to adjust column width');
-    resize.onpointerdown=e=>{e.preventDefault();e.stopPropagation();checkpoint();const parentElement=el.parentElement,parentWidth=parentElement?parentElement.getBoundingClientRect().width:0;if(!parentWidth)return;const startX=e.clientX,startWidth=el.getBoundingClientRect().width;resize.setPointerCapture(e.pointerId);const move=event=>{const next=Math.max(5,Math.min(95,((startWidth+event.clientX-startX)/parentWidth)*100));const value=next.toFixed(2)+'%';const style=n.settings[previewDevice]||(n.settings[previewDevice]={});style.width=value;style.flexBasis=value;el.style.width=value;el.style.flexBasis=value;el.style.flexGrow='0';el.style.flexShrink='0';};const end=()=>{resize.removeEventListener('pointermove',move);resize.removeEventListener('pointerup',end);resize.removeEventListener('pointercancel',end);markChanged('Column width updated');};resize.addEventListener('pointermove',move);resize.addEventListener('pointerup',end);resize.addEventListener('pointercancel',end);};
-    el.appendChild(resize);
+   const location=find(n.id),parent=location?.parent;
+   if(parent&&parent.type==='row'){
+    const siblings=parent.children||[],siblingIndex=siblings.findIndex(item=>item.id===n.id),adjacent=siblings[siblingIndex+1]||siblings[siblingIndex-1];
+    if(adjacent&&adjacent.type==='column'){
+     const resize=document.createElement('button');resize.type='button';resize.className='nb-column-width-handle';resize.setAttribute('aria-label',t('Resize column width'));resize.title=t('Drag to resize and balance adjacent column');
+     resize.onpointerdown=e=>{e.preventDefault();e.stopPropagation();checkpoint();const parentElement=el.parentElement,parentWidth=parentElement?parentElement.getBoundingClientRect().width:0,adjacentElement=parentElement?.querySelector('[data-node-id="'+CSS.escape(adjacent.id)+'"]');if(!parentWidth||!adjacentElement)return;const startX=e.clientX,startWidth=el.getBoundingClientRect().width,adjacentStart=adjacentElement.getBoundingClientRect().width,pairTotal=startWidth+adjacentStart,sign=siblingIndex<siblings.length-1?1:-1;resize.setPointerCapture(e.pointerId);const apply=(node,element,pct)=>{const value=pct.toFixed(2)+'%';const targetStyle=node.settings[previewDevice]||(node.settings[previewDevice]={});targetStyle.width=value;targetStyle.flexBasis=value;element.style.width=value;element.style.flexBasis=value;element.style.flexGrow='0';element.style.flexShrink='0';};const move=event=>{const delta=(event.clientX-startX)*sign,next=Math.max(parentWidth*.1,Math.min(pairTotal-parentWidth*.1,startWidth+delta));apply(n,el,(next/parentWidth)*100);apply(adjacent,adjacentElement,((pairTotal-next)/parentWidth)*100);};const end=()=>{resize.removeEventListener('pointermove',move);resize.removeEventListener('pointerup',end);resize.removeEventListener('pointercancel',end);markChanged('Column widths balanced and saved');};resize.addEventListener('pointermove',move);resize.addEventListener('pointerup',end);resize.addEventListener('pointercancel',end);};
+     el.appendChild(resize);
+    }
    }
   }
-  if(n.children){const kids=document.createElement('div');kids.className='nb-nested-children'+(n.type==='columns'?' nb-column-grid':'')+(n.type==='row'?' nb-row-layout':'');if(n.type==='columns'){const grid=getNodeStyle(n,previewDevice);kids.style.display='grid';kids.style.gridTemplateColumns=grid.gridTemplateColumns||n.children.map(()=> 'minmax(0, 1fr)').join(' ');kids.style.gap=grid.gap||'20px';}if(n.type==='row'){kids.style.display='flex';kids.style.flexWrap='wrap';kids.style.gap=getNodeStyle(n,previewDevice).gap||'16px';}n.children.forEach(child=>kids.appendChild(nodeView(child,depth+1)));el.appendChild(kids);}return el;}
+  if(n.children){const kids=document.createElement('div');kids.className='nb-nested-children'+(n.type==='columns'?' nb-column-grid':'')+(n.type==='row'?' nb-row-layout':'');if(n.type==='columns'){const grid=getNodeStyle(n,previewDevice);kids.style.display='grid';kids.style.gridTemplateColumns=grid.gridTemplateColumns||n.children.map(()=> 'minmax(0, 1fr)').join(' ');kids.style.gap=grid.gap||'20px';}if(n.type==='row'){kids.style.display='flex';kids.style.flexWrap='nowrap';kids.style.gap=getNodeStyle(n,previewDevice).gap||'16px';}if(n.type==='specialty_section'){const specialty=getNodeStyle(n,previewDevice);kids.style.display='grid';kids.style.gridTemplateColumns=specialty.gridTemplateColumns||'1fr 2fr';kids.style.gap=specialty.gap||'24px';}n.children.forEach(child=>kids.appendChild(nodeView(child,depth+1)));el.appendChild(kids);}return el;}
  function renderDynamicControls(parent,node){
   const wrap=document.createElement('div');wrap.className='nb-responsive-settings nb-dynamic-controls';const title=document.createElement('h3');title.textContent=t('Dynamic Content');wrap.appendChild(title);
   const binding=node.settings.dynamic||(node.settings.dynamic={enabled:false,source:'post_title',field:'',fallback:''});
@@ -189,6 +192,24 @@
   const wrap=document.createElement('div');wrap.className='nb-responsive-settings nb-design-panel nb-layout-schema';
   const heading=document.createElement('h3');heading.textContent=t(node.type.replaceAll('_',' ')+' settings');wrap.appendChild(heading);
   const note=document.createElement('p');note.textContent=t('These layout controls write to the active responsive style and are sanitized and rendered by the shared style pipeline.');wrap.appendChild(note);
+  if(node.type==='specialty_section'){
+   const presetLabel=document.createElement('label');presetLabel.textContent=t('Specialty layout preset');
+   const presetSelect=document.createElement('select');
+   const presets=[
+    ['1fr 1fr','Equal columns (1:1)'],
+    ['1fr 2fr','Left narrow / right wide (1:2)'],
+    ['2fr 1fr','Left wide / right narrow (2:1)'],
+    ['1fr 1fr 2fr','Two narrow / one wide (1:1:2)'],
+    ['2fr 1fr 1fr','One wide / two narrow (2:1:1)'],
+    ['1fr 2fr 1fr','Wide center (1:2:1)'],
+    ['1fr 1fr 1fr','Three equal columns (1:1:1)']
+   ];
+   presets.forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=t(label);presetSelect.appendChild(option);});
+   presetSelect.value=visibleStyle.gridTemplateColumns||'1fr 2fr';
+   presetSelect.onfocus=checkpoint;
+   presetSelect.onchange=()=>{style.display='grid';style.gridTemplateColumns=presetSelect.value;markChanged('Specialty layout preset updated');render();};
+   presetLabel.appendChild(presetSelect);wrap.appendChild(presetLabel);
+  }
   definitions.forEach(definition=>{
    const value=visibleStyle[definition.key]??definition.default??'';
    field(wrap,definition.label,definition.key,value,next=>{
