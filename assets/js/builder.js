@@ -108,6 +108,23 @@
   wrap.append(select,apply,update,detach,removePreset,save);parent.appendChild(wrap);
  }
  function renderStyleActions(parent){const wrap=document.createElement('div');wrap.className='nb-responsive-settings nb-style-actions';const heading=document.createElement('h3');heading.textContent=t('Copy / Extend Styles');wrap.appendChild(heading);const copy=document.createElement('button');copy.type='button';copy.className='button';copy.textContent=t('Copy Styles');copy.disabled=!selected||!find(selected);copy.onclick=()=>{if(copyStyles()){paste.disabled=false;status(t('Styles copied from selected element'));}};const paste=document.createElement('button');paste.type='button';paste.className='button';paste.textContent=t('Paste Styles');paste.disabled=!styleClipboard||!selectedNodes().length;paste.onclick=()=>pasteStyles();const extend=document.createElement('button');extend.type='button';extend.className='button';extend.textContent=t('Extend Styles to Selected');extend.disabled=selectedNodes().length<2;extend.onclick=extendStyles;const hint=document.createElement('p');hint.textContent=t('Tip: Ctrl/Cmd-click elements on the canvas or in Layers to multi-select. Extend uses the first selected element as the source.');wrap.append(copy,paste,extend,hint);parent.appendChild(wrap);}
+ const contentSchemas={
+  heading:[{key:'content',label:'Heading text',type:'textarea'},{key:'level',label:'Heading level (1–6)',type:'number',default:2,min:1,max:6}],
+  text:[{key:'content',label:'Text content',type:'textarea'}],
+  image:[{key:'url',label:'Image URL',type:'text'},{key:'alt',label:'Alternative text',type:'text'}],
+  button:[{key:'content',label:'Button text',type:'text'},{key:'url',label:'Button link URL',type:'text'}],
+  video:[{key:'url',label:'Video URL',type:'text'}],
+  spacer:[{key:'height',label:'Height (px)',type:'number',default:32,min:0,max:1200}]
+ };
+ function renderContentSchema(parent,node){
+  (contentSchemas[node.type]||[]).forEach(definition=>{
+   const value=node.settings[definition.key]??definition.default??'';
+   field(parent,definition.label,definition.key,value,next=>{
+    if(definition.type==='number')node.settings[definition.key]=Math.max(definition.min??0,Math.min(definition.max??100000,Number(next)||0));
+    else node.settings[definition.key]=next;
+   },definition.type==='number'?'number':(definition.type==='textarea'?'textarea':'text'));
+  });
+ }
  function settings(){const p=document.getElementById('nirmaan-settings');p.replaceChildren();renderStyleActions(p);renderBreakpointControls(p);const r=selected?find(selected):null;if(!r){const note=document.createElement('p');note.textContent=t('Select an element on the canvas.');p.appendChild(note);return;}const n=r.node,s=n.settings;
   if(cfg.postId)renderCustomFields(p);
   if(['shop_products','product_archive','related_products'].includes(n.type)){
@@ -158,11 +175,8 @@
    field(p,'Posts to show (1–24)','query_posts_per_page',s.query.posts_per_page||6,v=>{s.query.posts_per_page=Math.max(1,Math.min(24,Number(v)||6));},'number');
    field(p,'Grid columns (1–6)','query_columns',s.query.columns||3,v=>{s.query.columns=Math.max(1,Math.min(6,Number(v)||3));},'number');
   }
-  if(n.type==='video')field(p,'Video URL','url',s.url||'',v=>s.url=v);
   if(n.type==='query_loop'){field(p,'Post type','query_post_type',s.query?.post_type||'post',v=>{s.query=s.query||{};s.query.post_type=v;});field(p,'Posts per page (1–24)','query_posts_per_page',s.query?.posts_per_page||6,v=>{s.query=s.query||{};s.query.posts_per_page=Math.max(1,Math.min(24,Number(v)||6));},'number');const orderby=document.createElement('select');[['date','Date'],['title','Title'],['menu_order','Menu order'],['rand','Random']].forEach(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;orderby.appendChild(o);});orderby.value=s.query?.orderby||'date';orderby.onchange=()=>{checkpoint();s.query=s.query||{};s.query.orderby=orderby.value;markChanged('Query settings updated');};p.appendChild(orderby);const order=document.createElement('select');[['DESC','Newest first'],['ASC','Oldest first']].forEach(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;order.appendChild(o);});order.value=s.query?.order||'DESC';order.onchange=()=>{checkpoint();s.query=s.query||{};s.query.order=order.value;markChanged('Query settings updated');};p.appendChild(order);const note=document.createElement('p');note.textContent=t('Add child elements to define each repeated post item. Dynamic bindings inside the loop resolve against each post.');p.appendChild(note);}
-  else if(n.type==='image'){field(p,'Image URL','url',s.url,v=>s.url=v);field(p,'Alt text','alt',s.alt,v=>s.alt=v);}
-  else if(n.type==='spacer')field(p,'Height (px)','height',s.height,v=>s.height=Number(v),'number');
-  else if(n.type!=='form') {field(p,'Content','content',s.content,v=>s.content=v,'textarea');if(n.type==='button')field(p,'Link URL','url',s.url,v=>s.url=v);if(n.type==='heading')field(p,'Heading level','level',s.level,v=>s.level=Number(v),'number');}
+  else {renderContentSchema(p,n);}
   if(['heading','text','button','image'].includes(n.type))renderDynamicControls(p,n);
   const responsive=document.createElement('div');responsive.className='nb-responsive-settings nb-design-panel';const h=document.createElement('h3');h.textContent=t('Responsive controls');responsive.appendChild(h);
   const tabs=document.createElement('div');tabs.className='nb-device-tabs';['desktop','tablet','mobile'].forEach(d=>{const b=document.createElement('button');b.type='button';b.className='button'+(device===d?' button-primary':'');b.textContent=d[0].toUpperCase()+d.slice(1);b.onclick=()=>{device=d;render();};tabs.appendChild(b);});responsive.appendChild(tabs);
