@@ -357,7 +357,7 @@ test('frontend preview and authenticated inline editing are available for editab
   assert.match(renderer, /enqueue_frontend_editor/);
   assert.match(renderer, /is_user_logged_in\(\)/);
   assert.match(renderer, /current_user_can\('edit_post',\$post_id\)/);
-  assert.match(renderer, /nirmaan_frontend_edit/);
+  assert.ok(renderer.includes("'1'!==sanitize_text_field(wp_unslash($_GET['nirmaan_frontend_edit']??''))"));
   assert.match(renderer, /add_frontend_edit_link/);
   assert.match(renderer, /admin_bar_menu/);
   assert.match(frontendEditor, /contentEditable = 'true'/);
