@@ -33,7 +33,7 @@ class Forms {
   wp_enqueue_script('nirmaan-builder-forms',NIRMAAN_BUILDER_URL.'assets/js/forms.js',array('wp-i18n'),NIRMAAN_BUILDER_VERSION,true);wp_set_script_translations('nirmaan-builder-forms','nirmaan-builder',NIRMAAN_BUILDER_PATH.'languages');
   $fields=is_array($settings['form_fields']??null)?array_slice($settings['form_fields'],0,20):array();
   $fields=array_values(array_filter($fields,'is_array'));
-  $payload=array('form_id'=>sanitize_key($node_id),'title'=>sanitize_text_field($settings['form_title']??'Website enquiry'),'notify'=>sanitize_email($settings['notification_email']??get_option('admin_email')),'fields'=>$fields,'success_message'=>sanitize_text_field($settings['success_message']??__('Thank you. Your submission has been received.','nirmaan-builder')),'webhook_url'=>esc_url_raw($settings['webhook_url']??''),'expires'=>time()+7200);
+  $payload=array('form_id'=>sanitize_key($node_id),'title'=>sanitize_text_field($settings['form_title']??'Website enquiry'),'notify'=>sanitize_email($settings['notification_email']??get_option('admin_email')),'fields'=>$fields,'success_message'=>sanitize_text_field($settings['success_message']??__('Thank you. Your submission has been received.','nirmaan-builder')),'webhook_url'=>esc_url_raw($settings['webhook_url']??''),'consent_required'=>!empty($settings['form_consent_required']),'consent_label'=>sanitize_text_field($settings['form_consent_label']??__('I agree to the privacy policy','nirmaan-builder')),'privacy_policy_url'=>esc_url_raw($settings['privacy_policy_url']??''),'expires'=>time()+7200);
   $body=rtrim(strtr(base64_encode(wp_json_encode($payload)), '+/', '-_'), '=');
   $token=$body.'.'.hash_hmac('sha256',$body,wp_salt('auth'));
   $html='<form class="nb-form '.$class.'" method="post" action="'.esc_url(rest_url('nirmaan-builder/v1/form-submit')).'" data-nb-form style="'.esc_attr($style).'">';
@@ -50,13 +50,13 @@ class Forms {
    else{$input_type=in_array($type,array('email','number','tel','url','date'),true)?$type:'text';$html.='<input type="'.esc_attr($input_type).'" name="fields['.esc_attr($name).']"'. $attr .' maxlength="500">';}
    $html.='</div>';
   }
-  $html.='<button type="submit">'.esc_html($settings['submit_label']??__('Submit','nirmaan-builder')).'</button><p class="nb-form-status" role="status" aria-live="polite"></p></form>';
+  if(!empty($payload['consent_required'])){$html.='<label class="nb-form-consent"><input type="checkbox" name="consent" value="1" required> '.esc_html($payload['consent_label']);if(!empty($payload['privacy_policy_url']))$html.=' <a href="'.esc_url($payload['privacy_policy_url']).'" target="_blank" rel="noopener noreferrer">'.esc_html__('Privacy policy','nirmaan-builder').'</a>';$html.='</label>';}$html.='<button type="submit">'.esc_html($settings['submit_label']??__('Submit','nirmaan-builder')).'</button><p class="nb-form-status" role="status" aria-live="polite"></p></form>';
   return $html;
  }
  public function submit( $request ) {
   $params=$request->get_json_params();if(!is_array($params))$params=$request->get_body_params();
   if(!empty($params['website']))return new \WP_Error('form_spam',__('Submission rejected.','nirmaan-builder'),array('status'=>400));
-  $data=$this->decode_token($params['token']??'');if(!$data)return new \WP_Error('invalid_form_token',__('This form has expired. Refresh the page and try again.','nirmaan-builder'),array('status'=>403));
+  $data=$this->decode_token($params['token']??'');if(!$data)return new \WP_Error('invalid_form_token',__('This form has expired. Refresh the page and try again.','nirmaan-builder'),array('status'=>403));if(!empty($data['consent_required'])&&empty($params['consent']))return new \WP_Error('form_consent_required',__('Please accept the privacy policy before submitting.','nirmaan-builder'),array('status'=>400));
   $ip=(string)($_SERVER['REMOTE_ADDR']??'unknown');$rate_key='nb_form_rate_'.hash_hmac('sha256',$ip,wp_salt('auth'));
   $count=(int)get_transient($rate_key);if($count>=8)return new \WP_Error('form_rate_limited',__('Too many submissions. Please try again later.','nirmaan-builder'),array('status'=>429));
   set_transient($rate_key,$count+1,HOUR_IN_SECONDS);
