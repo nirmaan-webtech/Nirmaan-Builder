@@ -728,3 +728,22 @@ test('specialty section presets create and remove matching editable columns', ()
   assert.match(builder, /type==='specialty_section'.*node\.children=\[make\('column'\),make\('column'\)\]/);
   assert.match(builder, /const count=presetSelect\.value\.trim\(\)\.split/);
 });
+
+
+test('advanced listing query controls are sanitized and applied to frontend queries', () => {
+  for (const value of ['query_category','query_search','query_offset','query_excerpt_length']) assert.ok(builder.includes(value), value+' editor control missing');
+  for (const value of ["['category_name']","['search']","['offset']","['excerpt_length']"]) assert.ok(rest.includes(value), value+' REST persistence missing');
+  assert.match(renderer, /'category_name'=>sanitize_title/);
+  assert.match(renderer, /'s'=>sanitize_text_field/);
+  assert.match(renderer, /wp_trim_words\(get_the_excerpt\(\)/);
+});
+
+test('frontend slider controls are rendered and initialized by an enqueued module script', () => {
+  assert.match(renderer, /data-autoplay=/);
+  assert.match(renderer, /nb-slider-prev/);
+  assert.match(renderer, /nb-slider-dots/);
+  assert.match(renderer, /enqueue_modules_script/);
+  const modules = fs.readFileSync('assets/js/modules.js', 'utf8');
+  assert.match(modules, /setInterval/);
+  assert.match(modules, /data-slide/);
+});
