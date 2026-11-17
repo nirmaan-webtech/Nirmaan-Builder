@@ -239,3 +239,18 @@ Therefore, a green smoke-test run can confirm source wiring, but it cannot estab
 ### 8.6 Follow-up audit status
 
 This is a deeper source-level audit of the settings panel, REST sanitizer, renderer and smoke tests. It is still **not** a browser-level or XAMPP audit. No real WordPress save/reload, media modal, WooCommerce checkout, or frontend visual regression test has been performed. The next implementation phase can now begin with the schema/field engine and REST contract, but should retain staging/browser verification as a release blocker.
+
+
+## 9. Phase 2 implementation progress
+
+The first implementation slice has now been committed to `feature/divi4-canvas-parity`:
+
+- Added a declarative `contentSchemas` registry for Heading, Text, Image, Button, Video and Spacer.
+- Added a shared `renderContentSchema()` field renderer that builds those controls from schema metadata.
+- Removed the broad fallback that exposed an irrelevant generic Content textarea on layout and unrelated module types.
+- Blog/Portfolio, Query Loop, Forms, Gallery/Slider/Tabs/Accordion and WooCommerce retain their existing dedicated control paths; they are not yet migrated to the new registry.
+- Added a source-level regression test for the core schema registry and removal of the generic fallback.
+
+**Scope boundary:** this is the first slice of the schema engine, not the completed engine. The generic Design controls are still hand-built; Section/Row/Column schemas, module-specific Design/Advanced schemas, shared REST schema metadata, media-library selection, and end-to-end round-trip tests remain outstanding. The existing REST allow-list already stores the core fields used by this slice (`content`, `level`, `url`, `alt`, and `height`), so no new persisted keys were introduced in this commit.
+
+No PHP/JS test command or WordPress browser session was executed by this commit workflow. The new smoke test is committed but still needs to run in CI. Do not treat this tranche as proof of functional Divi 4 parity.
