@@ -592,3 +592,11 @@ test('Canvas interaction supports element copy/paste, resize and root drop targe
   assert.match(builder, /canvas\\.addEventListener\\('drop'/);
   assert.match(rest, /fullwidth_section','specialty_section/);
 });
+
+test('Element settings are separated into Content, Design and Advanced tabs', () => {
+  assert.match(builder, /nb-settings-tabs/);
+  assert.match(builder, /nb-settings-tab-panel/);
+  assert.match(builder, /aria-selected/);
+  assert.match(builder, /nb-design-panel/);
+  assert.match(builder, /nb-custom-fields/);
+});
