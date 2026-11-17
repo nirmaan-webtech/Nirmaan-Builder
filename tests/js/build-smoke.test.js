@@ -589,7 +589,7 @@ test('Canvas interaction supports element copy/paste, resize and root drop targe
   assert.match(builder, /Element pasted/);
   assert.match(builder, /nb-resize-handle/);
   assert.match(builder, /setPointerCapture/);
-  assert.match(builder, /canvas\\.addEventListener\\('drop'/);
+  assert.ok(builder.includes("canvas.addEventListener('drop'"));
   assert.match(rest, /fullwidth_section','specialty_section/);
 });
 
