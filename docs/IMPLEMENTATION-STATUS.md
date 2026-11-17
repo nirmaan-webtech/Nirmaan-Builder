@@ -76,3 +76,11 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Added corresponding Theme Options controls with strict allowlists and CSS custom properties.
 - Expanded per-device element styling with typography, sizing, spacing, border, shadow, opacity and flex layout properties.
 - Added renderer CSS property mapping and smoke coverage. Real WordPress UI, frontend rendering and theme-compatibility validation remain required.
+
+## Global Styles and Reusable Design Presets (PR in progress)
+- Added a permission-protected REST collection for global style presets, stored in a versioned WordPress option and shared across editor documents/pages.
+- Presets capture desktop, tablet and mobile element style values and can be applied to the currently selected element from the editor.
+- Added preset create, update and delete endpoints, name/category validation, the existing style sanitizer, and a 200-preset cap.
+- Added editor controls to save the selected element's current responsive styles, apply a saved preset, and delete a preset.
+- Presets are copied onto an element when applied; later edits to a preset do not retroactively change elements that already received it. This avoids hidden coupling and accidental site-wide visual changes.
+- Automated checks cover the REST route/sanitization contract and editor workflow markers. Real WordPress permission, persistence, responsive rendering and multi-user tests remain required.

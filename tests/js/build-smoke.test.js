@@ -129,3 +129,18 @@ test('design system font weight sanitizer safely falls back when omitted', () =>
   assert.match(settings, /\$weight = \(string\) \( \$input\['font_weight'\] \?\? \$out\['font_weight'\] \)/);
   assert.match(settings, /\? \$weight : '400'/);
 });
+
+test('global style presets are persisted, permission-protected and sanitized', () => {
+  assert.match(rest, /'\/style-presets'/);
+  assert.match(rest, /can_manage_presets/);
+  assert.match(rest, /function create_style_preset/);
+  assert.match(rest, /function update_style_preset/);
+  assert.match(rest, /function delete_style_preset/);
+  assert.match(rest, /nirmaan_builder_style_presets/);
+  assert.match(rest, /sanitize_preset_payload/);
+  assert.match(rest, /Maximum of 200 style presets/);
+  assert.match(builder, /Reusable Style Presets/);
+  assert.match(builder, /Save current styles as preset/);
+  assert.match(builder, /Style preset applied/);
+  assert.match(builder, /stylePresetsCache/);
+});
