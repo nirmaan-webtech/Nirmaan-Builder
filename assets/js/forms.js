@@ -10,7 +10,8 @@
    field.querySelectorAll('input,select,textarea').forEach(control=>{control.disabled=!visible;});
   });
  });
- document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('form[data-nb-form]').forEach(function(form){form.dispatchEvent(new Event('change',{bubbles:true}));});});
+ const initializeForms=function(){document.querySelectorAll('form[data-nb-form]').forEach(function(form){form.dispatchEvent(new Event('change',{bubbles:true}));});};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeForms,{once:true});else initializeForms();
  document.addEventListener('submit',async function(event){
   const form=event.target.closest('form[data-nb-form]');if(!form)return;event.preventDefault();
   const button=form.querySelector('button[type="submit"]'),status=form.querySelector('.nb-form-status');if(button)button.disabled=true;if(status)status.textContent='Sending…';
