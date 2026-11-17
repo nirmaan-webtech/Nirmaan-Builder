@@ -229,3 +229,25 @@ test('visual builder supports element context menu and inline text editing', () 
   assert.match(css, /\.nb-editor-context-menu/);
   assert.match(css, /\.nb-inline-editable/);
 });
+
+
+test('layout system supports nested section, row, column and columns structures', () => {
+  for (const type of ['section','row','column','columns']) {
+    assert.ok(builder.includes("['"+type+"'"), type + ' module missing');
+    assert.ok(rest.includes("'"+type+"'"), type + ' is not accepted by REST');
+    assert.ok(renderer.includes("case'"+type+"'"), type + ' has no renderer');
+  }
+  assert.match(builder, /const make=type/);
+  assert.match(builder, /Add column/);
+  assert.match(builder, /Remove last column/);
+  assert.match(builder, /gridTemplateColumns/);
+});
+
+test('layout system sanitizes and renders advanced positioning and overflow styles', () => {
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  assert.match(rest, /gridTemplateColumns/);
+  for (const key of ['position','zIndex','overflow','flexWrap','top','right','bottom','left']) {
+    assert.ok(rest.includes("'"+key+"'"), key + ' style is not sanitized');
+    assert.ok(renderer.includes("'"+key+"'"), key + ' style is not rendered');
+  }
+});
