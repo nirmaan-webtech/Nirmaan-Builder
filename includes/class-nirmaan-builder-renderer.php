@@ -39,12 +39,15 @@ class Renderer {
   if(!in_array($orderby,array('date','title','menu_order','popularity','rating','price','rand'),true))$orderby='date';
   $order='ASC'===strtoupper((string)($options['order']??'DESC'))?'ASC':'DESC';
   $category=sanitize_title($options['category']??'');
+  $min_price=isset($options['min_price'])&&''!==$options['min_price']?max(0,(float)$options['min_price']):'';
+  $max_price=isset($options['max_price'])&&''!==$options['max_price']?max(0,(float)$options['max_price']):'';
+
   $paginate=!empty($options['paginate'])?'true':'false';
   $shortcode=function($tag,$attributes){$parts=array();foreach($attributes as $key=>$value){if(''===$value||null===$value)continue;$parts[]=$key.'="'.esc_attr((string)$value).'"';}return do_shortcode('['.$tag.' '.implode(' ',$parts).']');};
   if('cart'===$type)return do_shortcode('[woocommerce_cart]');
   if('checkout'===$type)return do_shortcode('[woocommerce_checkout]');
   if('mini_cart'===$type){ob_start();if(function_exists('woocommerce_mini_cart'))woocommerce_mini_cart();return '<div class="nb-mini-cart">'.ob_get_clean().'</div>';}
-  if('shop_products'===$type||'product_archive'===$type)return $shortcode('products',array('limit'=>$limit,'columns'=>$columns,'orderby'=>$orderby,'order'=>$order,'category'=>$category,'paginate'=>$paginate));
+  if('shop_products'===$type||'product_archive'===$type){$attributes=array('limit'=>$limit,'columns'=>$columns,'orderby'=>$orderby,'order'=>$order,'category'=>$category,'paginate'=>$paginate,'min_price'=>$min_price,'max_price'=>$max_price);if(!empty($options['on_sale']))$attributes['on_sale']='true';if(!empty($options['in_stock']))$attributes['stock_status']='instock';return $shortcode('products',$attributes);}
   if('related_products'===$type)return $shortcode('related_products',array('limit'=>$limit,'columns'=>$columns));
   if('product_breadcrumbs'===$type){ob_start();if(function_exists('woocommerce_breadcrumb'))woocommerce_breadcrumb();return ob_get_clean();}
   global $product;
