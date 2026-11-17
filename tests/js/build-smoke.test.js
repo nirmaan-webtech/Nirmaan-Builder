@@ -264,3 +264,18 @@ test('layer panel supports filtering, expand/collapse, hierarchy navigation and 
   assert.match(admin, /nb-layer-search/);
   assert.match(admin, /nb-layer-navigator/);
 });
+
+
+test('advanced design controls are editable, sanitized and rendered on frontend', () => {
+  assert.match(builder, /Gradient \\(e\\.g\\. linear-gradient/);
+  assert.match(builder, /Hover state/);
+  assert.match(builder, /Hover transform/);
+  assert.match(builder, /Animation duration/);
+  assert.match(rest, /backgroundImage/);
+  assert.match(rest, /sanitize_style\\(\\$style\\['hover'\\],false\\)/);
+  assert.match(renderer, /:hover\\{/);
+  assert.match(renderer, /'backgroundImage'=>'background-image'/);
+  assert.match(renderer, /'animationName'=>'animation-name'/);
+  assert.match(renderer, /'filter'=>'filter'/);
+  assert.match(renderer, /'transform'=>'transform'/);
+});
