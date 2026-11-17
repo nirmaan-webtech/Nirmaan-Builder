@@ -696,14 +696,14 @@ test('WordPress Media Library picker is available for Image, Gallery and Slider 
 
 
 test('central settings field engine renders typed schema fields and shares content/layout definitions', () => {
-  assert.match(builder, /function renderField\\(parent,definition,value,onChange\\)/);
-  assert.match(builder, /function renderSchemaFields\\(parent,node,definitions,values,onChange\\)/);
-  assert.match(builder, /const settingsSchemas=\\{content:contentSchemas,layout:layoutSchemas\\}/);
+  assert.match(builder, /function renderField\(parent,definition,value,onChange\)/);
+  assert.match(builder, /function renderSchemaFields\(parent,node,definitions,values,onChange\)/);
+  assert.match(builder, /const settingsSchemas=\{content:contentSchemas,layout:layoutSchemas\}/);
   for (const type of ['textarea','select','checkbox','color','url','number','media']) assert.ok(builder.includes("type==='"+type+"'" ) || builder.includes("type === '"+type+"'"), 'field type '+type+' missing');
-  assert.match(builder, /definition\\.options/);
-  assert.match(builder, /definition\\.min/);
-  assert.match(builder, /definition\\.max/);
-  assert.match(builder, /renderSchemaFields\\(wrap,node,definitions,visibleStyle/);
+  assert.match(builder, /definition\.options/);
+  assert.match(builder, /definition\.min/);
+  assert.match(builder, /definition\.max/);
+  assert.match(builder, /renderSchemaFields\(wrap,node,definitions,visibleStyle/);
 });
 
 
