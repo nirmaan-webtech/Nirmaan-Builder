@@ -254,3 +254,68 @@ The first implementation slice has now been committed to `feature/divi4-canvas-p
 **Scope boundary:** this is the first slice of the schema engine, not the completed engine. The generic Design controls are still hand-built; Section/Row/Column schemas, module-specific Design/Advanced schemas, shared REST schema metadata, media-library selection, and end-to-end round-trip tests remain outstanding. The existing REST allow-list already stores the core fields used by this slice (`content`, `level`, `url`, `alt`, and `height`), so no new persisted keys were introduced in this commit.
 
 No PHP/JS test command or WordPress browser session was executed by this commit workflow. The new smoke test is committed but still needs to run in CI. Do not treat this tranche as proof of functional Divi 4 parity.
+
+
+## 10. Layout settings implementation — first slice
+
+A dedicated responsive layout schema has been added for Section, Fullwidth Section, Specialty Section, Row and Column. The shared schema renderer exposes layout-specific controls and writes values into the active desktop/tablet/mobile style bucket. The selected properties reuse the existing REST style allow-list and frontend CSS mapping rather than introducing unpersisted settings keys.
+
+Implemented in this slice:
+- Section and Fullwidth Section: width, max width where applicable, minimum height, padding, background color and overflow.
+- Specialty Section: width, max width, padding, column gap and background color.
+- Row: display, width, max width, flex direction/wrap, horizontal/vertical alignment, column gutter and padding.
+- Column: width, minimum height, padding, margin, background color and overflow.
+- Added source-level regression assertions for schema presence and REST/renderer property mapping.
+
+Scope limitations:
+- These are responsive CSS layout controls, not a complete Divi 4 layout engine. They do not yet implement true specialty-section column templates, drag-resizable column ratios, equal-height behavior, row/column structural constraints, or per-side spacing controls.
+- The schema uses the existing generic style pipeline; no new REST settings object was added.
+- Browser-level WordPress testing and executable test runs remain pending.
+
+
+## 11. Layout Advanced attributes — first slice
+
+Added Advanced controls for layout elements (Section, Fullwidth Section, Specialty Section, Row, Column, Container and Columns):
+- HTML ID, sanitized with WordPress `sanitize_html_class` and length-limited in the editor.
+- Space-separated CSS classes, sanitized token-by-token and capped at 12 classes.
+- REST document sanitizer now persists both fields.
+- Frontend renderer applies the custom ID and classes to the rendered layout wrapper.
+- Added source-level regression assertions covering editor, REST sanitizer and renderer.
+
+Scope limitations:
+- Custom ID/classes currently apply to layout wrappers only; module-level attributes are still outstanding.
+- No custom CSS editor, JavaScript hooks, ARIA attribute builder, or per-device attribute variants are included.
+- Duplicate HTML IDs are not automatically detected across the document.
+- No executable test run or live WordPress browser verification has been performed in this workflow.
+
+
+## 12. Column resizing and per-side spacing — implementation slice
+
+Added a pointer-driven resize handle to selected Column nodes when nested in a Row, Columns, or Specialty Section. Dragging adjusts the column width as a percentage of its immediate parent and writes the value into the active desktop/tablet/mobile style bucket. The existing REST style sanitizer and frontend renderer retain and output that width.
+
+Column Design settings now expose independent top/right/bottom/left padding and margin fields. These map to explicit CSS properties and are included in the REST style allow-list, so they are not silently discarded on save.
+
+Limitations:
+- Resizing is limited to a selected Column inside a supported layout parent; it is not yet a complete multi-column constraint solver. Adjacent columns are not automatically rebalanced to preserve a 100% total.
+- The percentage is calculated against the editor's immediate parent width. Nested/gapped layouts may require further refinement.
+- The editor drag handle writes both width and flex-basis; the REST sanitizer and frontend renderer preserve and output both values so the resized column retains its basis after reload.
+- Specialty Section remains a generic nested layout node; dedicated asymmetric specialty presets and structure editing are not implemented.
+- This commit adds source-level regression assertions only. Browser interaction, REST save/reload round-trip, PHP lint and frontend visual testing remain unverified.
+
+
+## 13. Specialty layouts and adjacent-column balancing — implementation slice
+
+Specialty Section now has explicit responsive layout presets:
+- Equal two-column (1:1)
+- Asymmetric two-column (1:2 and 2:1)
+- Three-column asymmetric (1:1:2, 2:1:1 and 1:2:1)
+- Three equal columns (1:1:1)
+
+The preset control writes a validated gridTemplateColumns value into the active responsive style bucket. The editor preview and frontend renderer both use CSS Grid. Default layout behavior stacks to one column on mobile and uses two equal columns on tablet unless the user has saved an explicit breakpoint override.
+
+Row Column resizing now changes the selected column and its adjacent Column together. The pair's combined measured width is conserved while each side is constrained to a minimum share; both width and flex-basis are persisted to the active responsive style bucket and rendered by the frontend.
+
+Implementation boundaries:
+- Adjacent balancing currently applies to direct Column children of a Row. It does not rebalance arbitrary nested grids, Specialty Section grid tracks, or mixed non-Column children.
+- Specialty presets require the Specialty Section to contain the corresponding number of direct child layout columns. The builder does not auto-create or delete child columns when a preset is selected.
+- Browser-level WordPress verification is still a release gate. The repository CI workflow runs PHP syntax, JS syntax and Node smoke assertions; it does not launch WordPress or exercise pointer events in a real browser. A running staging/local WordPress URL and test credentials are required for that final end-to-end pass.

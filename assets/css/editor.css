@@ -22,3 +22,8 @@
 .nb-preview-gallery,.nb-preview-slider{display:flex;gap:10px;overflow:auto}.nb-preview-gallery img,.nb-preview-slider img{width:110px;height:80px;object-fit:cover;border-radius:4px}.nb-preview-panels{display:grid;gap:8px}.nb-preview-panel{border:1px solid #cbd5e1;padding:10px;border-radius:4px}.nb-resize-handle{position:absolute;right:0;bottom:0;width:14px;height:14px;padding:0;border:0;background:#2271b1;cursor:nwse-resize;touch-action:none;z-index:20}.nb-editor-element.is-primary-selected{position:relative}.nb-editor-element.is-primary-selected>.nb-resize-handle:after{content:'';position:absolute;inset:3px;border-right:2px solid #fff;border-bottom:2px solid #fff}
 
 .nb-settings-tabs{display:flex;gap:6px;position:sticky;top:0;background:#fff;padding:8px 0;z-index:4;border-bottom:1px solid #dcdcde}.nb-settings-tabs button{flex:1;min-width:0}.nb-settings-tab-panel{padding:10px 0}.nb-settings-tab-panel[hidden]{display:none!important}.nb-resize-handle{touch-action:none}
+
+/* Column resize affordance and specialty grid canvas */
+.nb-column-width-handle{position:absolute;z-index:20;top:50%;right:-7px;width:14px;height:42px;transform:translateY(-50%);padding:0;border:1px solid #2271b1;border-radius:5px;background:#fff;cursor:col-resize;touch-action:none;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.nb-column-width-handle:before{content:"";display:block;width:3px;height:22px;margin:auto;border-left:1px solid #2271b1;border-right:1px solid #2271b1}
+.nb-layout-specialty_section,.nb-layout-row>.nb-layout-column{min-width:0}

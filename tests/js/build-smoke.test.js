@@ -6,6 +6,7 @@ const actions = fs.readFileSync('assets/js/admin-actions.js', 'utf8');
 const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
 const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
 const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+const editorCss = fs.readFileSync('assets/css/editor.css', 'utf8');
 const frontendEditor = fs.readFileSync('assets/js/frontend-edit.js', 'utf8');
 const gutenberg = fs.readFileSync('assets/js/gutenberg.js', 'utf8');
 const contentTypes = fs.readFileSync('includes/class-nirmaan-builder-content.php', 'utf8');
@@ -623,4 +624,62 @@ test('core module content controls are schema-driven and layout/Woo elements get
   }
   assert.match(builder, /else \{renderContentSchema\(p,n\);\}/);
   assert.doesNotMatch(builder, /else if\(n\.type!=='form'\) \{field\(p,'Content'/);
+});
+
+test('Section, Row and Column expose dedicated responsive layout schemas', () => {
+  for (const type of ['section','fullwidth_section','specialty_section','row','column']) {
+    assert.ok(builder.includes(type+':['), type + ' layout schema missing');
+  }
+  assert.match(builder, /function renderLayoutSchema/);
+  assert.match(builder, /renderLayoutSchema\(responsive,n,style,visibleStyle\)/);
+  for (const property of ['width','maxWidth','minHeight','padding','margin','backgroundColor','overflow','flexDirection','flexWrap','justifyContent','alignItems','gap']) {
+    assert.ok(rest.includes("'"+property+"'"), property + ' is not accepted by the REST style sanitizer');
+    assert.ok(renderer.includes("'"+property+"'"), property + ' is not mapped by the frontend renderer');
+  }
+});
+
+
+test('layout Advanced HTML attributes are sanitized, persisted and rendered', () => {
+  assert.match(builder, /HTML ID/);
+  assert.match(builder, /CSS classes \(space separated\)/);
+  assert.match(rest, /'html_id'=>sanitize_html_class/);
+  assert.match(rest, /'css_class'=>implode\(' ',array_slice/);
+  assert.match(renderer, /\$s\['css_class'\]/);
+  assert.match(renderer, /\$s\['html_id'\]/);
+  assert.match(renderer, /\$layout_attributes/);
+});
+
+
+test('column widths are pointer-resizable and per-side spacing is persisted and rendered', () => {
+  for (const key of ['paddingTop','paddingRight','paddingBottom','paddingLeft','marginTop','marginRight','marginBottom','marginLeft']) {
+    assert.ok(builder.includes("key:'"+key+"'"), key + ' control missing');
+    assert.ok(rest.includes("'"+key+"'"), key + ' is not sanitized');
+  }
+  assert.match(builder, /nb-column-width-handle/);
+  assert.match(builder, /Drag to resize and balance adjacent column/);
+  assert.match(builder, /style\.width=value/);
+  for (const property of ['padding-top','padding-right','padding-bottom','padding-left','margin-top','margin-right','margin-bottom','margin-left']) {
+    assert.ok(renderer.includes("'"+property+"'"), property + ' is not rendered');
+  }
+});
+
+
+test('specialty sections expose asymmetric presets with responsive frontend rendering', () => {
+  assert.match(builder, /Specialty layout preset/);
+  for (const preset of ['1fr 2fr','2fr 1fr','1fr 1fr 2fr','2fr 1fr 1fr','1fr 2fr 1fr']) {
+    assert.ok(builder.includes(preset), 'missing specialty preset '+preset);
+  }
+  assert.match(builder, /previewDevice==='mobile'\?'1fr'/);
+  assert.match(renderer, /'specialty_section'===\$type/);
+  assert.ok(renderer.includes("$device_style['gridTemplateColumns']=$device_style['gridTemplateColumns']??('mobile'"));
+});
+
+test('row column resizing balances an adjacent column and persists both widths', () => {
+  assert.match(builder, /adjacentStart/);
+  assert.match(builder, /pairTotal-next/);
+  assert.match(builder, /Column widths balanced and saved/);
+  assert.match(builder, /targetStyle\.flexBasis=value/);
+  assert.ok(rest.includes("'flexBasis'"));
+  assert.ok(renderer.includes("'flexBasis'=>'flex-basis'"));
+  assert.match(editorCss, /nb-column-width-handle/);
 });
