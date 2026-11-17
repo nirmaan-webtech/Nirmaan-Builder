@@ -70,3 +70,9 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Canvas preview applies device-specific styles with desktop-to-tablet-to-mobile override order.
 - Device visibility settings now hide elements in the matching editor preview.
 - Preview is a constrained editor canvas, not a full browser/device emulator; verify breakpoints on real devices and staging.
+
+## Design System and advanced styling batch (PR in progress)
+- Extended global design tokens: accent, surface, border and muted colors; heading font; base font weight and line-height; spacing unit; shadow preset.
+- Added corresponding Theme Options controls with strict allowlists and CSS custom properties.
+- Expanded per-device element styling with typography, sizing, spacing, border, shadow, opacity and flex layout properties.
+- Added renderer CSS property mapping and smoke coverage. Real WordPress UI, frontend rendering and theme-compatibility validation remain required.
