@@ -31,9 +31,9 @@ class Renderer {
   if('query_loop'===$type){
    $q=is_array($s['query']??null)?$s['query']:array();$post_type=sanitize_key($q['post_type']??'post');$public_types=get_post_types(array('public'=>true),'names');if(!in_array($post_type,$public_types,true))$post_type='post';
    $args=array('post_type'=>$post_type,'post_status'=>'publish','posts_per_page'=>min(24,max(1,absint($q['posts_per_page']??6))),'orderby'=>in_array(($q['orderby']??'date'),array('date','title','menu_order','rand'),true)?$q['orderby']:'date','order'=>'ASC'===strtoupper($q['order']??'DESC')?'ASC':'DESC','no_found_rows'=>true);
-   $loop=new \\WP_Query($args);$loop_html='';$previous_post=$GLOBALS['post']??null;
+   $loop=new \WP_Query($args);$loop_html='';$previous_post=$GLOBALS['post']??null;
    while($loop->have_posts()){$loop->the_post();$loop_html.='<article class="nb-query-item">'.$this->render_nodes($n['children']??array(),$depth+1).'</article>';}
-   wp_reset_postdata();if($previous_post instanceof \\WP_Post){$GLOBALS['post']=$previous_post;setup_postdata($previous_post);}
+   wp_reset_postdata();if($previous_post instanceof \WP_Post){$GLOBALS['post']=$previous_post;setup_postdata($previous_post);}
    $html.='<div class="nb-query-loop nb-node '.$id.'" style="'.$style.'">'.$loop_html.'</div>';continue;
   }
   if('global_element'===$type){$gid=absint($s['library_id']??0);$g=get_post_meta($gid,'_nirmaan_library_document',true);if($gid&&get_post_meta($gid,'_nirmaan_global',true)&&is_array($g))$html.=$this->render_nodes($g['nodes']??array());continue;}
