@@ -608,3 +608,9 @@ test('Custom module extension API exposes definitions, sanitization and renderin
   assert.match(rest, /\$custom_types/);
   assert.match(renderer, /nirmaan_builder_render_custom_module/);
 });
+
+
+test('module insertion accepts Fullwidth and Specialty sections as parents', () => {
+  assert.match(builder, /\['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'\]\.includes\(target\.node\.type\)\)target\.node\.children\.push\(make\(type\)\)/);
+  assert.match(builder, /\['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'\]\.includes\(target\.node\.type\)/);
+});
