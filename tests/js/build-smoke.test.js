@@ -404,4 +404,7 @@ test('WooCommerce catalog grids have bounded, sanitized display controls', () =>
 });
 
 
-test('Library saves selected reusable sections and typed module presets', () => {\n  assert.match(builder, /const selectedNodes=\(\)=>\{/);\n  assert.match(builder, /Name this reusable section/);\n  assert.match(builder, /module-preset/);\n  assert.match(builder, /nodes\.map\(node=>rekey\(clone\(node\)\)\)/);\n  assert.match(rest, /sanitize_library_category/);\n  assert.match(rest, /invalid_library_title/);\n  assert.match(rest, /empty_library_item/);\n  assert.match(rest, /unsupported_import_version/);\n  assert.match(rest, /_nirmaan_category/);\n});\n
+test('Library saves selected reusable sections and typed module presets', () => {
+  assert.match(builder, /const selectedNodes=\(\)=>\{/);\n  assert.match(builder, /Name this reusable section/);\n  assert.match(builder, /module-preset/);\n  assert.match(builder, /nodes\.map\(node=>rekey\(clone\(node\)\)\)/);
+  assert.match(rest, /sanitize_library_category/);\n  assert.match(rest, /invalid_library_title/);\n  assert.match(rest, /empty_library_item/);\n  assert.match(rest, /unsupported_import_version/);\n  assert.match(rest, /_nirmaan_category/);
+});
