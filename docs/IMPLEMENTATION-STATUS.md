@@ -140,7 +140,7 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Replaced broad WordPress capability checks in admin screens and REST routes with Nirmaan-specific capabilities.
 - Advanced form, query-loop and WooCommerce modules are hidden from users without the advanced-module capability and rejected by REST sanitization. Users cannot edit documents/templates/library items that already contain restricted advanced modules.
 - Role defaults are initialized once so later administrator changes in the Role Permissions screen are not silently overwritten on every request.
-- Remaining Phase 20 work: multilingual compatibility and a full translation-readiness pass. Live multi-role WordPress staging tests remain required, especially role creation, capability changes, ownership boundaries and access-denied REST responses.
+- The initial Phase 20 implementation is complete. Live WPML/Polylang and multi-role WordPress staging verification remains a release gate; see the completion notes below.
 
 
 ## Phase 20 – multilingual and translation-readiness completion
