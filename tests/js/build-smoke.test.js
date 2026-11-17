@@ -769,7 +769,8 @@ test('Forms support consent, conditional fields, server validation and submissio
   assert.match(rest, /form_consent_required/);
   assert.match(forms, /consent_required/);
   assert.match(forms, /form_consent_required/);
-  assert.match(forms, /form_consent_required/);\n  assert.match(forms, /empty\(\$params\['consent'\]\)/);
+  assert.match(forms, /form_consent_required/);
+  assert.match(forms, /empty\(\$params\['consent'\]\)/);
   assert.match(forms, /wp_insert_post/);
   assert.match(forms, /wp_mail/);
   assert.match(forms, /wp_safe_remote_post/);
