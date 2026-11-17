@@ -118,16 +118,16 @@
 - [ ] Editor top toolbar
 - [ ] Settings sidebar
 - [ ] Element selection
-- [ ] Element hover controls
+- [x] Element hover controls
 - [ ] Drag-and-drop engine
-- [ ] Right-click context menu
-- [ ] Duplicate elements
-- [ ] Delete elements
+- [x] Right-click context menu
+- [x] Duplicate elements
+- [x] Delete elements
 - [ ] Lock and unlock elements
 - [ ] Hide and show elements
-- [ ] Inline text editing
+- [x] Inline text editing
 - [ ] Live style updates
-- [ ] Canvas zoom
+- [x] Canvas zoom
 - [ ] Full-width preview
 - [ ] Builder loading and error states
 - [ ] Keyboard shortcuts
