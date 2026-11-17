@@ -1,23 +1,25 @@
 # Nirmaan Builder – Development Master Roadmap
 
+**Architecture decision:** Nirmaan Builder is delivered as a WordPress theme, not as a standalone plugin. Theme bootstrap, template hierarchy and theme ZIP packaging are tracked in the Theme Architecture phase. Older plugin-architecture checklist entries below are historical and must not be used as installation instructions.
+
 **Scope:** 23 phases and 372 checklist tasks. This roadmap is the source of truth for planned work. A task must not be marked complete until its code and tests exist.
 
-## Phase 1 – Core Plugin Architecture
-- [ ] Plugin folder and file architecture
-- [ ] Main plugin bootstrap file
-- [ ] Activation and deactivation hooks
+## Phase 1 – WordPress Theme Architecture
+- [ ] Theme folder and file architecture
+- [ ] Theme functions.php bootstrap
+- [ ] Theme setup and lifecycle hooks
 - [ ] Database architecture
 - [ ] Custom Post Types registration
 - [ ] Custom database tables where required
 - [ ] WordPress REST API integration
 - [ ] React application integration
 - [ ] PHP and JavaScript asset management
-- [ ] Plugin dependency management
+- [ ] Theme dependency management
 - [ ] Capability and permission management
 - [ ] Nonce and CSRF protection
 - [ ] Input sanitization and output escaping
 - [ ] Database migration system
-- [ ] Plugin version management
+- [ ] Theme version management
 - [ ] Multisite compatibility
 - [ ] Uninstall and data retention settings
 
@@ -448,3 +450,12 @@ A task is complete only when:
 3. Relevant automated or manual tests pass.
 4. Frontend behavior is verified for logged-in and logged-out visitors where applicable.
 5. Documentation is updated.
+
+
+## Theme conversion – initial implementation
+- Added a valid root style.css theme header so WordPress recognizes the ZIP as a theme.
+- Added functions.php bootstrap using the theme directory and theme URL, and loaded the builder classes from the active theme.
+- Removed the plugin entry point and plugin activation hook. Custom post types are registered on init after their classes are loaded, preventing the reported Content class activation fatal error.
+- Added the standard WordPress theme template files and wp_head/wp_body_open/wp_footer integration points.
+- Added a fallback site header/footer; an assigned Builder Header or Footer replaces the matching fallback.
+- Runtime validation on the user's XAMPP installation remains outstanding. This conversion branch must pass CI and a fresh WordPress theme ZIP installation before it is considered complete.
