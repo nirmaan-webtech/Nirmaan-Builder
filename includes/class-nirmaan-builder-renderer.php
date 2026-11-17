@@ -2,7 +2,8 @@
 namespace NirmaanBuilder;
 if(!defined('ABSPATH')){exit;}
 class Renderer {
- private $style_presets=null;\n private function get_style_preset($id){if(!$id)return array();if(null===$this->style_presets){$items=get_option('nirmaan_builder_style_presets',array());$this->style_presets=is_array($items)?$items:array();}return $this->style_presets[$id]['styles']??array();}
+ private $style_presets=null;
+ private function get_style_preset($id){if(!$id)return array();if(null===$this->style_presets){$items=get_option('nirmaan_builder_style_presets',array());$this->style_presets=is_array($items)?$items:array();}return $this->style_presets[$id]['styles']??array();}
  public function hooks(){add_filter('the_content',array($this,'filter_content'),20);add_action('wp_body_open',array($this,'render_header'),5);add_action('wp_footer',array($this,'render_footer'),5);add_action('wp_enqueue_scripts',array($this,'enqueue_styles'));}
  public function enqueue_styles(){wp_enqueue_style('nirmaan-builder-frontend',NIRMAAN_BUILDER_URL.'assets/css/frontend.css',array(),NIRMAAN_BUILDER_VERSION);}
  private function assigned_template(){$templates=get_posts(array('post_type'=>'nirmaan_template','post_status'=>'publish','numberposts'=>200,'meta_key'=>'_nirmaan_priority','orderby'=>'meta_value_num','order'=>'DESC'));foreach($templates as $t){$c=get_post_meta($t->ID,'_nirmaan_conditions',true);if($this->matches_conditions(is_array($c)?$c:array()))return $t->ID;}return 0;}
