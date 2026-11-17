@@ -112,3 +112,13 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Existing spacing, dimensions, background, border and shadow settings are now marked as covered in the roadmap; actual per-theme visual verification remains deferred.
 - Automated smoke tests cover module registration, REST acceptance, safe grid-column syntax and frontend style mappings.
 - Not yet covered in this batch: pointer-based drag-resizing handles, dedicated section background image/gradient controls, and advanced alignment UI.
+
+
+## Layers & Wireframe – advanced layer management (PR #17)
+- Added layer search that retains matching descendants and their parent hierarchy.
+- Added Expand All and Collapse All controls.
+- Added explicit layer reordering (up/down), nesting into the previous layout, and outdenting to the parent level.
+- Added selected-element hierarchy breadcrumbs; selecting an ancestor from the navigator focuses that element.
+- Drag/drop in the layer tree can now move nodes into layout containers as well as reorder siblings; cycle moves are blocked.
+- Existing rename, visibility, lock, wireframe and visual-view controls retained.
+- Automated smoke tests cover the new controls and cycle guard. WordPress/browser interaction testing remains deferred.

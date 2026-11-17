@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const builder = fs.readFileSync('assets/js/builder.js', 'utf8');
 const actions = fs.readFileSync('assets/js/admin-actions.js', 'utf8');
+const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
 const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
 const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
 
@@ -74,10 +75,10 @@ test('layers support collapse, rename, visibility, lock and wireframe view', () 
   assert.match(admin, /id="nirmaan-view-toggle"/);
 });
 
-test('layers support safe same-level drag reordering', () => {
+test('layers support safe drag reordering and nested moves', () => {
   assert.match(builder, /nb-layer-drop-target/);
-  assert.match(builder, /source\.nodes!==target\.nodes/);
-  assert.match(builder, /const insertAt=current\.index/);
+  assert.match(builder, /containsId\(source\.node,target\.node\.id\)/);
+  assert.match(builder, /refreshed\.node\.children\.push\(moving\)/);
   assert.match(builder, /wrap\.draggable=!n\.settings\.locked/);
 });
 
@@ -250,4 +251,16 @@ test('layout system sanitizes and renders advanced positioning and overflow styl
     assert.ok(rest.includes("'"+key+"'"), key + ' style is not sanitized');
     assert.ok(renderer.includes("'"+key+"'"), key + ' style is not rendered');
   }
+});
+
+
+test('layer panel supports filtering, expand/collapse, hierarchy navigation and nesting actions', () => {
+  for (const feature of ['nb-layer-search','nb-layer-expand-all','nb-layer-collapse-all','nb-layer-navigator','selectedPath','renderLayerNavigator','moveLayer']) {
+    assert.ok(builder.includes(feature), feature + ' layer feature missing');
+  }
+  assert.match(builder, /Indent into previous layout/);
+  assert.match(builder, /Outdent layer/);
+  assert.match(builder, /containsId\(source\.node,target\.node\.id\)/);
+  assert.match(admin, /nb-layer-search/);
+  assert.match(admin, /nb-layer-navigator/);
 });
