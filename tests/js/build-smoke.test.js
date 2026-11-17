@@ -425,4 +425,5 @@ test('History saving serializes autosaves before manual save and preserves edits
   assert.match(rest, /Invalid autosave part for this document type/);
   assert.match(rest, /30\*DAY_IN_SECONDS/);
   assert.match(rest, /Invalid revision part for this document type/);
+  assert.match(rest, /public function list_revisions/);
 });
