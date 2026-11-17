@@ -287,3 +287,17 @@ Scope limitations:
 - No custom CSS editor, JavaScript hooks, ARIA attribute builder, or per-device attribute variants are included.
 - Duplicate HTML IDs are not automatically detected across the document.
 - No executable test run or live WordPress browser verification has been performed in this workflow.
+
+
+## 12. Column resizing and per-side spacing — implementation slice
+
+Added a pointer-driven resize handle to selected Column nodes when nested in a Row, Columns, or Specialty Section. Dragging adjusts the column width as a percentage of its immediate parent and writes the value into the active desktop/tablet/mobile style bucket. The existing REST style sanitizer and frontend renderer retain and output that width.
+
+Column Design settings now expose independent top/right/bottom/left padding and margin fields. These map to explicit CSS properties and are included in the REST style allow-list, so they are not silently discarded on save.
+
+Limitations:
+- Resizing is limited to a selected Column inside a supported layout parent; it is not yet a complete multi-column constraint solver. Adjacent columns are not automatically rebalanced to preserve a 100% total.
+- The percentage is calculated against the editor's immediate parent width. Nested/gapped layouts may require further refinement.
+- The editor drag handle currently writes a width value; published rendering uses the standard width CSS property and does not yet emit an explicit flex-basis constraint.
+- Specialty Section remains a generic nested layout node; dedicated asymmetric specialty presets and structure editing are not implemented.
+- This commit adds source-level regression assertions only. Browser interaction, REST save/reload round-trip, PHP lint and frontend visual testing remain unverified.
