@@ -151,7 +151,8 @@ test('global presets stay linked and synchronize through frontend rendering', ()
   assert.match(rest, /function snapshot_preset_nodes/);
   assert.match(rest, /preserve_deleted_preset_references/);
   assert.match(rest, /references_preserved/);
-  assert.match(builder, /function getNodeStyle/);\n  assert.match(builder, /function detachPresetReferences/);
+  assert.match(builder, /function getNodeStyle/);
+  assert.match(builder, /function detachPresetReferences/);
   assert.match(builder, /Linked to global style preset/);
   assert.match(builder, /Update selected preset from this element/);
   assert.match(builder, /linked elements will sync/);
