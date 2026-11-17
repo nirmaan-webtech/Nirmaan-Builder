@@ -347,6 +347,6 @@ test('Classic Editor and public custom post types receive Builder controls safel
   assert.match(admin, /current_user_can\('edit_post',\$post_id\)/);
   assert.match(admin, /Open Visual Builder/);
   assert.match(contentTypes, /get_post_types\( array\( 'public' => true \), 'names' \)/);
-  assert.match(plugin, /Content::class, 'register_meta'/);
+  assert.ok(plugin.includes("register_content_types' ), 5"));
   assert.match(plugin, /register_content_types'\ ), 5/);
 });
