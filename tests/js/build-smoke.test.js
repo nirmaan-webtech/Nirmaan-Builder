@@ -515,3 +515,35 @@ test('Phase 20 hides and rejects advanced modules for roles without the advanced
   assert.match(rest, /nodes_require_advanced_modules/);
   assert.match(rest, /post_requires_advanced_modules/);
 });
+
+test('Phase 20 multilingual integrations register translatable builder content safely', () => {
+  const multilingual = fs.readFileSync('includes/class-nirmaan-builder-multilingual.php', 'utf8');
+  const plugin = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  const wpml = fs.readFileSync('wpml-config.xml', 'utf8');
+  assert.match(plugin, /class-nirmaan-builder-multilingual\.php/);
+  assert.match(multilingual, /pll_get_post_types/);
+  assert.match(multilingual, /pll_copy_post_metas/);
+  assert.match(multilingual, /wpml_register_single_string/);
+  assert.match(multilingual, /wpml_translate_single_string/);
+  assert.match(multilingual, /pll_register_string/);
+  assert.match(multilingual, /pll__/);
+  assert.match(multilingual, /_nirmaan_builder_document/);
+  assert.match(renderer, /Multilingual::translate_document/);
+  assert.match(wpml, /nirmaan_template/);
+  assert.match(wpml, /nirmaan_library/);
+  assert.match(wpml, /action="copy"/);
+});
+
+test('Phase 20 scripts load WordPress gettext runtime for translations', () => {
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  for (const file of [admin, forms]) {
+    assert.match(file, /wp_set_script_translations/);
+    assert.match(file, /wp-i18n/);
+  }
+  for (const file of [builder, actions, gutenberg, fs.readFileSync('assets/js/forms.js', 'utf8')]) {
+    assert.match(file, /wp\.i18n/);
+    assert.match(file, /nirmaan-builder/);
+  }
+});
