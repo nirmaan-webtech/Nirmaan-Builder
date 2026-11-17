@@ -348,15 +348,15 @@
 - [x] Third-party integration architecture through validated webhook delivery and the action hook
 
 ## Phase 20 – User Roles and Advanced Controls
-- [ ] Builder role permissions
-- [ ] Administrator controls
-- [ ] Editor permissions
-- [ ] Module access restrictions
-- [ ] Design setting restrictions
-- [ ] Role Editor
-- [ ] Content editing restrictions
-- [ ] Template management permissions
-- [ ] Library permissions
+- [x] Builder role permissions
+- [x] Administrator controls
+- [x] Editor permissions
+- [x] Module access restrictions
+- [x] Design setting restrictions (global Theme Options and shared design presets)
+- [x] Role Editor
+- [x] Content editing restrictions
+- [x] Template management permissions
+- [x] Library permissions
 - [ ] Multilingual compatibility
 - [ ] Translation-ready strings
 
