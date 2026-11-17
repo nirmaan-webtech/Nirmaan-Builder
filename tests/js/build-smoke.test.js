@@ -60,7 +60,7 @@ test('editor exposes layers, duplicate, undo/redo and keyboard shortcuts', () =>
   assert.match(builder, /nirmaan-undo/);
   assert.match(builder, /nirmaan-redo/);
   assert.match(builder, /const checkpoint=/);
-  assert.match(builder, /textContent='Duplicate'/);
+  assert.match(builder, /textContent=t\('Duplicate'\)/);
   assert.match(builder, /e\.key\.toLowerCase\(\)==='d'/);
   assert.match(builder, /e\.shiftKey\?redo\(\):undo\(\)/);
   const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
@@ -291,7 +291,7 @@ test('responsive editing supports custom breakpoints and inherited device styles
   assert.match(settings, /\$mobile >= \$tablet/);
   assert.ok(settings.includes("$out['breakpoints']"));
   assert.match(builder, /function getInheritedNodeStyle/);
-  assert.match(builder, /Reset '\+device\+' overrides/);
+  assert.match(builder, /t\('Reset '\)\+device\+' overrides/);
   assert.match(builder, /Save breakpoints/);
   assert.match(builder, /responsiveBreakpoints\.tablet/);
   assert.match(renderer, /Settings::get\(\)\['breakpoints'\]/);
@@ -478,4 +478,149 @@ test('Phase 19 submissions can be deleted only by an authorized administrator wi
   assert.match(forms, /current_user_can\('manage_options'\)/);
   assert.match(forms, /check_admin_referer\('nirmaan_delete_submission_\'/);
   assert.match(forms, /wp_delete_post\(\$id,true\)/);
+});
+
+test('Phase 20 registers granular builder roles and a protected role editor', () => {
+  const roles = fs.readFileSync('includes/class-nirmaan-builder-roles.php', 'utf8');
+  const plugin = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  assert.match(plugin, /class-nirmaan-builder-roles\.php/);
+  assert.match(plugin, /Roles::register_hooks/);
+  for (const capability of ['use_nirmaan_builder','edit_nirmaan_content','use_nirmaan_modules','use_nirmaan_advanced_modules','edit_nirmaan_design','manage_nirmaan_library','manage_nirmaan_templates','manage_nirmaan_settings','manage_nirmaan_roles']) {
+    assert.ok(roles.includes(capability), capability + ' capability missing');
+  }
+  assert.match(roles, /add_role\( 'nirmaan_builder'/);
+  assert.match(roles, /check_admin_referer\( 'nirmaan_builder_save_roles'/);
+  assert.match(roles, /current_user_can\( 'manage_nirmaan_roles' \)/);
+  assert.match(admin, /nirmaan-roles/);
+  assert.match(admin, /Roles::render_page/);
+});
+
+test('Phase 20 gates REST content, templates, library and design actions by granular capabilities', () => {
+  assert.match(rest, /current_user_can\('use_nirmaan_builder'\)/);
+  assert.match(rest, /current_user_can\('edit_nirmaan_content'\)/);
+  assert.match(rest, /current_user_can\('manage_nirmaan_templates'\)/);
+  assert.match(rest, /current_user_can\('manage_nirmaan_library'\)/);
+  assert.match(rest, /current_user_can\('manage_nirmaan_settings'\)/);
+  assert.match(rest, /current_user_can\('edit_nirmaan_design'\)/);
+  assert.match(rest, /use_nirmaan_advanced_modules/);
+  assert.match(admin, /manage_nirmaan_settings/);
+  assert.match(admin, /manage_nirmaan_templates/);
+  assert.match(admin, /manage_nirmaan_library/);
+});
+
+test('Phase 20 hides and rejects advanced modules for roles without the advanced-module capability', () => {
+  assert.match(builder, /cfg\.canUseAdvancedModules/);
+  assert.match(rest, /array_diff\(\$allowed,array\('form','query_loop'/);
+  assert.match(rest, /nodes_require_advanced_modules/);
+  assert.match(rest, /post_requires_advanced_modules/);
+});
+
+test('Phase 20 multilingual integrations register translatable builder content safely', () => {
+  const multilingual = fs.readFileSync('includes/class-nirmaan-builder-multilingual.php', 'utf8');
+  const plugin = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  const wpml = fs.readFileSync('wpml-config.xml', 'utf8');
+  assert.match(plugin, /class-nirmaan-builder-multilingual\.php/);
+  assert.match(multilingual, /pll_get_post_types/);
+  assert.match(multilingual, /pll_copy_post_metas/);
+  assert.match(multilingual, /wpml_register_single_string/);
+  assert.match(multilingual, /wpml_translate_single_string/);
+  assert.match(multilingual, /pll_register_string/);
+  assert.match(multilingual, /pll__/);
+  assert.match(multilingual, /_nirmaan_builder_document/);
+  assert.match(renderer, /Multilingual::translate_document/);
+  assert.match(wpml, /nirmaan_template/);
+  assert.match(wpml, /nirmaan_library/);
+  assert.match(wpml, /action="copy"/);
+});
+
+test('Phase 20 scripts load WordPress gettext runtime for translations', () => {
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  for (const file of [admin, forms]) {
+    assert.match(file, /wp_set_script_translations/);
+    assert.match(file, /wp-i18n/);
+  }
+  for (const file of [builder, actions, gutenberg, fs.readFileSync('assets/js/forms.js', 'utf8')]) {
+    assert.match(file, /wp\.i18n/);
+    assert.match(file, /nirmaan-builder/);
+  }
+});
+
+
+test('repository is packaged as a WordPress theme, not a plugin', () => {
+  const theme = fs.readFileSync('style.css', 'utf8');
+  const functions = fs.readFileSync('functions.php', 'utf8');
+  const header = fs.readFileSync('header.php', 'utf8');
+  const footer = fs.readFileSync('footer.php', 'utf8');
+  const bootstrap = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
+  assert.match(theme, /Theme Name:\s*Nirmaan Builder/);
+  assert.match(functions, /get_template_directory\(\)/);
+  assert.match(functions, /Theme::instance\(\)->boot/);
+  assert.match(header, /wp_head\(\)/);
+  assert.match(header, /wp_body_open\(\)/);
+  assert.match(footer, /wp_footer\(\)/);
+  assert.match(bootstrap, /class Theme/);
+  assert.match(bootstrap, /class-nirmaan-builder-content\.php/);
+  assert.match(bootstrap, /load_theme_textdomain/);
+  assert.doesNotMatch(bootstrap, /load_plugin_textdomain/);
+});
+
+test('Canvas parity modules are allow-listed, persisted and rendered with real frontend output', () => {
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  for (const type of ['gallery','video','slider','tabs','accordion','blog','portfolio','fullwidth_section','specialty_section']) {
+    assert.ok(builder.includes("['"+type+"'"), type+' missing from editor module palette');
+    assert.ok(rest.includes("'"+type+"'"), type+' missing from REST sanitizer');
+  }
+  for (const type of ['gallery','video','slider','tabs','accordion','blog','portfolio']) assert.ok(renderer.includes("'"+type+"'"),type+' missing from frontend renderer');
+  assert.match(renderer, /wp_oembed_get/);
+  assert.match(renderer, /nb-tab-radio/);
+  assert.match(renderer, /<details/);
+  assert.match(renderer, /new \\WP_Query/);
+  assert.match(rest, /sanitize_module_items/);
+  assert.match(builder, /nb-preview-gallery/);
+  assert.match(builder, /nb-preview-panels/);
+  assert.match(builder, /query_columns/);
+});
+
+test('Canvas interaction supports element copy/paste, resize and root drop targets', () => {
+  assert.match(builder, /nodeClipboard/);
+  assert.match(builder, /Element pasted/);
+  assert.match(builder, /nb-resize-handle/);
+  assert.match(builder, /setPointerCapture/);
+  assert.ok(builder.includes("canvas.addEventListener('drop'"));
+  assert.match(rest, /fullwidth_section','specialty_section/);
+});
+
+test('Element settings are separated into Content, Design and Advanced tabs', () => {
+  assert.match(builder, /nb-settings-tabs/);
+  assert.match(builder, /nb-settings-tab-panel/);
+  assert.match(builder, /aria-selected/);
+  assert.match(builder, /nb-design-panel/);
+  assert.match(builder, /nb-custom-fields/);
+});
+
+test('Custom module extension API exposes definitions, sanitization and rendering hooks', () => {
+  assert.match(admin, /nirmaan_builder_custom_module_definitions/);
+  assert.match(builder, /customModules/);
+  assert.match(rest, /nirmaan_builder_sanitize_custom_module_settings/);
+  assert.match(rest, /\$custom_types/);
+  assert.match(renderer, /nirmaan_builder_render_custom_module/);
+});
+
+
+test('module insertion accepts Fullwidth and Specialty sections as parents', () => {
+  assert.match(builder, /\['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'\]\.includes\(target\.node\.type\)\)target\.node\.children\.push\(make\(type\)\)/);
+  assert.match(builder, /\['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'\]\.includes\(target\.node\.type\)/);
+});
+
+test('core module content controls are schema-driven and layout/Woo elements get no generic content field', () => {
+  assert.match(builder, /const contentSchemas=/);
+  assert.match(builder, /function renderContentSchema\(parent,node\)/);
+  for (const type of ['heading','text','image','button','video','spacer']) {
+    assert.match(builder, new RegExp(type+':\\['));
+  }
+  assert.match(builder, /else \{renderContentSchema\(p,n\);\}/);
+  assert.doesNotMatch(builder, /else if\(n\.type!=='form'\) \{field\(p,'Content'/);
 });

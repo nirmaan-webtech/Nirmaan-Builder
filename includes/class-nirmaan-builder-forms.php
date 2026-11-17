@@ -30,7 +30,7 @@ class Forms {
   return $data;
  }
  public static function render( $node_id, $settings, $class, $style ) {
-  wp_enqueue_script('nirmaan-builder-forms',NIRMAAN_BUILDER_URL.'assets/js/forms.js',array(),NIRMAAN_BUILDER_VERSION,true);
+  wp_enqueue_script('nirmaan-builder-forms',NIRMAAN_BUILDER_URL.'assets/js/forms.js',array('wp-i18n'),NIRMAAN_BUILDER_VERSION,true);wp_set_script_translations('nirmaan-builder-forms','nirmaan-builder',NIRMAAN_BUILDER_PATH.'languages');
   $fields=is_array($settings['form_fields']??null)?array_slice($settings['form_fields'],0,20):array();
   $fields=array_values(array_filter($fields,'is_array'));
   $payload=array('form_id'=>sanitize_key($node_id),'title'=>sanitize_text_field($settings['form_title']??'Website enquiry'),'notify'=>sanitize_email($settings['notification_email']??get_option('admin_email')),'fields'=>$fields,'success_message'=>sanitize_text_field($settings['success_message']??__('Thank you. Your submission has been received.','nirmaan-builder')),'webhook_url'=>esc_url_raw($settings['webhook_url']??''),'expires'=>time()+7200);
