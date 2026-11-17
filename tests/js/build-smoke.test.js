@@ -173,5 +173,5 @@ test('editor supports responsive style copy, paste and multi-selection extend', 
   assert.match(builder, /selectNode\(n\.id,e\.ctrlKey\|\|e\.metaKey\)/);
   assert.match(builder, /Styles extended from first selected element/);
   assert.match(builder, /delete node\.settings\.style_preset_id/);
-  assert.match(builder, /hide_\+d/);
+  assert.match(builder, /hide_'\+d/);
 });
