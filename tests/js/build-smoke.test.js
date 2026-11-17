@@ -778,7 +778,7 @@ test('Forms support consent, conditional fields, server validation and submissio
   assert.match(forms, /wp_http_validate_url/);
   assert.match(forms, /Enter a valid phone number/);
   assert.match(formScript, /consent:data\.get\('consent'\)/);
-  assert.match(formScript, /data-processing-label/);
+  assert.match(formScript, /dataset\.processingLabel/);
 });
 
 test('WooCommerce grids persist and apply price, sale and stock filters', () => {
