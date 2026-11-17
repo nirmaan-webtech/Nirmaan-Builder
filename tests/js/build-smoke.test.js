@@ -6,6 +6,9 @@ const actions = fs.readFileSync('assets/js/admin-actions.js', 'utf8');
 const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
 const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
 const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+const gutenberg = fs.readFileSync('assets/js/gutenberg.js', 'utf8');
+const contentTypes = fs.readFileSync('includes/class-nirmaan-builder-content.php', 'utf8');
+const plugin = fs.readFileSync('includes/class-nirmaan-builder.php', 'utf8');
 
 test('editor supports nested nodes and responsive device settings', () => {
   assert.match(builder, /const find=/);
@@ -319,4 +322,30 @@ test('Query Loop supports bounded public post queries and nested dynamic templat
   assert.match(renderer, /nb-query-item/);
   assert.match(renderer, /wp_reset_postdata/);
   assert.match(renderer, /render_nodes\(\$n\['children'\]\?\?array\(\),\$depth\+1\)/);
+});
+
+
+test('Gutenberg integration exposes a Builder sidebar and preserves native editor content', () => {
+  assert.match(admin, /enqueue_block_editor_assets/);
+  assert.match(admin, /wp_enqueue_script\('nirmaan-builder-gutenberg'/);
+  assert.match(gutenberg, /wp\.plugins\.registerPlugin/);
+  assert.match(gutenberg, /PluginSidebar/);
+  assert.match(gutenberg, /getCurrentPostId/);
+  assert.match(gutenberg, /_nirmaan_builder_enabled/);
+  assert.match(contentTypes, /register_post_meta/);
+  assert.match(contentTypes, /'show_in_rest' => true/);
+  assert.match(contentTypes, /add_post_type_support\( \$post_type, 'custom-fields' \)/);
+  assert.match(renderer, /metadata_exists\('post',get_the_ID\(\),'_nirmaan_builder_enabled'\)/);
+  assert.match(rest, /update_post_meta\(\$id,'_nirmaan_builder_enabled',true\)/);
+});
+
+test('Classic Editor and public custom post types receive Builder controls safely', () => {
+  assert.match(admin, /add_meta_boxes/);
+  assert.match(admin, /show_ui'=>true/);
+  assert.match(admin, /save_builder_mode/);
+  assert.match(admin, /wp_verify_nonce/);
+  assert.match(admin, /current_user_can\('edit_post',\$post_id\)/);
+  assert.match(admin, /Open Visual Builder/);
+  assert.match(contentTypes, /get_post_types\( array\( 'public' => true \), 'names' \)/);
+  assert.ok(plugin.includes("register_content_types' ), 5"));
 });
