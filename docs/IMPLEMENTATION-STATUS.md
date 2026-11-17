@@ -92,3 +92,13 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Ctrl/Cmd-click on canvas or in Layers adds/removes elements from the selection. Extend copies the first selected element's responsive styles to the remaining selected elements.
 - Copy/paste supports Ctrl/Cmd+Shift+C and Ctrl/Cmd+Shift+V; the editor controls are also available in the settings panel.
 - Clipboard is session-memory only and is not persisted across reloads. Browser-level WordPress staging tests remain required.
+
+
+## Visual Builder interaction improvements (PR #15)
+- Added a fullscreen editor mode with an Escape-key exit.
+- Added canvas zoom controls from 50% to 150%, with a reset to 100%.
+- Added a right-click element context menu for duplicate, edit text, hide/show, lock/unlock and delete actions.
+- Added double-click inline editing for heading, text and button content; edits are written into the document model and autosaved.
+- Reused shared duplicate/delete handlers from both keyboard shortcuts and context menu actions.
+- Added automated smoke coverage for the new controls and interactions.
+- Remaining Phase 7 work includes live frontend preview, robust builder loading/error states, full-width preview mode and broader editor state/accessibility handling. Browser-level interaction testing remains deferred.
