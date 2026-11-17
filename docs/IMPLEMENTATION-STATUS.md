@@ -21,7 +21,7 @@ These Theme Options additions were merged into `main` in PR #2. They still requi
 - Node-based JavaScript syntax checks and feature smoke tests in CI; PHP syntax checks remain enabled.
 
 ## Known limitations / not yet production complete
-- Nested editing is a practical first pass, not a polished freeform tree editor: no arbitrary column resizing, multi-select, clipboard, undo/redo, or full keyboard accessibility.
+- Nested editing is a practical first pass, not a polished freeform tree editor: no arbitrary column resizing or full keyboard accessibility. Multi-selection and responsive style copy/paste/extend are now implemented.
 - Responsive controls cover common CSS properties and hide/show per device; no breakpoint manager, visual viewport preview, or complete responsive style inheritance UI.
 - Template conditions are a multi-select set of common contexts; per-taxonomy, per-author, per-user-role, custom URL and arbitrary object targeting are not yet exposed. Singular-ID and custom post-type rules are supported by the data model but not yet fully surfaced in the admin UI.
 - Global elements are live references for frontend rendering and can be edited from the Library screen; there is no revision history, permissions/locking, or change preview.
@@ -85,3 +85,10 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Updating a preset now updates every linked element on the next frontend render and in the editor after the preset list refreshes.
 - Elements can be detached while retaining their effective responsive styles. Deleting a preset snapshots its latest styles into linked documents, templates, library items, autosaves and revisions before removing the shared preset.
 - Automated smoke tests cover the reference/sanitization contract, editor controls, renderer resolution and deletion fallback. Live WordPress staging and multi-user browser tests remain required.
+
+## Copy, Paste and Extend Styles (PR in progress)
+- Copy captures effective desktop, tablet and mobile styles, including resolved global preset values and per-device visibility.
+- Paste applies the captured values as independent local styles and detaches any destination global preset link; content, element identity, children, lock/hidden state and other settings remain unchanged.
+- Ctrl/Cmd-click on canvas or in Layers adds/removes elements from the selection. Extend copies the first selected element's responsive styles to the remaining selected elements.
+- Copy/paste supports Ctrl/Cmd+Shift+C and Ctrl/Cmd+Shift+V; the editor controls are also available in the settings panel.
+- Clipboard is session-memory only and is not persisted across reloads. Browser-level WordPress staging tests remain required.
