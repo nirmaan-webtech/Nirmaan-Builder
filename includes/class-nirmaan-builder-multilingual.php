@@ -46,7 +46,8 @@ final class Multilingual {
   foreach ( $value as $key => $child ) {
    $child_path = $path . '/' . (string) $key;
    if ( is_array( $child ) ) { self::collect_strings( $child, $child_path, $prefix, $strings ); continue; }
-   if ( ! in_array( (string) $key, self::$translatable_keys, true ) || ! is_scalar( $child ) ) { continue; }
+   $is_option_value = preg_match( '#/options$#', $path ) && is_numeric( (string) $key );
+   if ( ( ! in_array( (string) $key, self::$translatable_keys, true ) && ! $is_option_value ) || ! is_scalar( $child ) ) { continue; }
    $text = (string) $child;
    if ( '' === trim( $text ) ) { continue; }
    $strings[ $prefix . '-' . md5( $child_path ) ] = $text;
@@ -60,7 +61,8 @@ final class Multilingual {
   foreach ( $value as $key => $child ) {
    $child_path = $path . '/' . (string) $key;
    if ( is_array( $child ) ) { $value[ $key ] = self::translate_array( $child, $prefix, $child_path ); continue; }
-   if ( ! in_array( (string) $key, self::$translatable_keys, true ) || ! is_scalar( $child ) || '' === trim( (string) $child ) ) { continue; }
+   $is_option_value = preg_match( '#/options$#', $path ) && is_numeric( (string) $key );
+   if ( ( ! in_array( (string) $key, self::$translatable_keys, true ) && ! $is_option_value ) || ! is_scalar( $child ) || '' === trim( (string) $child ) ) { continue; }
    $name = $prefix . '-' . md5( $child_path );
    $translated = apply_filters( 'wpml_translate_single_string', (string) $child, self::CONTEXT, $name );
    if ( function_exists( 'pll__' ) ) { $translated = pll__( (string) $translated ); }
