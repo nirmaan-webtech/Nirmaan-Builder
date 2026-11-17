@@ -693,4 +693,24 @@ test('WordPress Media Library picker is available for Image, Gallery and Slider 
   assert.match(builder, /image:\[\{key:'url',label:'Image',type:'media'\}/);
   assert.match(builder, /mediaField\(row,'Image','url'/);
 });
-\n\ntest('central settings field engine renders typed schema fields and shares content/layout definitions', () => {\n  assert.match(builder, /function renderField\\(parent,definition,value,onChange\\)/);\n  assert.match(builder, /function renderSchemaFields\\(parent,node,definitions,values,onChange\\)/);\n  assert.match(builder, /const settingsSchemas=\\{content:contentSchemas,layout:layoutSchemas\\}/);\n  for (const type of ['textarea','select','checkbox','color','url','number','media']) assert.ok(builder.includes("type==='"+type+"'" ) || builder.includes("type === '"+type+"'"), 'field type '+type+' missing');\n  assert.match(builder, /definition\\.options/);\n  assert.match(builder, /definition\\.min/);\n  assert.match(builder, /definition\\.max/);\n  assert.match(builder, /renderSchemaFields\\(wrap,node,definitions,visibleStyle/);\n});\n\n\ntest('Section Row and Column expose typed layout controls backed by REST and frontend mappings', () => {\n  for (const value of ['Section width','Content max width','Positioning','Stacking order (z-index)','Row display','Column direction','Horizontal alignment','Vertical alignment','Column flex basis','Padding top','Margin left']) assert.ok(builder.includes(value), value+' setting missing');\n  assert.match(builder, /type:'select',default:'flex'/);\n  assert.match(builder, /type:'color',default:'#ffffff'/);\n  assert.match(rest, /'alignSelf'/);\n  assert.match(renderer, /'alignSelf'=>'align-self'/);\n});\n
+
+
+test('central settings field engine renders typed schema fields and shares content/layout definitions', () => {
+  assert.match(builder, /function renderField\\(parent,definition,value,onChange\\)/);
+  assert.match(builder, /function renderSchemaFields\\(parent,node,definitions,values,onChange\\)/);
+  assert.match(builder, /const settingsSchemas=\\{content:contentSchemas,layout:layoutSchemas\\}/);
+  for (const type of ['textarea','select','checkbox','color','url','number','media']) assert.ok(builder.includes("type==='"+type+"'" ) || builder.includes("type === '"+type+"'"), 'field type '+type+' missing');
+  assert.match(builder, /definition\\.options/);
+  assert.match(builder, /definition\\.min/);
+  assert.match(builder, /definition\\.max/);
+  assert.match(builder, /renderSchemaFields\\(wrap,node,definitions,visibleStyle/);
+});
+
+
+test('Section Row and Column expose typed layout controls backed by REST and frontend mappings', () => {
+  for (const value of ['Section width','Content max width','Positioning','Stacking order (z-index)','Row display','Column direction','Horizontal alignment','Vertical alignment','Column flex basis','Padding top','Margin left']) assert.ok(builder.includes(value), value+' setting missing');
+  assert.match(builder, /type:'select',default:'flex'/);
+  assert.match(builder, /type:'color',default:'#ffffff'/);
+  assert.match(rest, /'alignSelf'/);
+  assert.match(renderer, /'alignSelf'=>'align-self'/);
+});
