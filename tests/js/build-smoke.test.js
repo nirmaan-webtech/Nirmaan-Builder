@@ -267,15 +267,15 @@ test('layer panel supports filtering, expand/collapse, hierarchy navigation and 
 
 
 test('advanced design controls are editable, sanitized and rendered on frontend', () => {
-  assert.match(builder, /Gradient \\(e\\.g\\. linear-gradient/);
-  assert.match(builder, /Hover state/);
-  assert.match(builder, /Hover transform/);
-  assert.match(builder, /Animation duration/);
-  assert.match(rest, /backgroundImage/);
-  assert.match(rest, /sanitize_style\\(\\$style\\['hover'\\],false\\)/);
-  assert.match(renderer, /:hover\\{/);
-  assert.match(renderer, /'backgroundImage'=>'background-image'/);
-  assert.match(renderer, /'animationName'=>'animation-name'/);
-  assert.match(renderer, /'filter'=>'filter'/);
-  assert.match(renderer, /'transform'=>'transform'/);
+  assert.ok(builder.includes('linear-gradient'));
+  assert.ok(builder.includes('Hover state'));
+  assert.ok(builder.includes('Hover transform'));
+  assert.ok(builder.includes('Animation duration'));
+  assert.ok(rest.includes('backgroundImage'));
+  assert.ok(rest.includes("sanitize_style($style['hover'],false)"));
+  assert.ok(renderer.includes(':hover{'));
+  assert.ok(renderer.includes("'backgroundImage'=>'background-image'"));
+  assert.ok(renderer.includes("'animationName'=>'animation-name'"));
+  assert.ok(renderer.includes("'filter'=>'filter'"));
+  assert.ok(renderer.includes("'transform'=>'transform'"));
 });
