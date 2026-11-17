@@ -614,3 +614,13 @@ test('module insertion accepts Fullwidth and Specialty sections as parents', () 
   assert.match(builder, /\['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'\]\.includes\(target\.node\.type\)\)target\.node\.children\.push\(make\(type\)\)/);
   assert.match(builder, /\['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'\]\.includes\(target\.node\.type\)/);
 });
+
+test('core module content controls are schema-driven and layout/Woo elements get no generic content field', () => {
+  assert.match(builder, /const contentSchemas=/);
+  assert.match(builder, /function renderContentSchema\(parent,node\)/);
+  for (const type of ['heading','text','image','button','video','spacer']) {
+    assert.match(builder, new RegExp(type+':\\['));
+  }
+  assert.match(builder, /else \{renderContentSchema\(p,n\);\}/);
+  assert.doesNotMatch(builder, /else if\(n\.type!=='form'\) \{field\(p,'Content'/);
+});
