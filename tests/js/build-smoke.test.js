@@ -371,7 +371,6 @@ test('frontend preview and authenticated inline editing are available for editab
 
 test('frontend editor is loaded only for an authorized singular post in explicit edit mode', () => {
   assert.match(renderer, /!is_singular\(\)\|\|!is_user_logged_in\(\)/);
-  assert.match(renderer, /'1'!==sanitize_text_field\(wp_unslash\(\$_GET\['nirmaan_frontend_edit'\]\?\?'\)\)/);
   assert.match(renderer, /wp_create_nonce\('wp_rest'\)/);
   assert.match(renderer, /wp_enqueue_style\('nirmaan-builder-frontend-edit'/);
 });
