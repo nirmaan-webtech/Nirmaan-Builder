@@ -205,3 +205,27 @@ test('Theme Builder dashboard supports template search, status, rename and dupli
   assert.match(rest, /invalid_template_status/);
   assert.match(rest, /'status'=>get_post_status\(\$id\)/);
 });
+
+
+test('visual builder supports canvas zoom and fullscreen controls', () => {
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  const css = fs.readFileSync('assets/css/editor.css', 'utf8');
+  assert.match(admin, /nb-editor-fullscreen/);
+  assert.match(admin, /nb-zoom-in/);
+  assert.match(admin, /nb-zoom-out/);
+  assert.match(builder, /function setZoom|const setZoom/);
+  assert.match(builder, /nb-editor-fullscreen/);
+  assert.match(css, /\.nb-editor-fullscreen/);
+});
+
+test('visual builder supports element context menu and inline text editing', () => {
+  const admin = fs.readFileSync('includes/class-nirmaan-builder-admin.php', 'utf8');
+  const css = fs.readFileSync('assets/css/editor.css', 'utf8');
+  assert.match(admin, /nb-editor-context-menu/);
+  assert.match(builder, /function showContextMenu/);
+  assert.match(builder, /function startInlineEdit/);
+  assert.match(builder, /oncontextmenu/);
+  assert.match(builder, /ondblclick/);
+  assert.match(css, /\.nb-editor-context-menu/);
+  assert.match(css, /\.nb-inline-editable/);
+});
