@@ -58,6 +58,14 @@
    el.appendChild(handle);
   }
   el.onclick=e=>{if(e.target.closest('.nb-element-controls')||e.target.isContentEditable)return;e.stopPropagation();selectNode(n.id,e.ctrlKey||e.metaKey);render();};el.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();showContextMenu(n.id,e.clientX,e.clientY);};el.ondragstart=e=>{if(n.settings.locked){e.preventDefault();return;}e.dataTransfer.setData('text/plain',n.id);e.dataTransfer.effectAllowed='move';};el.ondragover=e=>{e.preventDefault();el.classList.add('drop-target');};el.ondragleave=()=>el.classList.remove('drop-target');el.ondrop=e=>{e.preventDefault();e.stopPropagation();el.classList.remove('drop-target');const from=find(e.dataTransfer.getData('text/plain')),to=find(n.id);if(!from||!to||from.node.id===to.node.id||from.nodes===to.nodes&&from.index===to.index||containsId(from.node,to.node.id))return;checkpoint();const moving=from.nodes.splice(from.index,1)[0];const refreshed=find(n.id);if(['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'].includes(refreshed.node.type))refreshed.node.children.push(moving);else refreshed.nodes.splice(refreshed.index,0,moving);render();status(t('Unsaved changes'));};
+  if(n.type==='column'&&selected===n.id&&!n.settings.locked){
+   const parent=find(n.id)?.parent;
+   if(parent&&['row','columns','specialty_section'].includes(parent.type)){
+    const resize=document.createElement('button');resize.type='button';resize.className='nb-column-width-handle';resize.setAttribute('aria-label',t('Resize column width'));resize.title=t('Drag to adjust column width');
+    resize.onpointerdown=e=>{e.preventDefault();e.stopPropagation();checkpoint();const parentElement=el.parentElement,parentWidth=parentElement?parentElement.getBoundingClientRect().width:0;if(!parentWidth)return;const startX=e.clientX,startWidth=el.getBoundingClientRect().width;resize.setPointerCapture(e.pointerId);const move=event=>{const next=Math.max(5,Math.min(95,((startWidth+event.clientX-startX)/parentWidth)*100));const value=next.toFixed(2)+'%';const style=n.settings[previewDevice]||(n.settings[previewDevice]={});style.width=value;el.style.width=value;el.style.flex='0 0 '+value;};const end=()=>{resize.removeEventListener('pointermove',move);resize.removeEventListener('pointerup',end);resize.removeEventListener('pointercancel',end);markChanged('Column width updated');};resize.addEventListener('pointermove',move);resize.addEventListener('pointerup',end);resize.addEventListener('pointercancel',end);};
+    el.appendChild(resize);
+   }
+  }
   if(n.children){const kids=document.createElement('div');kids.className='nb-nested-children'+(n.type==='columns'?' nb-column-grid':'')+(n.type==='row'?' nb-row-layout':'');if(n.type==='columns'){const grid=getNodeStyle(n,previewDevice);kids.style.display='grid';kids.style.gridTemplateColumns=grid.gridTemplateColumns||n.children.map(()=> 'minmax(0, 1fr)').join(' ');kids.style.gap=grid.gap||'20px';}if(n.type==='row'){kids.style.display='flex';kids.style.flexWrap='wrap';kids.style.gap=getNodeStyle(n,previewDevice).gap||'16px';}n.children.forEach(child=>kids.appendChild(nodeView(child,depth+1)));el.appendChild(kids);}return el;}
  function renderDynamicControls(parent,node){
   const wrap=document.createElement('div');wrap.className='nb-responsive-settings nb-dynamic-controls';const title=document.createElement('h3');title.textContent=t('Dynamic Content');wrap.appendChild(title);
@@ -163,8 +171,14 @@
   column:[
    {key:'width',label:'Column width',default:'100%'},
    {key:'minHeight',label:'Minimum height',default:'',optional:true},
-   {key:'padding',label:'Column padding',default:'0'},
-   {key:'margin',label:'Column margin',default:'0'},
+   {key:'paddingTop',label:'Padding top',default:'0'},
+   {key:'paddingRight',label:'Padding right',default:'0'},
+   {key:'paddingBottom',label:'Padding bottom',default:'0'},
+   {key:'paddingLeft',label:'Padding left',default:'0'},
+   {key:'marginTop',label:'Margin top',default:'0'},
+   {key:'marginRight',label:'Margin right',default:'0'},
+   {key:'marginBottom',label:'Margin bottom',default:'0'},
+   {key:'marginLeft',label:'Margin left',default:'0'},
    {key:'backgroundColor',label:'Background color',default:''},
    {key:'overflow',label:'Overflow',default:'visible'}
   ]
