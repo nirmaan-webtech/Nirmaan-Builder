@@ -636,3 +636,14 @@ test('Section, Row and Column expose dedicated responsive layout schemas', () =>
     assert.ok(renderer.includes("'"+property+"'"), property + ' is not mapped by the frontend renderer');
   }
 });
+
+
+test('layout Advanced HTML attributes are sanitized, persisted and rendered', () => {
+  assert.match(builder, /HTML ID/);
+  assert.match(builder, /CSS classes \(space separated\)/);
+  assert.match(rest, /'html_id'=>sanitize_html_class/);
+  assert.match(rest, /'css_class'=>implode\(' ',array_slice/);
+  assert.match(renderer, /\$s\['css_class'\]/);
+  assert.match(renderer, /\$s\['html_id'\]/);
+  assert.match(renderer, /\$html_attributes/);
+});
