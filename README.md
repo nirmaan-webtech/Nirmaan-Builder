@@ -21,7 +21,7 @@ This remains an evolving builder foundation, **not a complete Divi 4 replacement
 - WooCommerce only for WooCommerce elements
 
 ## Install as a theme
-1. Download the ZIP for branch feature/convert-to-wordpress-theme.
+1. Download the ZIP for branch `feature/divi4-canvas-parity` (this branch includes the theme conversion and the latest Canvas changes).
 2. In WordPress, open **Appearance → Themes → Add New → Upload Theme**.
 3. Upload the ZIP and click **Install Now → Activate**.
 4. Open **Nirmaan Builder → Theme Option** to configure global design settings.
