@@ -577,7 +577,7 @@ test('Canvas parity modules are allow-listed, persisted and rendered with real f
   assert.match(renderer, /wp_oembed_get/);
   assert.match(renderer, /nb-tab-radio/);
   assert.match(renderer, /<details/);
-  assert.match(renderer, /new \\\\WP_Query/);
+  assert.match(renderer, /new \\WP_Query/);
   assert.match(rest, /sanitize_module_items/);
   assert.match(builder, /nb-preview-gallery/);
   assert.match(builder, /nb-preview-panels/);
