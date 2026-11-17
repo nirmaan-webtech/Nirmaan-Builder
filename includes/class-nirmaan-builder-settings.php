@@ -60,7 +60,8 @@ final class Settings {
   $heading_fonts = array( 'inherit', 'system', 'Arial, sans-serif', 'Georgia, serif', 'Tahoma, sans-serif', 'Verdana, sans-serif' );
   $heading_font = sanitize_text_field( $input['heading_font_family'] ?? $out['heading_font_family'] );
   $out['heading_font_family'] = in_array( $heading_font, $heading_fonts, true ) ? $heading_font : 'inherit';
-  $out['font_weight'] = in_array( (string) ( $input['font_weight'] ?? $out['font_weight'] ), array( '300', '400', '500', '600', '700', '800' ), true ) ? (string) $input['font_weight'] : '400';
+  $weight = (string) ( $input['font_weight'] ?? $out['font_weight'] );
+  $out['font_weight'] = in_array( $weight, array( '300', '400', '500', '600', '700', '800' ), true ) ? $weight : '400';
   $line_height = (string) ( $input['line_height'] ?? $out['line_height'] );
   $out['line_height'] = preg_match( '/^(0?\\.[8-9]|[1-2](\\.[0-9])?)$/', $line_height ) ? $line_height : '1.6';
   $spacing = sanitize_text_field( $input['spacing_scale'] ?? $out['spacing_scale'] );
