@@ -175,3 +175,18 @@ Implemented in the current PR branch:
 Still not verified as complete:
 - WordPress runtime/browser QA, save/reload/revision round-trip against a real database, WooCommerce runtime rendering, and responsive visual parity require a running WordPress staging site.
 - The remaining Divi 4 parity scope is broader than source-level smoke tests. Do not treat this branch as a complete Divi 4 replacement or production release until runtime tests and the outstanding controls are completed.
+
+
+## Remaining-scope implementation update (2026-11-17)
+
+Additional source-level work:
+- Added a WordPress-backed REST test harness at `tests/wp/round-trip.php` for content save, reload, revision restore and autosave persistence. It must be run with WP-CLI against an activated staging WordPress site.
+- Added Forms consent checkbox/privacy-policy link, configurable processing label, server-side consent enforcement, field-level error feedback, and server-side URL/telephone/date validation. Existing conditional fields, notification email, spam honeypot, rate limiting, submissions storage and optional webhook workflow remain integrated.
+- Added WooCommerce product grid filters for min/max price, sale-only and in-stock-only, plus element-specific product title tag and image size settings.
+- Added scroll reveal effects (fade, slide-up, zoom) with delay, IntersectionObserver activation and reduced-motion fallback. Sticky positioning remains configurable through position/top layout controls.
+- Added runtime QA instructions at `docs/WORDPRESS-RUNTIME-QA.md`.
+
+Still environment-dependent and not signed off:
+- The WP-CLI round-trip harness has not been executed against a live WordPress database in this session.
+- Browser-level nested drag/drop, breakpoint rendering, canvas/frontend comparison, WooCommerce templates and form delivery need an actual staging WordPress URL, a temporary administrator account, and WooCommerce enabled.
+- No visual browser sign-off or production readiness claim is made from static CI alone.
