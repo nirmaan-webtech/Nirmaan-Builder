@@ -104,3 +104,21 @@ test('editor supports desktop, tablet and mobile viewport previews', () => {
   const css = fs.readFileSync('assets/css/editor.css', 'utf8');
   assert.match(css, /data-preview-device=mobile/);
 });
+
+test('design system exposes sanitized global tokens and advanced element styles', () => {
+  const settings = fs.readFileSync('includes/class-nirmaan-builder-settings.php', 'utf8');
+  assert.match(settings, /accent_color/);
+  assert.match(settings, /heading_font_family/);
+  assert.match(settings, /spacing_scale/);
+  assert.match(settings, /--nb-accent/);
+  assert.match(settings, /--nb-line-height/);
+  assert.match(rest, /fontWeight/);
+  assert.match(rest, /borderColor/);
+  assert.match(rest, /boxShadow/);
+  assert.match(rest, /flexDirection/);
+  assert.match(builder, /Letter spacing/);
+  assert.match(builder, /Box shadow/);
+  assert.match(builder, /Flex direction/);
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  assert.match(renderer, /'boxShadow'=>'box-shadow'/);
+});
