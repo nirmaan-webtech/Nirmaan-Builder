@@ -251,3 +251,15 @@ test('layout system sanitizes and renders advanced positioning and overflow styl
     assert.ok(renderer.includes("'"+key+"'"), key + ' style is not rendered');
   }
 });
+
+
+test('layer panel supports filtering, expand/collapse, hierarchy navigation and nesting actions', () => {
+  for (const feature of ['nb-layer-search','nb-layer-expand-all','nb-layer-collapse-all','nb-layer-navigator','selectedPath','renderLayerNavigator','moveLayer']) {
+    assert.ok(builder.includes(feature), feature + ' layer feature missing');
+  }
+  assert.match(builder, /Indent into previous layout/);
+  assert.match(builder, /Outdent layer/);
+  assert.match(builder, /containsId\(source\.node,target\.node\.id\)/);
+  assert.match(admin, /nb-layer-search/);
+  assert.match(admin, /nb-layer-navigator/);
+});
