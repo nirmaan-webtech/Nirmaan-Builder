@@ -16,9 +16,15 @@ function nirmaan_builder_theme_setup() {
 	add_theme_support( 'align-wide' );
 	add_theme_support( 'responsive-embeds' );
 	add_theme_support( 'woocommerce' );
+	add_editor_style( 'style.css' );
 	register_nav_menus( array( 'primary' => __( 'Primary Menu', 'nirmaan-builder' ), 'footer' => __( 'Footer Menu', 'nirmaan-builder' ) ) );
 }
 add_action( 'after_setup_theme', 'nirmaan_builder_theme_setup' );
+
+function nirmaan_builder_enqueue_theme_styles() {
+	wp_enqueue_style( 'nirmaan-builder-theme', get_stylesheet_uri(), array(), NIRMAAN_BUILDER_VERSION );
+}
+add_action( 'wp_enqueue_scripts', 'nirmaan_builder_enqueue_theme_styles', 5 );
 
 function nirmaan_builder_theme_boot() {
 	$GLOBALS['nirmaan_builder_renderer'] = \NirmaanBuilder\Theme::instance()->boot();
