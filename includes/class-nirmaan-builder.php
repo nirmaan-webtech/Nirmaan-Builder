@@ -10,7 +10,8 @@ final class Plugin {
 		require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-rest.php';
 		require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-renderer.php';
 		require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-settings.php';
-		( new Admin() )->hooks(); add_action( 'init', array( $this, 'register_content_types' ), 5 ); add_action( 'init', array( Content::class, 'register_meta' ), 99 ); ( new Rest() )->register_hooks(); ( new Renderer() )->hooks(); ( new Settings() )->register_hooks();
+		require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-forms.php';
+		( new Admin() )->hooks(); add_action( 'init', array( $this, 'register_content_types' ), 5 ); add_action( 'init', array( Content::class, 'register_meta' ), 99 ); ( new Rest() )->register_hooks(); ( new Renderer() )->hooks(); ( new Settings() )->register_hooks(); ( new Forms() )->hooks();
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 	}
 	public function load_textdomain() { load_plugin_textdomain( 'nirmaan-builder', false, dirname( plugin_basename( NIRMAAN_BUILDER_FILE ) ) . '/languages' ); }
