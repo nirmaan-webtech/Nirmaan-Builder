@@ -671,7 +671,7 @@ test('specialty sections expose asymmetric presets with responsive frontend rend
   }
   assert.match(builder, /previewDevice==='mobile'\?'1fr'/);
   assert.match(renderer, /'specialty_section'===\$type/);
-  assert.match(renderer, /'gridTemplateColumns'\]\=\$device_style\['gridTemplateColumns'\]\?\?'mobile'/);
+  assert.ok(renderer.includes("$device_style['gridTemplateColumns']=$device_style['gridTemplateColumns']??('mobile'"));
 });
 
 test('row column resizing balances an adjacent column and persists both widths', () => {
