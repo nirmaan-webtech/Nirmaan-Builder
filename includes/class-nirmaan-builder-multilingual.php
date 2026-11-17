@@ -35,33 +35,33 @@ final class Multilingual {
  public static function register_meta_strings( $meta_id, $post_id, $meta_key, $meta_value ) {
   if ( ! in_array( $meta_key, array( '_nirmaan_builder_document', '_nirmaan_template_parts', '_nirmaan_library_document' ), true ) ) { return; }
   $strings = array();
-  self::collect_strings( maybe_unserialize( $meta_value ), (string) $meta_key, $strings );
+  self::collect_strings( maybe_unserialize( $meta_value ), (string) $meta_key, 'post-' . absint( $post_id ), $strings );
   foreach ( $strings as $name => $value ) {
    if ( function_exists( 'pll_register_string' ) ) { pll_register_string( $name, $value, self::CONTEXT, false ); }
    do_action( 'wpml_register_single_string', self::CONTEXT, $name, $value );
   }
  }
- private static function collect_strings( $value, $path, &$strings ) {
+ private static function collect_strings( $value, $path, $prefix, &$strings ) {
   if ( ! is_array( $value ) ) { return; }
   foreach ( $value as $key => $child ) {
    $child_path = $path . '/' . (string) $key;
-   if ( is_array( $child ) ) { self::collect_strings( $child, $child_path, $strings ); continue; }
+   if ( is_array( $child ) ) { self::collect_strings( $child, $child_path, $prefix, $strings ); continue; }
    if ( ! in_array( (string) $key, self::$translatable_keys, true ) || ! is_scalar( $child ) ) { continue; }
    $text = (string) $child;
    if ( '' === trim( $text ) ) { continue; }
-   $strings[ 'post-' . absint( get_the_ID() ) . '-' . md5( $child_path ) ] = $text;
+   $strings[ $prefix . '-' . md5( $child_path ) ] = $text;
   }
  }
- public static function translate_document( $document, $post_id ) {
+ public static function translate_document( $document, $post_id, $meta_key = '_nirmaan_builder_document' ) {
   if ( ! is_array( $document ) ) { return $document; }
-  return self::translate_array( $document, 'post-' . absint( $post_id ), '' );
+  return self::translate_array( $document, 'post-' . absint( $post_id ), (string) $meta_key );
  }
  private static function translate_array( $value, $prefix, $path ) {
   foreach ( $value as $key => $child ) {
-   $child_path = '' === $path ? (string) $key : $path . '/' . (string) $key;
+   $child_path = $path . '/' . (string) $key;
    if ( is_array( $child ) ) { $value[ $key ] = self::translate_array( $child, $prefix, $child_path ); continue; }
    if ( ! in_array( (string) $key, self::$translatable_keys, true ) || ! is_scalar( $child ) || '' === trim( (string) $child ) ) { continue; }
-   $name = $prefix . '-' . md5( ( '' === $path ? '' : $path . '/' ) . (string) $key );
+   $name = $prefix . '-' . md5( $child_path );
    $translated = apply_filters( 'wpml_translate_single_string', (string) $child, self::CONTEXT, $name );
    if ( function_exists( 'pll__' ) ) { $translated = pll__( (string) $translated ); }
    $value[ $key ] = $translated;
