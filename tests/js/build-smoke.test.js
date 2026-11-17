@@ -747,3 +747,58 @@ test('frontend slider controls are rendered and initialized by an enqueued modul
   assert.match(modules, /setInterval/);
   assert.match(modules, /data-slide/);
 });
+
+
+test('database save, autosave and revision round-trip endpoints preserve snapshots', () => {
+  assert.match(rest, /function save_content/);
+  assert.match(rest, /function get_content/);
+  assert.match(rest, /function save_autosave/);
+  assert.match(rest, /function get_autosave/);
+  assert.match(rest, /function list_revisions/);
+  assert.match(rest, /function restore_revision/);
+  assert.match(rest, /record_revision\('content'/);
+  assert.match(rest, /set_document_for_target\(\$type,\$id,\$doc,\$part\)/);
+  assert.match(rest, /_nirmaan_builder_revisions/);
+  assert.match(rest, /_nirmaan_builder_autosaves/);
+});
+
+test('Forms support consent, conditional fields, server validation and submission storage', () => {
+  const forms = fs.readFileSync('includes/class-nirmaan-builder-forms.php', 'utf8');
+  const formScript = fs.readFileSync('assets/js/forms.js', 'utf8');
+  assert.match(builder, /form_consent_required/);
+  assert.match(rest, /form_consent_required/);
+  assert.match(forms, /consent_required/);
+  assert.match(forms, /form_consent_required/);
+  assert.match(forms, /form_consent_required.*params\['consent'\]/);
+  assert.match(forms, /wp_insert_post/);
+  assert.match(forms, /wp_mail/);
+  assert.match(forms, /wp_safe_remote_post/);
+  assert.match(forms, /form_rate_limited/);
+  assert.match(forms, /form_spam/);
+  assert.match(forms, /wp_http_validate_url/);
+  assert.match(forms, /Enter a valid phone number/);
+  assert.match(formScript, /consent:data\.get\('consent'\)/);
+  assert.match(formScript, /data-processing-label/);
+});
+
+test('WooCommerce grids persist and apply price, sale and stock filters', () => {
+  assert.match(builder, /woo_min_price/);
+  assert.match(builder, /woo_max_price/);
+  assert.match(builder, /on_sale/);
+  assert.match(builder, /in_stock/);
+  assert.match(rest, /min_price/);
+  assert.match(rest, /max_price/);
+  assert.match(renderer, /stock_status/);
+  assert.match(renderer, /on_sale/);
+});
+
+test('Scroll effects are sanitized, rendered and initialized with IntersectionObserver', () => {
+  assert.match(builder, /scroll_effect/);
+  assert.match(rest, /scroll_effect/);
+  assert.match(renderer, /nb-scroll-reveal/);
+  const modules = fs.readFileSync('assets/js/modules.js', 'utf8');
+  const css = fs.readFileSync('assets/css/frontend.css', 'utf8');
+  assert.match(modules, /IntersectionObserver/);
+  assert.match(modules, /nb-scroll-visible/);
+  assert.match(css, /prefers-reduced-motion/);
+});
