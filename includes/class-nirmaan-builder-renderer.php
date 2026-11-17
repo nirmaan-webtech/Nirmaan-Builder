@@ -27,10 +27,10 @@ class Renderer {
   foreach($map as $key=>$property){
    if(!isset($s[$key])||''===$s[$key])continue;
    $value=$s[$key];
-   if('boxShadow'===$key)$value=$shadows[$value]??'none';
+   if('boxShadow'===$key)$value=$shadows[$value]??'none';if('animationName'===$key&&'none'!==$value){$value='nb-'.$value;}
    if(in_array($key,array('color','backgroundColor','borderColor'),true))$value=sanitize_hex_color($value)?:'';
    else $value=esc_attr($value);
-   if(''!==$value)$out.=$property.':'.$value.';';
+   if(''!==$value)$out.=$property.':'.$value.';';if(isset($s['animationName'])&&'none'!==$s['animationName'])$out.='animation-fill-mode:both;';
   }
   return $out;
  }
