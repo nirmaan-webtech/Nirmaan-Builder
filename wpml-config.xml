@@ -5,7 +5,7 @@
     <custom-type translate="1">nirmaan_library</custom-type>
   </custom-types>
   <custom-fields>
-    <custom-field action="translate">_nirmaan_builder_document</custom-field>
+    <custom-field action="copy">_nirmaan_builder_document</custom-field>
     <custom-field action="copy">_nirmaan_builder_enabled</custom-field>
     <custom-field action="translate">_nirmaan_builder_custom_fields</custom-field>
     <custom-field action="translate">_nirmaan_template_parts</custom-field>
