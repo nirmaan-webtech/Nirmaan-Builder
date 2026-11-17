@@ -714,3 +714,17 @@ test('Section Row and Column expose typed layout controls backed by REST and fro
   assert.match(rest, /'alignSelf'/);
   assert.match(renderer, /'alignSelf'=>'align-self'/);
 });
+
+
+test('advanced Image Button Gallery Slider Tabs Accordion controls are defined and persisted', () => {
+  for (const key of ['gallery_columns','gallery_gap','gallery_layout','lightbox','slider_autoplay','slider_interval','slider_arrows','slider_dots','tabs_style','tabs_alignment','accordion_multiple','accordion_first_open','video_ratio','full_width','show_featured_image','show_excerpt','custom_css']) assert.ok(builder.includes(key), key+' control missing');
+  for (const key of ['gallery_columns','gallery_gap','gallery_layout','lightbox','slider_autoplay','slider_interval','slider_arrows','slider_dots','tabs_style','tabs_alignment','accordion_multiple','accordion_first_open','video_ratio','custom_css']) assert.ok(rest.includes("['"+key+"']") || rest.includes("['"+key+"']"), key+' REST persistence missing');
+  assert.match(renderer, /nb-button-full/);
+  assert.match(renderer, /nb-tabs-'.*tabs_style/);
+  assert.match(renderer, /nb-gallery-columns/);
+});
+
+test('specialty section presets create and remove matching editable columns', () => {
+  assert.match(builder, /type==='specialty_section'.*node\.children=\[make\('column'\),make\('column'\)\]/);
+  assert.match(builder, /const count=presetSelect\.value\.trim\(\)\.split/);
+});
