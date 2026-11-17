@@ -254,3 +254,20 @@ The first implementation slice has now been committed to `feature/divi4-canvas-p
 **Scope boundary:** this is the first slice of the schema engine, not the completed engine. The generic Design controls are still hand-built; Section/Row/Column schemas, module-specific Design/Advanced schemas, shared REST schema metadata, media-library selection, and end-to-end round-trip tests remain outstanding. The existing REST allow-list already stores the core fields used by this slice (`content`, `level`, `url`, `alt`, and `height`), so no new persisted keys were introduced in this commit.
 
 No PHP/JS test command or WordPress browser session was executed by this commit workflow. The new smoke test is committed but still needs to run in CI. Do not treat this tranche as proof of functional Divi 4 parity.
+
+
+## 10. Layout settings implementation — first slice
+
+A dedicated responsive layout schema has been added for Section, Fullwidth Section, Specialty Section, Row and Column. The shared schema renderer exposes layout-specific controls and writes values into the active desktop/tablet/mobile style bucket. The selected properties reuse the existing REST style allow-list and frontend CSS mapping rather than introducing unpersisted settings keys.
+
+Implemented in this slice:
+- Section and Fullwidth Section: width, max width where applicable, minimum height, padding, background color and overflow.
+- Specialty Section: width, max width, padding, column gap and background color.
+- Row: display, width, max width, flex direction/wrap, horizontal/vertical alignment, column gutter and padding.
+- Column: width, minimum height, padding, margin, background color and overflow.
+- Added source-level regression assertions for schema presence and REST/renderer property mapping.
+
+Scope limitations:
+- These are responsive CSS layout controls, not a complete Divi 4 layout engine. They do not yet implement true specialty-section column templates, drag-resizable column ratios, equal-height behavior, row/column structural constraints, or per-side spacing controls.
+- The schema uses the existing generic style pipeline; no new REST settings object was added.
+- Browser-level WordPress testing and executable test runs remain pending.
