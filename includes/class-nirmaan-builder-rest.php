@@ -10,6 +10,14 @@ class Rest {
    array('methods'=>WP_REST_Server::READABLE,'callback'=>array($this,'get_settings'),'permission_callback'=>array($this,'can_manage_settings')),
    array('methods'=>WP_REST_Server::CREATABLE,'callback'=>array($this,'save_settings'),'permission_callback'=>array($this,'can_manage_settings'))
   ) );
+  register_rest_route( 'nirmaan-builder/v1', '/style-presets', array(
+   array('methods'=>WP_REST_Server::READABLE,'callback'=>array($this,'list_style_presets'),'permission_callback'=>array($this,'can_manage_presets')),
+   array('methods'=>WP_REST_Server::CREATABLE,'callback'=>array($this,'create_style_preset'),'permission_callback'=>array($this,'can_manage_presets'))
+  ) );
+  register_rest_route( 'nirmaan-builder/v1', '/style-presets/(?P<id>[a-zA-Z0-9_-]+)', array(
+   array('methods'=>'POST','callback'=>array($this,'update_style_preset'),'permission_callback'=>array($this,'can_manage_presets')),
+   array('methods'=>WP_REST_Server::DELETABLE,'callback'=>array($this,'delete_style_preset'),'permission_callback'=>array($this,'can_manage_presets'))
+  ) );
   register_rest_route( 'nirmaan-builder/v1', '/content/(?P<id>\\d+)', array(
    array('methods'=>WP_REST_Server::READABLE,'callback'=>array($this,'get_content'),'permission_callback'=>array($this,'can_edit_content')),
    array('methods'=>WP_REST_Server::CREATABLE,'callback'=>array($this,'save_content'),'permission_callback'=>array($this,'can_edit_content')) ) );
@@ -38,6 +46,37 @@ class Rest {
    array('methods'=>WP_REST_Server::READABLE,'callback'=>array($this,'get_library_item'),'permission_callback'=>array($this,'can_manage_library')),
    array('methods'=>'POST','callback'=>array($this,'save_library_item'),'permission_callback'=>array($this,'can_manage_library')),
    array('methods'=>WP_REST_Server::DELETABLE,'callback'=>array($this,'delete_library_item'),'permission_callback'=>array($this,'can_manage_library')) ) );
+ }
+ public function can_manage_presets(){return current_user_can('edit_theme_options');}
+ private function style_presets(){ $items=get_option('nirmaan_builder_style_presets',array());return is_array($items)?$items:array(); }
+ private function sanitize_preset_payload($p){
+  if(!is_array($p))return new \\WP_Error('invalid_preset',__('Invalid style preset.','nirmaan-builder'),array('status'=>400));
+  $name=sanitize_text_field($p['name']??'');
+  if(''===$name||strlen($name)>80)return new \\WP_Error('invalid_preset_name',__('Preset name is required and must be 80 characters or fewer.','nirmaan-builder'),array('status'=>400));
+  $styles=is_array($p['styles']??null)?$p['styles']:array();
+  $clean=array();
+  foreach(array('desktop','tablet','mobile') as $device){$clean[$device]=$this->sanitize_style(is_array($styles[$device]??null)?$styles[$device]:array());}
+  if(!array_filter($clean))return new \\WP_Error('empty_preset',__('Add at least one supported style before saving.','nirmaan-builder'),array('status'=>400));
+  $category=sanitize_key($p['category']??'element');
+  if(!in_array($category,array('element','typography','color','button','container'),true))$category='element';
+  return array('name'=>$name,'category'=>$category,'styles'=>$clean,'version'=>1,'updated_at'=>current_time('mysql',true));
+ }
+ public function list_style_presets(){ $items=$this->style_presets();return rest_ensure_response(array_values($items)); }
+ public function create_style_preset($r){
+  $preset=$this->sanitize_preset_payload($r->get_json_params());if(is_wp_error($preset))return $preset;
+  $items=$this->style_presets();if(count($items)>=200)return new \\WP_Error('preset_limit',__('Maximum of 200 style presets reached.','nirmaan-builder'),array('status'=>400));
+  $id='preset-'.str_replace('-','',wp_generate_uuid4());$preset['id']=$id;$items[$id]=$preset;update_option('nirmaan_builder_style_presets',$items,false);
+  return rest_ensure_response(array('created'=>true,'preset'=>$preset));
+ }
+ public function update_style_preset($r){
+  $id=sanitize_key($r['id']);$items=$this->style_presets();if(!isset($items[$id]))return new \\WP_Error('preset_not_found',__('Style preset not found.','nirmaan-builder'),array('status'=>404));
+  $preset=$this->sanitize_preset_payload($r->get_json_params());if(is_wp_error($preset))return $preset;
+  $preset['id']=$id;$items[$id]=$preset;update_option('nirmaan_builder_style_presets',$items,false);
+  return rest_ensure_response(array('saved'=>true,'preset'=>$preset));
+ }
+ public function delete_style_preset($r){
+  $id=sanitize_key($r['id']);$items=$this->style_presets();if(!isset($items[$id]))return new \\WP_Error('preset_not_found',__('Style preset not found.','nirmaan-builder'),array('status'=>404));
+  unset($items[$id]);update_option('nirmaan_builder_style_presets',$items,false);return rest_ensure_response(array('deleted'=>true));
  }
  public function status(){return rest_ensure_response(array('name'=>'Nirmaan Builder','version'=>NIRMAAN_BUILDER_VERSION,'status'=>'builder-expanded'));}
  public function can_manage_settings(){return current_user_can('manage_options');}
