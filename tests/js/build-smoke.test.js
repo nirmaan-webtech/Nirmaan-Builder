@@ -807,3 +807,11 @@ test('Scroll effects are sanitized, rendered and initialized with IntersectionOb
   assert.match(modules, /nb-scroll-visible/);
   assert.match(css, /prefers-reduced-motion/);
 });
+
+
+test('the root default Section stays protected while duplicated Sections are deletable', () => {
+  assert.match(builder, /const ensureDefaultSection=\(\)=>\{[\s\S]*?first\.settings\.system_default_section=true/);
+  assert.match(builder, /const isProtectedSection=node=>!!\(node&&node\.type==='section'&&node\.settings&&node\.settings\.system_default_section\)/);
+  assert.match(builder, /const rekey=node=>\{if\(node\.settings\)delete node\.settings\.system_default_section;/);
+  assert.match(builder, /if\(isProtectedSection\(current\.node\)\)\{status\(t\('The default Section cannot be deleted\.'\)\);return;\}/);
+});
