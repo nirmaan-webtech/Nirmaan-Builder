@@ -231,7 +231,7 @@ Still environment-dependent and not signed off:
 - Added a dedicated **Nirmaan Builder → Page Builder** admin screen for editing WordPress pages and posts.
 - Added a Section → Row → Column → Module canvas using the existing Nirmaan document schema and existing frontend renderer; existing saved documents remain compatible.
 - Added a live canvas inspector with Content, Design, Hover and Advanced tabs; desktop, tablet and mobile style buckets; media-library image selection; and frontend preview. Design controls cover layout, spacing, typography, borders, shadows, gradients, transforms, filters and animations.
-- Added element insertion, duplication, deletion, sibling reordering and drag/drop between compatible structural levels. Content controls include media, buttons, galleries, sliders, tabs, accordions and form fields.
+- Added element insertion, duplication, deletion, sibling reordering and drag/drop between compatible structural levels. Content controls include media, buttons, galleries, sliders, tabs, accordions, form fields, Blog/Portfolio queries and WooCommerce catalog filters.
 - Added undo/redo, JSON import/export, manual save, 30-second autosave, and Library load/save integration using existing REST endpoints.
 - Added direct **Edit in Canvas** links for Header, Body and Footer parts in Theme Builder. Template-part edits use the existing template REST routes and autosave/revision storage.
 - Added JavaScript smoke coverage and included the new canvas script in the build syntax checks.
