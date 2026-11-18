@@ -716,6 +716,17 @@ test('Section Row and Column expose typed layout controls backed by REST and fro
 });
 
 
+
+test('Section Row and Column share persisted visual design controls with frontend CSS mappings', () => {
+  for (const key of ['backgroundImage','borderColor','borderWidth','borderStyle','borderRadius','boxShadow','opacity','textAlign']) {
+    assert.ok(builder.includes("key:'"+key+"'"), key+' shared layout design control missing');
+    assert.ok(rest.includes("'"+key+"'"), key+' REST sanitizer missing');
+    assert.ok(renderer.includes("'"+key+"'"), key+' frontend CSS mapping missing');
+  }
+  assert.match(builder, /definitions\.concat\(layoutVisualSchema\)/);
+  assert.match(builder, /renderSchemaFields\(wrap,node,definitions\.concat\(layoutVisualSchema\),visibleStyle/);
+});
+
 test('advanced Image Button Gallery Slider Tabs Accordion controls are defined and persisted', () => {
   for (const key of ['gallery_columns','gallery_gap','gallery_layout','lightbox','slider_autoplay','slider_interval','slider_arrows','slider_dots','tabs_style','tabs_alignment','accordion_multiple','accordion_first_open','video_ratio','full_width','show_featured_image','show_excerpt','custom_css']) assert.ok(builder.includes(key), key+' control missing');
   for (const key of ['gallery_columns','gallery_gap','gallery_layout','lightbox','slider_autoplay','slider_interval','slider_arrows','slider_dots','tabs_style','tabs_alignment','accordion_multiple','accordion_first_open','video_ratio','custom_css']) assert.ok(rest.includes("['"+key+"']") || rest.includes("['"+key+"']"), key+' REST persistence missing');
