@@ -197,6 +197,16 @@
    {key:'marginLeft',label:'Margin left',type:'text',default:'0'}
   ]
  };
+ const layoutVisualSchema=[
+  {key:'backgroundImage',label:'Background gradient',type:'text',default:'',optional:true,placeholder:'linear-gradient(135deg, #111827, #2563eb)'},
+  {key:'borderColor',label:'Border color',type:'color',default:'#e5e7eb'},
+  {key:'borderWidth',label:'Border width',type:'text',default:'0'},
+  {key:'borderStyle',label:'Border style',type:'select',default:'solid',options:[['none','None'],['solid','Solid'],['dashed','Dashed'],['dotted','Dotted'],['double','Double']]},
+  {key:'borderRadius',label:'Corner radius',type:'text',default:'0',placeholder:'e.g. 12px'},
+  {key:'boxShadow',label:'Box shadow',type:'select',default:'none',options:[['none','None'],['soft','Soft'],['medium','Medium'],['strong','Strong']]},
+  {key:'opacity',label:'Opacity (0–1)',type:'number',default:1,min:0,max:1,step:0.05},
+  {key:'textAlign',label:'Text alignment',type:'select',default:'left',options:[['left','Left'],['center','Center'],['right','Right'],['justify','Justify']]}
+ ];
  const settingsSchemas={content:contentSchemas,layout:layoutSchemas};
  function renderSchemaFields(parent,node,definitions,values,onChange){(definitions||[]).forEach(definition=>{const value=values[definition.key]??definition.default??'';if(definition.type==='media'){mediaField(parent,definition.label,definition.key,value,next=>onChange(definition,next));return;}renderField(parent,definition,value,next=>onChange(definition,next));});}
  function renderContentSchema(parent,node){renderSchemaFields(parent,node,settingsSchemas.content[node.type],node.settings,(definition,value)=>{node.settings[definition.key]=value;});}
@@ -224,7 +234,7 @@
    presetSelect.onchange=()=>{checkpoint();style.display='grid';style.gridTemplateColumns=presetSelect.value;const count=presetSelect.value.trim().split(/\\s+/).length;node.children=Array.isArray(node.children)?node.children:[];while(node.children.length<count)node.children.push(make('column'));while(node.children.length>count)node.children.pop();markChanged('Specialty layout preset and columns updated');render();};
    presetLabel.appendChild(presetSelect);wrap.appendChild(presetLabel);
   }
-  renderSchemaFields(wrap,node,definitions,visibleStyle,(definition,value)=>{style[definition.key]=value;});
+  renderSchemaFields(wrap,node,definitions.concat(layoutVisualSchema),visibleStyle,(definition,value)=>{style[definition.key]=value;});
   parent.appendChild(wrap);
  }
  function settings(){const p=document.getElementById('nirmaan-settings');p.replaceChildren();renderStyleActions(p);renderBreakpointControls(p);const r=selected?find(selected):null;if(!r){const note=document.createElement('p');note.textContent=t('Select an element on the canvas.');p.appendChild(note);return;}const n=r.node,s=n.settings;
