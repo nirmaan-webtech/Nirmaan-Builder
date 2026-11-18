@@ -224,3 +224,11 @@ Still environment-dependent and not signed off:
 - These controls write to the active desktop/tablet/mobile style object, use the existing schema-driven field renderer, trigger canvas refresh/autosave, and flow through the existing REST style sanitizer and frontend CSS property mapper.
 - Added a regression test asserting each shared visual property is represented in the editor schema, REST sanitizer and frontend renderer.
 - CI is running for the latest branch head. This is source-level coverage only; a real WordPress save/reload and frontend render check still requires the staging environment.
+
+
+## Visual canvas system removal (2026-11-18)
+
+- Removed the Visual Editor admin route and its editor JavaScript, editor stylesheet and Gutenberg launch integration.
+- Removed canvas entry links from Library and Theme Builder. Theme Options, Theme Builder rules, Library management, role permissions, REST persistence and frontend rendering remain in the theme.
+- Previously saved builder documents and their frontend rendering are retained; this change removes the canvas editing interface, not stored page data.
+- Local WordPress/WAMP activation and frontend checks are still required before treating the branch as verified.
