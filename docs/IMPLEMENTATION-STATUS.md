@@ -230,8 +230,8 @@ Still environment-dependent and not signed off:
 
 - Added a dedicated **Nirmaan Builder → Page Builder** admin screen for editing WordPress pages and posts.
 - Added a Section → Row → Column → Module canvas using the existing Nirmaan document schema and existing frontend renderer; existing saved documents remain compatible.
-- Added a live canvas inspector with Content, Design, Hover and Advanced tabs; desktop, tablet and mobile style buckets; media-library image selection; and frontend preview.
-- Added element insertion, duplication, deletion, sibling reordering and drag/drop between compatible structural levels.
+- Added a live canvas inspector with Content, Design, Hover and Advanced tabs; desktop, tablet and mobile style buckets; media-library image selection; and frontend preview. Design controls cover layout, spacing, typography, borders, shadows, gradients, transforms, filters and animations.
+- Added element insertion, duplication, deletion, sibling reordering and drag/drop between compatible structural levels. Content controls include media, buttons, galleries, sliders, tabs, accordions and form fields.
 - Added undo/redo, JSON import/export, manual save, 30-second autosave, and Library load/save integration using existing REST endpoints.
 - Added direct **Edit in Canvas** links for Header, Body and Footer parts in Theme Builder. Template-part edits use the existing template REST routes and autosave/revision storage.
 - Added JavaScript smoke coverage and included the new canvas script in the build syntax checks.
@@ -239,4 +239,4 @@ Still environment-dependent and not signed off:
 Scope and verification notes:
 - This is a WordPress-native implementation based on the Akario builder's interaction model, not a byte-for-byte transplant of Akario's standalone PHP/database stack. It uses Nirmaan's existing WordPress document schema and rendering pipeline.
 - The current implementation exposes the modules already supported by Nirmaan's REST sanitizer and frontend renderer. Akario-only module types and some specialized controls still require explicit Nirmaan schema, sanitizer and renderer support before they can be considered implemented.
-- CI and WordPress runtime/browser QA must pass before sign-off. WAMP activation, drag/drop behavior, responsive save/reload, template-part rendering, Library round-trip and frontend parity have not been verified in this session.
+- GitHub Actions CI run #853 passed PHP syntax, JavaScript syntax and feature smoke tests for the current canvas head. WordPress runtime/browser QA remains outstanding: WAMP activation, drag/drop behavior, responsive save/reload, template-part rendering, Library round-trip and frontend parity have not been verified in this session.
