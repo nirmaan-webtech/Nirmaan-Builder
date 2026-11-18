@@ -95,7 +95,7 @@ function inspectorRender(){
   body.append(field('CSS classes','css_class',s.css_class||'','text',null,v=>set('css_class',v)));
   body.append(field('Custom CSS declarations','custom_css',s.custom_css||'','textarea',null,v=>set('custom_css',v)));
   body.append(field('Scroll effect','scroll_effect',s.scroll_effect||'none','select',[['none','None'],['fade','Fade'],['slide-up','Slide up'],['zoom','Zoom']],v=>set('scroll_effect',v)));
-  ['hide_desktop','hide_tablet','hide_mobile','hidden','locked'].forEach(k=>{const l=document.createElement('label');l.className='nbc-field';const i=document.createElement('input');i.type='checkbox';i.checked=!!s[k];i.onchange=()=>set(k,i.checked);l.append(i,document.createTextNode(' '+k.replace(/_/g,' ')));body.append(l);});
+  ['hide_desktop','hide_tablet','hide_mobile'].forEach(k=>{const l=document.createElement('label');l.className='nbc-field';const i=document.createElement('input');i.type='checkbox';i.checked=!!s[k];i.onchange=()=>set(k,i.checked);l.append(i,document.createTextNode(' '+k.replace(/_/g,' ')));body.append(l);});
  }
  const actions=document.createElement('div');actions.className='nbc-inspector-actions';actions.append(tool('Duplicate',()=>duplicate(n.id)),tool('Delete',()=>remove(n.id)));inspector.appendChild(actions);
 }
