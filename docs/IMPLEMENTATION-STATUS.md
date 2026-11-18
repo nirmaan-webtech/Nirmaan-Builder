@@ -226,9 +226,17 @@ Still environment-dependent and not signed off:
 - CI is running for the latest branch head. This is source-level coverage only; a real WordPress save/reload and frontend render check still requires the staging environment.
 
 
-## Visual canvas system removal (2026-11-18)
+## Visual canvas implementation restored (2026-11-18)
 
-- Removed the Visual Editor admin route and its editor JavaScript, editor stylesheet and Gutenberg launch integration.
-- Removed canvas entry links from Library and Theme Builder. Theme Options, Theme Builder rules, Library management, role permissions, REST persistence and frontend rendering remain in the theme.
-- Previously saved builder documents and their frontend rendering are retained; this change removes the canvas editing interface, not stored page data.
-- Local WordPress/WAMP activation and frontend checks are still required before treating the branch as verified.
+- Added a dedicated **Nirmaan Builder → Page Builder** admin screen for editing WordPress pages and posts.
+- Added a Section → Row → Column → Module canvas using the existing Nirmaan document schema and existing frontend renderer; existing saved documents remain compatible.
+- Added a live canvas inspector with Content, Design, Hover and Advanced tabs; desktop, tablet and mobile style buckets; media-library image selection; and frontend preview.
+- Added element insertion, duplication, deletion, sibling reordering and drag/drop between compatible structural levels.
+- Added undo/redo, JSON import/export, manual save, 30-second autosave, and Library load/save integration using existing REST endpoints.
+- Added direct **Edit in Canvas** links for Header, Body and Footer parts in Theme Builder. Template-part edits use the existing template REST routes and autosave/revision storage.
+- Added JavaScript smoke coverage and included the new canvas script in the build syntax checks.
+
+Scope and verification notes:
+- This is a WordPress-native implementation based on the Akario builder's interaction model, not a byte-for-byte transplant of Akario's standalone PHP/database stack. It uses Nirmaan's existing WordPress document schema and rendering pipeline.
+- The current implementation exposes the modules already supported by Nirmaan's REST sanitizer and frontend renderer. Akario-only module types and some specialized controls still require explicit Nirmaan schema, sanitizer and renderer support before they can be considered implemented.
+- CI and WordPress runtime/browser QA must pass before sign-off. WAMP activation, drag/drop behavior, responsive save/reload, template-part rendering, Library round-trip and frontend parity have not been verified in this session.
