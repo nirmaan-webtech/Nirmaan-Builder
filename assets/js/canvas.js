@@ -13,7 +13,7 @@ const node=(id, type, settings={}, children=[])=>({id:id||uid(),type,settings,ch
 const section=()=>node('', 'section',{desktop:{width:'100%',padding:'32px',backgroundColor:'#ffffff'}},[row()]);
 const row=()=>node('', 'row',{desktop:{display:'flex',gap:'16px',width:'100%',flexWrap:'wrap'}},[column()]);
 const column=()=>node('', 'column',{desktop:{flexBasis:'100%',padding:'10px'}},[]);
-const find=(nodes,id,parent=null)=>{for(const n of nodes||[]){if(n.id===id)return {n,parent,nodes};const hit=find(n.children,id,n);if(hit)return hit;}return null;};
+const contains=(n,id)=>n.id===id||(n.children||[]).some(ch=>contains(ch,id));\nconst find=(nodes,id,parent=null)=>{for(const n of nodes||[]){if(n.id===id)return {n,parent,nodes};const hit=find(n.children,id,n);if(hit)return hit;}return null;};
 const selectedNode=()=>find(doc.nodes,selected)?.n||null;
 const all=(nodes,fn)=>{(nodes||[]).forEach(n=>{fn(n);all(n.children,fn);});};
 const record=()=>{past.push(JSON.stringify(doc));if(past.length>80)past.shift();future=[];dirty=true;setStatus('Unsaved changes');};
@@ -37,7 +37,7 @@ function renderNode(n){
  const structural=['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'].includes(n.type);
  const el=document.createElement(structural?'div':'div');
  el.className='nbc-node '+(structural?'nbc-'+n.type:'nbc-module')+(selected===n.id?' is-selected':'');
- el.dataset.id=n.id;el.dataset.type=n.type;applyStyle(el,n.settings||{});
+ el.dataset.id=n.id;el.dataset.type=n.type;el.draggable=true;applyStyle(el,n.settings||{});\n el.addEventListener('dragstart',e=>{draggingId=n.id;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',n.id);});\n el.addEventListener('dragover',e=>{if(draggingId&&draggingId!==n.id)e.preventDefault();});\n el.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();const from=find(doc.nodes,draggingId),to=find(doc.nodes,n.id);if(!from||!to||from.n===to.n||contains(from.n,to.n.id))return;record();const moving=from.n;from.nodes.splice(from.nodes.indexOf(moving),1);const accepts=(to.n.type==='section'&&moving.type==='row')||(to.n.type==='row'&&moving.type==='column')||(to.n.type==='column'&&!['section','row','column','container','columns','specialty_section','fullwidth_section'].includes(moving.type));if(accepts){to.n.children=to.n.children||[];to.n.children.push(moving);}else{const index=to.nodes.indexOf(to.n);to.nodes.splice(index+1,0,moving);}draggingId='';selected=moving.id;render();});
  if(structural){(n.children||[]).forEach(ch=>el.appendChild(renderNode(ch)));if(!n.children?.length){const empty=document.createElement('div');empty.className='nbc-empty-col';empty.textContent='Empty · add a module';el.appendChild(empty);}}
  else el.appendChild(modulePreview(n));
  const tools=document.createElement('div');tools.className='nbc-node-tools';tools.append(tool('⚙',()=>{selected=n.id;tab='content';render();},n.id),tool('＋',()=>addSibling(n.id),n.id),tool('↑',()=>move(n.id,-1),n.id),tool('↓',()=>move(n.id,1),n.id),tool('⧉',()=>duplicate(n.id),n.id),tool('×',()=>remove(n.id),n.id));el.appendChild(tools);
@@ -51,7 +51,7 @@ function field(label,key,value,type='text',options=null,change=null){
  if(type==='textarea'){input=document.createElement('textarea');input.value=value??'';}
  else if(type==='select'){input=document.createElement('select');(options||[]).forEach(o=>{const op=document.createElement('option');op.value=o[0];op.textContent=o[1];input.appendChild(op);});input.value=value??'';}
  else{input=document.createElement('input');input.type=type;input.value=value??'';}
- input.addEventListener(type==='textarea'?'input':'change',()=>change(input.value));wrap.appendChild(input);return wrap;
+ input.addEventListener(type==='select'?'change':'input',()=>change(input.value));wrap.appendChild(input);return wrap;
 }
 function group(text){const e=document.createElement('div');e.className='nbc-group';e.textContent=text;return e;}
 function inspectorRender(){
