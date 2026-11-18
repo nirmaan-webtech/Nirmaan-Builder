@@ -84,6 +84,31 @@ function inspectorRender(){
    if(n.type==='accordion'){body.append(checkField('Allow multiple open','accordion_multiple',s.accordion_multiple,v=>set('accordion_multiple',v)));body.append(checkField('Open first item','accordion_first_open',s.accordion_first_open,v=>set('accordion_first_open',v)));}
    if(n.type==='form'){body.append(field('Form title','form_title',s.form_title||'Website enquiry','text',null,v=>set('form_title',v)));body.append(field('Form fields JSON','form_fields',JSON.stringify(s.form_fields||[{type:'text',name:'name',label:'Name',required:true},{type:'email',name:'email',label:'Email',required:true},{type:'textarea',name:'message',label:'Message',required:true}],null,2),'textarea',null,v=>{try{set('form_fields',JSON.parse(v));}catch(e){setStatus('Form fields must be valid JSON');}}));body.append(field('Notification email','notification_email',s.notification_email||'','email',null,v=>set('notification_email',v)));body.append(field('Success message','success_message',s.success_message||'Thank you. Your submission has been received.','textarea',null,v=>set('success_message',v)));body.append(field('Submit label','submit_label',s.submit_label||'Submit','text',null,v=>set('submit_label',v)));body.append(checkField('Require privacy consent','form_consent_required',s.form_consent_required,v=>set('form_consent_required',v)));body.append(field('Consent label','form_consent_label',s.form_consent_label||'I agree to the privacy policy','text',null,v=>set('form_consent_label',v)));body.append(field('Privacy policy URL','privacy_policy_url',s.privacy_policy_url||'','text',null,v=>set('privacy_policy_url',v)));}
    if(['query_loop','blog','portfolio','shop_products','related_products'].includes(n.type)){body.append(field('Columns','columns',String(s.query?.columns||3),'number',null,v=>set('query',{...(s.query||{}),columns:Math.min(6,Math.max(1,Number(v)||3))})));body.append(field('Items per page','posts_per_page',String(s.query?.posts_per_page||6),'number',null,v=>set('query',{...(s.query||{}),posts_per_page:Math.min(24,Math.max(1,Number(v)||6))})));}
+   if(['blog','portfolio'].includes(n.type)){
+    const q=s.query||{};
+    body.append(field('Post type','post_type',q.post_type||'post','text',null,v=>set('query',{...(s.query||{}),post_type:v})));
+    body.append(field('Category slug','category_name',q.category_name||'','text',null,v=>set('query',{...(s.query||{}),category_name:v})));
+    body.append(field('Search terms','search',q.search||'','text',null,v=>set('query',{...(s.query||{}),search:v})));
+    body.append(field('Order by','orderby',q.orderby||'date','select',[['date','Date'],['title','Title'],['menu_order','Menu order'],['rand','Random']],v=>set('query',{...(s.query||{}),orderby:v})));
+    body.append(field('Order','order',q.order||'DESC','select',[['DESC','Descending'],['ASC','Ascending']],v=>set('query',{...(s.query||{}),order:v})));
+    body.append(field('Offset','offset',q.offset||0,'number',null,v=>set('query',{...(s.query||{}),offset:Math.max(0,Number(v)||0)})));
+    body.append(checkField('Show featured image','show_featured_image',s.show_featured_image!==false,v=>set('show_featured_image',v)));
+    body.append(checkField('Show date','show_date',s.show_date,v=>set('show_date',v)));
+    if(n.type==='blog')body.append(checkField('Show excerpt','show_excerpt',s.show_excerpt,v=>set('show_excerpt',v)));
+   }
+   if(n.type==='shop_products'||n.type==='related_products'){
+    const w=s.woo||{};
+    body.append(field('Products limit','limit',w.limit||8,'number',null,v=>set('woo',{...(s.woo||{}),limit:Math.min(24,Math.max(1,Number(v)||8))})));
+    body.append(field('WooCommerce columns','woo_columns',w.columns||4,'number',null,v=>set('woo',{...(s.woo||{}),columns:Math.min(6,Math.max(1,Number(v)||4))})));
+    body.append(field('Category slug','category',w.category||'','text',null,v=>set('woo',{...(s.woo||{}),category:v})));
+    body.append(field('Minimum price','min_price',w.min_price||'','number',null,v=>set('woo',{...(s.woo||{}),min_price:v})));
+    body.append(field('Maximum price','max_price',w.max_price||'','number',null,v=>set('woo',{...(s.woo||{}),max_price:v})));
+    body.append(checkField('Sale items only','on_sale',w.on_sale,v=>set('woo',{...(s.woo||{}),on_sale:v})));
+    body.append(checkField('In-stock only','in_stock',w.in_stock,v=>set('woo',{...(s.woo||{}),in_stock:v})));
+    body.append(checkField('Enable pagination','paginate',w.paginate,v=>set('woo',{...(s.woo||{}),paginate:v})));
+   }
+   if(n.type==='product_title')body.append(field('Title tag','woo_title_tag',s.woo_title_tag||'h1','select',[['h1','H1'],['h2','H2'],['h3','H3'],['h4','H4'],['h5','H5'],['h6','H6']],v=>set('woo_title_tag',v)));
+   if(n.type==='product_image')body.append(field('Image size','woo_image_size',s.woo_image_size||'large','select',[['thumbnail','Thumbnail'],['medium','Medium'],['large','Large'],['full','Full']],v=>set('woo_image_size',v)));
   }else{body.append(field('Admin label','label',s.label||'', 'text',null,v=>set('label',v)));}
  }else if(tab==='design'||tab==='hover'){
   const style=s[device]||(s[device]={});const target=tab==='hover'?(style.hover||(style.hover={})):style;
