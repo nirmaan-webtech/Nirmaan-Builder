@@ -26,3 +26,13 @@ html.nb-has-scroll-effects .nb-scroll-reveal{opacity:0;transition:opacity .65s e
 
 .nb-form [aria-invalid=true]{outline:2px solid #dc2626;outline-offset:1px}.nb-field-error{display:block;color:#b91c1c;font-size:.875rem;margin-top:4px}.nb-form-consent{display:flex;align-items:flex-start;gap:8px;margin:12px 0}
 .nb-slider[data-effect=fade] .nb-media-item{display:block;position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .45s ease}.nb-slider[data-effect=fade] .nb-media-item.is-active{position:relative;opacity:1;pointer-events:auto}
+
+/* Akario-compatible modules integrated into the existing Nirmaan canvas. */
+.nb-blurb,.nb-cta,.nb-testimonial,.nb-pricing-table,.nb-counter,.nb-icon,.nb-login,.nb-search{box-sizing:border-box}
+.nb-blurb{display:flex;flex-direction:column;gap:12px}.nb-blurb-image{display:block;max-width:100%;height:auto}.nb-blurb-icon,.nb-icon>span:first-child{font-size:2rem;line-height:1.2}
+.nb-cta{text-align:center}.nb-testimonial{margin:0;padding:1.25rem;border-left:3px solid currentColor}.nb-testimonial img{width:64px;height:64px;object-fit:cover;border-radius:50%}.nb-testimonial cite{display:block;margin-top:.75rem;font-style:normal;font-weight:600}
+.nb-pricing-table{padding:1.5rem;border:1px solid #dbe2ea;border-radius:8px;text-align:center}.nb-pricing-price{font-size:2rem;font-weight:700;margin:.75rem 0}
+.nb-counter{display:flex;flex-direction:column;gap:.35rem;text-align:center}.nb-counter strong{font-size:2.5rem;line-height:1.1}.nb-icon{display:flex;align-items:center;gap:.5rem}
+.nb-search{display:flex;gap:.5rem;align-items:center}.nb-search input{min-width:0;flex:1}.nb-search button,.nb-login button{cursor:pointer}
+.nb-code{overflow:auto;padding:1rem;background:#f4f6f8;color:#182230;border-radius:6px}.nb-html>*:first-child{margin-top:0}.nb-html>*:last-child{margin-bottom:0}
+.nb-login form{display:grid;gap:.75rem}.nb-login label{display:block}.nb-login input{max-width:100%}
