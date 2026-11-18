@@ -24,7 +24,9 @@ test('canvas exposes hierarchy, device previews, settings, history and persisten
   for (const token of ['undo','redo','autosave','content/','data-device','data-action']) {
     assert.ok(script.includes(token), 'missing editor workflow: ' + token);
   }
-  assert.match(script, /content\/\+cfg\.postId/);
+  assert.match(script, /targetPath/);
+  assert.match(script, /cfg\.targetId/);
+  assert.match(script, /targetType==='template'/);
   assert.match(rest, /public function save_content/);
   assert.match(rest, /public function save_autosave/);
   assert.match(styles, /nb-canvas-workspace/);
