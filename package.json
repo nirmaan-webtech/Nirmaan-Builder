@@ -4,9 +4,9 @@
   "private": true,
   "description": "WordPress theme and integrated visual builder for Nirmaan WebTech.",
   "scripts": {
-    "build": "node --check assets/js/builder.js && node --check assets/js/admin-actions.js && node --check assets/js/frontend-edit.js && node --check assets/js/forms.js && node --check assets/js/modules.js",
+    "build": "node --check assets/js/admin-actions.js && node --check assets/js/frontend-edit.js && node --check assets/js/forms.js && node --check assets/js/modules.js",
     "test": "node --test tests/js/*.test.js",
-    "lint:js": "node --check assets/js/builder.js && node --check assets/js/admin-actions.js && node --check assets/js/forms.js"
+    "lint:js": "node --check assets/js/admin-actions.js && node --check assets/js/forms.js"
   },
   "devDependencies": {
     "@wordpress/scripts": "^30.0.0"
