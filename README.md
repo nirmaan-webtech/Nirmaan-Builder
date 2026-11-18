@@ -3,7 +3,8 @@
 Nirmaan Builder is an installable WordPress **theme** by Nirmaan WebTech. The visual builder, Theme Options, Theme Builder, Library, forms, role controls and WooCommerce elements are integrated into the theme. No separate Nirmaan Builder plugin is required.
 
 ## Included builder capabilities
-- Dedicated visual Page Builder canvas with Section → Row → Column → Module hierarchy, device previews, live settings inspector, undo/redo, JSON import/export and autosave.
+- Existing integrated Visual Builder canvas with Section → Row → Column → Module hierarchy, device previews, live settings inspector, undo/redo, JSON import/export and autosave.
+- Akario-inspired modules (Blurb, CTA, Testimonial, Pricing Tables, Number Counter, Icon, HTML, Code, Search, Login, Contact Form and Email Opt-In) integrated into the existing canvas, REST storage and frontend renderer.
 - Desktop, tablet and mobile styles with per-device visibility.
 - Theme Options for branding, global colors, typography, layout defaults and custom CSS.
 - Theme Builder with Header, Body and Footer parts, display conditions and priority.
@@ -21,7 +22,7 @@ This remains an evolving builder foundation, **not a complete Divi 4 replacement
 - WooCommerce only for WooCommerce elements
 
 ## Install as a theme
-1. Download the ZIP for branch `feature/divi4-canvas-parity` (this branch includes the theme conversion and the latest Canvas changes).
+1. Download the installable theme ZIP built from branch `feature/divi4-complete-parity-phase-1`.
 2. In WordPress, open **Appearance → Themes → Add New → Upload Theme**.
 3. Upload the ZIP and click **Install Now → Activate**.
 4. Open **Nirmaan Builder → Theme Option** to configure global design settings.
