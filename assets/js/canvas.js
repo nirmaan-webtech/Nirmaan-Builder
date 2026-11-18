@@ -35,14 +35,15 @@ function modulePreview(n){
  if(['blog','portfolio','query_loop','shop_products','related_products'].includes(n.type)){const e=document.createElement('div');e.textContent=(labels[n.type]||n.type)+' preview';return e;}
  const e=document.createElement('div');e.textContent=labels[n.type]||n.type;return e;
 }
-let draggingId='';\nlet draggingId='';
+let draggingId='';
 function renderNode(n){
  const structural=['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'].includes(n.type);
  const el=document.createElement(structural?'div':'div');
  el.className='nbc-node '+(structural?'nbc-'+n.type:'nbc-module')+(selected===n.id?' is-selected':'');
  el.dataset.id=n.id;el.dataset.type=n.type;el.draggable=true;applyStyle(el,n.settings||{});
  el.addEventListener('dragstart',e=>{draggingId=n.id;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',n.id);});
- el.addEventListener('dragover',e=>{if(draggingId&&draggingId!==n.id)e.preventDefault();});\n el.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();const from=find(doc.nodes,draggingId),to=find(doc.nodes,n.id);if(!from||!to||from.n===to.n||contains(from.n,to.n.id))return;record();const moving=from.n;from.nodes.splice(from.nodes.indexOf(moving),1);const accepts=(to.n.type==='section'&&moving.type==='row')||(to.n.type==='row'&&moving.type==='column')||(to.n.type==='column'&&!['section','row','column','container','columns','specialty_section','fullwidth_section'].includes(moving.type));if(accepts){to.n.children=to.n.children||[];to.n.children.push(moving);}else{const index=to.nodes.indexOf(to.n);to.nodes.splice(index+1,0,moving);}draggingId='';selected=moving.id;render();});
+ el.addEventListener('dragover',e=>{if(draggingId&&draggingId!==n.id)e.preventDefault();});
+ el.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();const from=find(doc.nodes,draggingId),to=find(doc.nodes,n.id);if(!from||!to||from.n===to.n||contains(from.n,to.n.id))return;record();const moving=from.n;from.nodes.splice(from.nodes.indexOf(moving),1);const accepts=(to.n.type==='section'&&moving.type==='row')||(to.n.type==='row'&&moving.type==='column')||(to.n.type==='column'&&!['section','row','column','container','columns','specialty_section','fullwidth_section'].includes(moving.type));if(accepts){to.n.children=to.n.children||[];to.n.children.push(moving);}else{const index=to.nodes.indexOf(to.n);to.nodes.splice(index+1,0,moving);}draggingId='';selected=moving.id;render();});
  if(structural){(n.children||[]).forEach(ch=>el.appendChild(renderNode(ch)));if(!n.children?.length){const empty=document.createElement('div');empty.className='nbc-empty-col';empty.textContent='Empty · add a module';el.appendChild(empty);}}
  else el.appendChild(modulePreview(n));
  const tools=document.createElement('div');tools.className='nbc-node-tools';tools.append(tool('⚙',()=>{selected=n.id;tab='content';render();},n.id),tool('＋',()=>addSibling(n.id),n.id),tool('↑',()=>move(n.id,-1),n.id),tool('↓',()=>move(n.id,1),n.id),tool('⧉',()=>duplicate(n.id),n.id),tool('×',()=>remove(n.id),n.id));el.appendChild(tools);
