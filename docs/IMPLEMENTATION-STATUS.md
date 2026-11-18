@@ -159,7 +159,22 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Wired the Image module and Gallery/Slider item image controls to the native image picker; selected attachment URLs are stored in the existing document fields, so no new REST schema keys are introduced.
 - Added source-level regression assertions for enqueueing and picker wiring.
 - Remaining: verify attachment selection in a real WordPress browser, add image metadata/size controls, and implement media selection for any additional image-bearing modules. This source-level change is not browser QA.
-\n\n## Phase 22 – centralized schema-driven settings field engine\n- Added one reusable typed field renderer for text, URL, number, color, textarea, select, checkbox and media controls.\n- Added shared schema dispatch for Content and layout settings so both panels use the same field pipeline.\n- Field definitions can supply options, min/max, step, required, placeholder and helper text; numeric bounds are enforced in the editor.\n- Kept existing call sites compatible through the legacy `field()` adapter.\n- Added source-level smoke coverage. Real WordPress interaction and browser validation remain outstanding.\n\n\n## Phase 23 – Section, Row and Column layout controls\n- Expanded the layout schemas with typed selectors for display, flex direction/wrapping, alignment, overflow and positioning.\n- Added section width/max-width, minimum height, spacing, background color and stacking order controls.\n- Added column width/flex-basis, minimum height, background, overflow and per-side padding/margin controls.\n- Added `alignSelf` to the REST style allow-list and frontend CSS property map.\n- Added source-level regression assertions. Full end-to-end REST persistence and visual checks are tracked separately.\n
+
+
+## Phase 22 – centralized schema-driven settings field engine
+- Added one reusable typed field renderer for text, URL, number, color, textarea, select, checkbox and media controls.
+- Added shared schema dispatch for Content and layout settings so both panels use the same field pipeline.
+- Field definitions can supply options, min/max, step, required, placeholder and helper text; numeric bounds are enforced in the editor.
+- Kept existing call sites compatible through the legacy `field()` adapter.
+- Added source-level smoke coverage. Real WordPress interaction and browser validation remain outstanding.
+
+
+## Phase 23 – Section, Row and Column layout controls
+- Expanded the layout schemas with typed selectors for display, flex direction/wrapping, alignment, overflow and positioning.
+- Added section width/max-width, minimum height, spacing, background color and stacking order controls.
+- Added column width/flex-basis, minimum height, background, overflow and per-side padding/margin controls.
+- Added `alignSelf` to the REST style allow-list and frontend CSS property map.
+- Added source-level regression assertions. Full end-to-end REST persistence and visual checks are tracked separately.
 
 ## Latest parity implementation update (2026-11-17)
 
@@ -190,3 +205,14 @@ Still environment-dependent and not signed off:
 - The WP-CLI round-trip harness has not been executed against a live WordPress database in this session.
 - Browser-level nested drag/drop, breakpoint rendering, canvas/frontend comparison, WooCommerce templates and form delivery need an actual staging WordPress URL, a temporary administrator account, and WooCommerce enabled.
 - No visual browser sign-off or production readiness claim is made from static CI alone.
+
+
+## Visual canvas UX and protected root Section (2026-11-18)
+- Empty builder documents initialize with a default root Section.
+- Section insertion opens a row-layout picker; columns expose a module picker.
+- Hover controls expose Settings, Duplicate and Delete actions for canvas elements.
+- Content, Design and Advanced settings open in a modal; field changes update the canvas preview and continue through the existing autosave/document persistence flow.
+- The root default Section is protected from deletion in canvas controls, context-menu actions and the delete handler.
+- Duplicated elements receive new IDs; duplicated Sections must not inherit the root-only protection marker.
+- Source-level regression coverage was added for this protection/duplication contract. CI must pass for the latest commit.
+- Runtime confirmation is still outstanding: verify modal open/close and focus behavior, settings changes, autosave/save/reload, and frontend output in a real WordPress browser.
