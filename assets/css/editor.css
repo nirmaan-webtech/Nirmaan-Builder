@@ -64,3 +64,21 @@
 .nb-settings-popup-body .nb-device-tabs{position:sticky;top:42px;background:#fff;z-index:1;padding:6px 0}
 .nb-empty{padding:38px 10px}
 @media(max-width:782px){.nb-picker-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nb-builder-popup{padding:10px}.nb-builder-popup-card{max-height:94vh}.nb-settings-popup-body{max-height:calc(94vh - 62px)}.nb-row-layout{grid-template-columns:1fr!important}}
+
+
+/* Full-viewport editor shell */
+body.nb-editor-active #adminmenumain,body.nb-editor-active #wpadminbar,body.nb-editor-active #wpfooter,body.nb-editor-active #screen-meta,body.nb-editor-active #screen-meta-links{display:none!important}
+body.nb-editor-active #wpcontent{margin-left:0!important;padding-left:0!important}
+body.nb-editor-active #wpbody-content{padding-bottom:0!important}
+body.nb-editor-active .nirmaan-editor-wrap,.nirmaan-editor-wrap.nb-editor-fullscreen{position:fixed!important;inset:0!important;z-index:100000!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;margin:0!important;padding:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;background:#eef1f5!important;box-sizing:border-box!important}
+.nirmaan-editor-wrap .nirmaan-editor-topbar{flex:0 0 auto;min-height:54px;box-sizing:border-box;overflow-x:auto;white-space:nowrap}
+.nirmaan-editor-wrap .nirmaan-editor-layout{flex:1 1 auto;min-height:0!important;height:auto!important;grid-template-columns:270px minmax(0,1fr)!important;overflow:hidden}
+.nirmaan-editor-wrap .nirmaan-editor-sidebar{min-height:0;height:100%;box-sizing:border-box;overflow:auto}
+.nirmaan-editor-wrap .nirmaan-editor-main{min-width:0;min-height:0;height:100%;box-sizing:border-box;overflow:auto;padding:24px;background:#e9edf3}
+.nirmaan-editor-wrap .nirmaan-canvas-label{max-width:none}
+.nirmaan-editor-wrap .nirmaan-canvas{width:100%;max-width:none;min-height:calc(100% - 36px);margin:0 auto;padding:44px;box-sizing:border-box;background:#fff;border:1px solid #d7dee8;border-radius:8px;box-shadow:0 8px 28px rgba(20,35,55,.08)}
+.nb-settings-popup-body #nirmaan-settings,.nb-settings-popup-body{display:block!important;visibility:visible!important;opacity:1!important}
+.nb-element-controls button:disabled{opacity:.35;cursor:not-allowed}
+.nb-builder-popup-card{display:flex;flex-direction:column}
+.nb-settings-popup-body{flex:1 1 auto;min-height:0}
+@media(max-width:782px){body.nb-editor-active .nirmaan-editor-wrap .nirmaan-editor-layout{grid-template-columns:1fr!important;grid-template-rows:auto minmax(0,1fr)!important}body.nb-editor-active .nirmaan-editor-sidebar{max-height:34vh;height:auto;border-right:0;border-bottom:1px solid #d7dee8}body.nb-editor-active .nirmaan-editor-main{min-height:0;padding:12px}body.nb-editor-active .nirmaan-canvas{padding:18px;min-height:70vh}body.nb-editor-active .nirmaan-editor-topbar{gap:6px;padding:8px;flex-wrap:nowrap}}
