@@ -21,14 +21,14 @@ test('canvas exposes hierarchy, device previews, settings, history and persisten
   for (const token of ['section','row','column','heading','text','image','button','gallery','slider','accordion']) {
     assert.ok(script.includes(token), 'missing builder capability: ' + token);
   }
-  for (const token of ['undo','redo','autosave','content/','data-device','data-action']) {
+  for (const token of ['undo','redo','autosave','restoreRevision','revisions/','targetPath','data-device','data-action']) {
     assert.ok(script.includes(token), 'missing editor workflow: ' + token);
   }
   assert.match(script, /targetPath/);
   assert.match(script, /cfg\.targetId/);
   assert.match(script, /targetType==='template'/);
   assert.match(rest, /public function save_content/);
-  assert.match(rest, /public function save_autosave/);
+  assert.match(rest, /public function save_autosave/);\n  assert.match(rest, /public function restore_revision/);
   assert.match(styles, /nb-canvas-workspace/);
 });
 
