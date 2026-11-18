@@ -16,7 +16,7 @@
  const undo=()=>restoreHistory(undoStack,redoStack),redo=()=>restoreHistory(redoStack,undoStack);
  const selectNode=(id,additive=false)=>{if(additive){if(selectedIds.has(id)){selectedIds.delete(id);if(selected===id)selected=Array.from(selectedIds).pop()||null;}else{selectedIds.add(id);selected=id;}}else{selected=id;selectedIds=new Set([id]);}};
  const selectedNodes=()=>{const ids=selectedIds.size?Array.from(selectedIds):(selected?[selected]:[]);return ids.map(id=>find(id)?.node).filter(Boolean);};
- const rekey=node=>{node.id=uid();(node.children||[]).forEach(rekey);return node;};
+ const rekey=node=>{if(node.settings)delete node.settings.system_default_section;node.id=uid();(node.children||[]).forEach(rekey);return node;};
  const uid=()=>'nb-'+Math.random().toString(36).slice(2,10);
  const saveLocalDraft=()=>{try{localStorage.setItem(recoveryKey,JSON.stringify({document:doc,savedAt:Date.now()}));}catch(e){}};
  const scheduleAutosave=()=>{if(!loaded)return;dirty=true;saveLocalDraft();clearTimeout(autosaveTimer);if(saving)return;autosaveTimer=setTimeout(()=>{const snapshot=clone(doc);autosaveInFlight=autosaveInFlight.catch(()=>{}).then(()=>api('autosave/'+targetType+'/'+targetId+'?part='+encodeURIComponent(part),{method:'POST',body:JSON.stringify({part,document:snapshot})}));autosaveInFlight.then(()=>{if(!saving&&JSON.stringify(doc)===JSON.stringify(snapshot))status(t('Draft autosaved'));}).catch(()=>{status(t('Autosave unavailable — changes remain in this browser'));});},2500);};
