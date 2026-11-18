@@ -28,7 +28,8 @@ test('canvas exposes hierarchy, device previews, settings, history and persisten
   assert.match(script, /cfg\.targetId/);
   assert.match(script, /targetType==='template'/);
   assert.match(rest, /public function save_content/);
-  assert.match(rest, /public function save_autosave/);\n  assert.match(rest, /public function restore_revision/);\n  assert.match(rest, /public function restore_revision/);
+  assert.match(rest, /public function save_autosave/);
+  assert.match(rest, /public function restore_revision/);\n  assert.match(rest, /public function restore_revision/);
   assert.match(styles, /nb-canvas-workspace/);
 });
 
