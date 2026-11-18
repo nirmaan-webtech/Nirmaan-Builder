@@ -84,7 +84,7 @@ function inspectorRender(){
   const keys=[['Width','width'],['Max width','maxWidth'],['Min height','minHeight'],['Padding','padding'],['Margin','margin'],['Gap','gap'],['Display','display'],['Flex direction','flexDirection'],['Flex wrap','flexWrap'],['Justify content','justifyContent'],['Align items','alignItems']];
   keys.forEach(([label,key])=>body.append(field(label,key,(target[key]??''),'text',null,v=>{record();target[key]=v;renderCanvas();})));
   body.append(group('Typography & appearance'));
-  [['Font size','fontSize'],['Font weight','fontWeight'],['Line height','lineHeight'],['Text align','textAlign'],['Text color','color'],['Background color','backgroundColor'],['Border color','borderColor'],['Border width','borderWidth'],['Border radius','borderRadius'],['Box shadow','boxShadow']].forEach(([label,key])=>body.append(field(label,key,target[key]||'', 'text',null,v=>{record();target[key]=v;renderCanvas();})));
+  [['Font size','fontSize'],['Font weight','fontWeight'],['Line height','lineHeight'],['Text align','textAlign'],['Text color','color'],['Background color','backgroundColor'],['Border color','borderColor'],['Border width','borderWidth'],['Border radius','borderRadius'],['Box shadow','boxShadow']].forEach(([label,key])=>body.append(field(label,key,target[key]||'', ['color','backgroundColor','borderColor'].includes(key)?'color':'text',null,v=>{record();target[key]=v;renderCanvas();})));
   body.append(group('Background'));
   body.append(field('Background gradient','backgroundImage',target.backgroundImage||'','text',null,v=>{record();target.backgroundImage=v;renderCanvas();}));
  }else{
