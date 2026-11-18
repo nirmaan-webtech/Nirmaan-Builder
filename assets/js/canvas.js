@@ -33,7 +33,7 @@ function modulePreview(n){
  if(['blog','portfolio','query_loop','shop_products','related_products'].includes(n.type)){const e=document.createElement('div');e.textContent=(labels[n.type]||n.type)+' preview';return e;}
  const e=document.createElement('div');e.textContent=labels[n.type]||n.type;return e;
 }
-function renderNode(n){
+let draggingId='';\nfunction renderNode(n){
  const structural=['section','fullwidth_section','specialty_section','row','column','container','columns','query_loop'].includes(n.type);
  const el=document.createElement(structural?'div':'div');
  el.className='nbc-node '+(structural?'nbc-'+n.type:'nbc-module')+(selected===n.id?' is-selected':'');
