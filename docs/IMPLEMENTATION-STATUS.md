@@ -216,3 +216,11 @@ Still environment-dependent and not signed off:
 - Duplicated elements receive new IDs; duplicated Sections must not inherit the root-only protection marker.
 - Source-level regression coverage was added for this protection/duplication contract. CI must pass for the latest commit.
 - Runtime confirmation is still outstanding: verify modal open/close and focus behavior, settings changes, autosave/save/reload, and frontend output in a real WordPress browser.
+
+
+## Section / Row / Column visual design parity increment (2026-11-18)
+
+- Extended the shared Section, Fullwidth Section, Specialty Section, Row and Column layout schema with reusable visual controls for gradient backgrounds, border color/width/style, corner radius, shadow presets, opacity and text alignment.
+- These controls write to the active desktop/tablet/mobile style object, use the existing schema-driven field renderer, trigger canvas refresh/autosave, and flow through the existing REST style sanitizer and frontend CSS property mapper.
+- Added a regression test asserting each shared visual property is represented in the editor schema, REST sanitizer and frontend renderer.
+- CI is running for the latest branch head. This is source-level coverage only; a real WordPress save/reload and frontend render check still requires the staging environment.
