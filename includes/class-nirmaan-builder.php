@@ -10,7 +10,6 @@ final class Theme {
   if ( $this->booted ) return $GLOBALS['nirmaan_builder_renderer'] ?? null;
   $this->booted = true;
   require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-admin.php';
-  require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-canvas.php';
   require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-content.php';
   require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-rest.php';
   require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-renderer.php';
@@ -19,7 +18,6 @@ final class Theme {
   require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-roles.php';
   require_once NIRMAAN_BUILDER_PATH . 'includes/class-nirmaan-builder-multilingual.php';
   ( new Admin() )->hooks();
-  ( new Canvas() )->hooks();
   Roles::register_hooks();
   Multilingual::register_hooks();
   add_action( 'init', array( $this, 'register_content_types' ), 5 );
