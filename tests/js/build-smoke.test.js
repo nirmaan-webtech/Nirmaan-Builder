@@ -683,3 +683,20 @@ test('row column resizing balances an adjacent column and persists both widths',
   assert.ok(renderer.includes("'flexBasis'=>'flex-basis'"));
   assert.match(editorCss, /nb-column-width-handle/);
 });
+
+
+test('Akario module palette is integrated into the existing Nirmaan editor canvas', () => {
+  const js = fs.readFileSync('assets/js/builder.js', 'utf8');
+  const rest = fs.readFileSync('includes/class-nirmaan-builder-rest.php', 'utf8');
+  const renderer = fs.readFileSync('includes/class-nirmaan-builder-renderer.php', 'utf8');
+  for (const type of ['blurb','cta','testimonial','pricing_tables','number_counter','icon','html','code','search','login','contact_form','email_optin']) {
+    assert.ok(js.includes("['"+type+"'"), type + ' missing from existing canvas palette');
+    assert.ok(rest.includes("'"+type+"'"), type + ' missing from REST allowlist');
+    if (!['contact_form','email_optin'].includes(type)) assert.ok(renderer.includes("case'"+type+"'"), type + ' missing from frontend renderer');
+  }
+  assert.match(js, /nb-preview-blurb/);
+  assert.match(js, /nb-preview-pricing/);
+  assert.match(renderer, /Forms::render/);
+  assert.match(renderer, /wp_login_form/);
+  assert.match(renderer, /wp_kses_post\(\$s\['html'\]/);
+});

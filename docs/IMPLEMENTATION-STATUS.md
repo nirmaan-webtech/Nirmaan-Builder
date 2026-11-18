@@ -151,3 +151,87 @@ Limitations: layer drag-and-drop reordering is not implemented yet. Wireframe mo
 - Internationalized core admin/editor labels and documented POT/JSON catalog generation in `languages/README.md`.
 - Added smoke tests for WPML/Polylang integration hooks and translation script wiring.
 - Automated CI is repository-level validation only. Before production, verify the current supported WPML/Polylang versions on a real staging site, including translated page editing, language-specific templates, form labels/options, and role-based REST permissions.
+
+
+## Phase 21 – WordPress Media Library integration (first implementation slice)
+- Loaded the native WordPress media modal on the Visual Editor screen.
+- Added a reusable Media Library field for selecting and clearing image attachments.
+- Wired the Image module and Gallery/Slider item image controls to the native image picker; selected attachment URLs are stored in the existing document fields, so no new REST schema keys are introduced.
+- Added source-level regression assertions for enqueueing and picker wiring.
+- Remaining: verify attachment selection in a real WordPress browser, add image metadata/size controls, and implement media selection for any additional image-bearing modules. This source-level change is not browser QA.
+
+
+## Phase 22 – centralized schema-driven settings field engine
+- Added one reusable typed field renderer for text, URL, number, color, textarea, select, checkbox and media controls.
+- Added shared schema dispatch for Content and layout settings so both panels use the same field pipeline.
+- Field definitions can supply options, min/max, step, required, placeholder and helper text; numeric bounds are enforced in the editor.
+- Kept existing call sites compatible through the legacy `field()` adapter.
+- Added source-level smoke coverage. Real WordPress interaction and browser validation remain outstanding.
+
+
+## Phase 23 – Section, Row and Column layout controls
+- Expanded the layout schemas with typed selectors for display, flex direction/wrapping, alignment, overflow and positioning.
+- Added section width/max-width, minimum height, spacing, background color and stacking order controls.
+- Added column width/flex-basis, minimum height, background, overflow and per-side padding/margin controls.
+- Added `alignSelf` to the REST style allow-list and frontend CSS property map.
+- Added source-level regression assertions. Full end-to-end REST persistence and visual checks are tracked separately.
+
+## Latest parity implementation update (2026-11-17)
+
+Implemented in the current PR branch:
+- Fixed the malformed newline in the centralized JavaScript field engine that prevented the Visual Builder script from loading. Added regression coverage; the follow-up CI run passed.
+- Expanded schema-driven module controls for Image, Button, Gallery, Slider, Tabs, Accordion, Blog, Portfolio and Video.
+- Added REST sanitization/persistence for the new module options and scoped custom CSS declarations.
+- Added frontend rendering for image links/captions/loading mode, button target/size/full-width variants, gallery columns/gap, tabs orientation/alignment, accordion single-open behavior, blog listing visibility, video aspect ratio, and functional slider arrows/dots/autoplay.
+- Added specialty-section default columns and synchronized preset selection with the actual editable column count.
+- Added category/search/offset/excerpt controls to Blog, Portfolio and Query Loop and applied these to frontend WP_Query calls.
+- Added smoke tests for the new settings and slider interactions.
+
+Still not verified as complete:
+- WordPress runtime/browser QA, save/reload/revision round-trip against a real database, WooCommerce runtime rendering, and responsive visual parity require a running WordPress staging site.
+- The remaining Divi 4 parity scope is broader than source-level smoke tests. Do not treat this branch as a complete Divi 4 replacement or production release until runtime tests and the outstanding controls are completed.
+
+
+## Remaining-scope implementation update (2026-11-17)
+
+Additional source-level work:
+- Added a WordPress-backed REST test harness at `tests/wp/round-trip.php` for content save, reload, revision restore and autosave persistence. It must be run with WP-CLI against an activated staging WordPress site.
+- Added Forms consent checkbox/privacy-policy link, configurable processing label, server-side consent enforcement, field-level error feedback, and server-side URL/telephone/date validation. Existing conditional fields, notification email, spam honeypot, rate limiting, submissions storage and optional webhook workflow remain integrated.
+- Added WooCommerce product grid filters for min/max price, sale-only and in-stock-only, plus element-specific product title tag and image size settings.
+- Added scroll reveal effects (fade, slide-up, zoom) with delay, IntersectionObserver activation and reduced-motion fallback. Sticky positioning remains configurable through position/top layout controls.
+- Added runtime QA instructions at `docs/WORDPRESS-RUNTIME-QA.md`.
+
+Still environment-dependent and not signed off:
+- The WP-CLI round-trip harness has not been executed against a live WordPress database in this session.
+- Browser-level nested drag/drop, breakpoint rendering, canvas/frontend comparison, WooCommerce templates and form delivery need an actual staging WordPress URL, a temporary administrator account, and WooCommerce enabled.
+- No visual browser sign-off or production readiness claim is made from static CI alone.
+
+
+## Visual canvas UX and protected root Section (2026-11-18)
+- Empty builder documents initialize with a default root Section.
+- Section insertion opens a row-layout picker; columns expose a module picker.
+- Hover controls expose Settings, Duplicate and Delete actions for canvas elements.
+- Content, Design and Advanced settings open in a modal; field changes update the canvas preview and continue through the existing autosave/document persistence flow.
+- The root default Section is protected from deletion in canvas controls, context-menu actions and the delete handler.
+- Duplicated elements receive new IDs; duplicated Sections must not inherit the root-only protection marker.
+- Source-level regression coverage was added for this protection/duplication contract. CI must pass for the latest commit.
+- Runtime confirmation is still outstanding: verify modal open/close and focus behavior, settings changes, autosave/save/reload, and frontend output in a real WordPress browser.
+
+
+## Section / Row / Column visual design parity increment (2026-11-18)
+
+- Extended the shared Section, Fullwidth Section, Specialty Section, Row and Column layout schema with reusable visual controls for gradient backgrounds, border color/width/style, corner radius, shadow presets, opacity and text alignment.
+- These controls write to the active desktop/tablet/mobile style object, use the existing schema-driven field renderer, trigger canvas refresh/autosave, and flow through the existing REST style sanitizer and frontend CSS property mapper.
+- Added a regression test asserting each shared visual property is represented in the editor schema, REST sanitizer and frontend renderer.
+- CI is running for the latest branch head. This is source-level coverage only; a real WordPress save/reload and frontend render check still requires the staging environment.
+
+
+## Akario canvas integration (2026-11-18)
+
+- The existing Nirmaan Visual Builder route and editor screen remain the entry point. No separate Page Builder admin screen is part of the implementation.
+- Akario's Section → Row → Column → Module editing model is adapted into the existing Nirmaan canvas and existing WordPress document schema; the existing frontend renderer and REST save/load pipeline remain the source of truth.
+- The existing Content, Design, Hover and Advanced inspector workflow, responsive style buckets, media library integration, frontend preview, history, autosave and revisions are retained.
+- Added Akario module types to the existing module palette: Blurb, Call to Action, Testimonial, Pricing Tables, Number Counter, Icon, HTML, Code, Search, Login, Contact Form and Email Opt-In.
+- Added module settings, in-canvas previews, REST allow-listing/sanitization and WordPress frontend rendering. HTML is sanitized with `wp_kses_post`; code is displayed escaped rather than executed; login uses WordPress native login; contact and opt-in use Nirmaan Forms.
+- Akario's standalone authentication, database and API are not copied. Only canvas interaction patterns and module behavior are adapted to WordPress.
+- Regression smoke coverage has been added. Latest CI and WordPress runtime/browser QA still need verification; WAMP activation, save/reload, responsive rendering, module output and frontend parity must be tested before merge.

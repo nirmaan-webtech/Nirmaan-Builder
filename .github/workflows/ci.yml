@@ -32,3 +32,18 @@ jobs:
         run: npm run build
       - name: Run feature smoke tests
         run: npm test
+
+  theme-package:
+    name: Build installable theme ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package WordPress theme
+        run: git archive --format=zip --prefix=nirmaan-builder/ HEAD -o nirmaan-builder-updated.zip
+      - name: Upload theme ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: nirmaan-builder-updated-theme
+          path: nirmaan-builder-updated.zip
+          if-no-files-found: error
+          retention-days: 14
