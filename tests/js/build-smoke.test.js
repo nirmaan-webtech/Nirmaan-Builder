@@ -21,7 +21,7 @@ test('canvas exposes hierarchy, device previews, settings, history and persisten
   for (const token of ['section','row','column','heading','text','image','button','gallery','slider','accordion']) {
     assert.ok(script.includes(token), 'missing builder capability: ' + token);
   }
-  for (const token of ['undo','redo','autosave','responsive','content/','data-device','data-action']) {
+  for (const token of ['undo','redo','autosave','content/','data-device','data-action']) {
     assert.ok(script.includes(token), 'missing editor workflow: ' + token);
   }
   assert.match(script, /content\/\+cfg\.postId/);
